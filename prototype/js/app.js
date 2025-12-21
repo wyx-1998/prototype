@@ -210,10 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentDocName = '';
 
     function getCreatorHTML() {
-        // Default to File Dashboard
+        // Default to Creator Dashboard (New Design)
         return `
             <div id="creator-container" class="creator-layout" style="background:var(--bg-color); display:block; padding:2rem; overflow-y:auto">
-                ${getCreatorDashboardContent()}
+                ${getCreatorDashboardContentNew()}
             </div>
         `;
     }
@@ -351,43 +351,166 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
+    // 全局变量存储当前文档类型
+    let currentDocType = "";
+
     function getMockDocContent(title) {
-        if (title.includes("计划") || title.includes("大纲")) {
+        // 根据currentDocType变量确定文档类型
+        if (currentDocType === "Type-1") {
+            // Type-1: 培训课件 (Courseware) - PPT画布 - 移除卡片概念，直接在画布上展示内容
             return `
-                <h2>1. 编制目的</h2>
-                <p>为进一步加强公司安全生产管理，提高全员安全素质，预防和减少生产安全事故，依据《安全生产法》及相关规定，制定本年度培训计划。</p>
-                <br>
-                <h2>2. 培训对象与学时</h2>
-                <p><strong>2.1 新员工：</strong> 岗前安全培训时间不得少于 24 学时。</p>
-                <p><strong>2.2 特种作业人员：</strong> 必须经专门的安全技术培训并考核合格，取得其《特种作业操作证》。</p>
-                <br>
-                <h2>3. 培训内容</h2>
-                <h3>3.1 公司级（一级）教育</h3>
-                <p>国家安全生产法律法规、公司安全规章制度、典型事故案例分析。</p>
-                <h3>3.2 车间级（二级）教育</h3>
-                <p>本车间作业特点、危险因素、应急处置方案。</p>
-                <br>
-                <h2>4. 考核方式</h2>
-                <p>采用笔试与实操相结合的方式，80分以上为合格。</p>
-            `;
-        } else if (title.includes("教材") || title.includes("知识")) {
-            return `
-                <div style="background:#f9f9f9; padding:1rem; border-left:4px solid var(--primary-color); margin-bottom:1rem">
-                    <strong>摘要：</strong> 本教材旨在普及基础安全知识，适用于全员年度再培训。
+                <div style="margin-bottom:2rem; padding:2rem; background:white; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); box-sizing:border-box;">
+                    <h2 style="text-align:center; color:#1677ff; margin-bottom:1.5rem">第一页：课程介绍</h2>
+                    <div style="display:flex; flex-direction:column; gap:1.5rem">
+                        <div>
+                            <h3 style="color:#1677ff; margin:0.5rem 0">课程目标</h3>
+                            <ul style="margin:0.5rem 0; padding-left:1.5rem; line-height:1.5">
+                                <li>了解安全生产的基本概念和重要性</li>
+                                <li>掌握常见安全隐患的识别方法</li>
+                                <li>熟悉应急处置流程和自救互救技能</li>
+                                <li>提升全员安全责任意识</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 style="color:#1677ff; margin:0.5rem 0">课程大纲</h3>
+                            <ol style="margin:0.5rem 0; padding-left:1.5rem; line-height:1.5">
+                                <li>安全生产法律法规解读</li>
+                                <li>典型事故案例分析</li>
+                                <li>现场隐患排查要点</li>
+                                <li>个人防护用品使用</li>
+                                <li>应急救援基础知识</li>
+                            </ol>
+                        </div>
+                    </div>
                 </div>
-                <h2>第一章 安全生产基础概念</h2>
-                <p>安全生产是指在生产经营活动中，为了避免造成人员伤害和财产损失，而采取并执行的各种安全技术和管理措施。</p>
-                <br>
-                <h2>第二章 常见危险作业安全要求</h2>
-                <h3>2.1 动火作业</h3>
-                <p>动火作业前必须办理审批手续，清理现场易燃物，并配备灭火器材。</p>
-                <h3>2.2 高处作业</h3>
-                <p>凡在坠落高度基准面 2m 以上（含 2m）有可能坠落的高处进行作业，称为高处作业。必须佩戴安全带。</p>
-                <br>
-                <h2>第三章 事故应急与自救</h2>
-                <p>发生事故后，应立即启动应急预案，优先抢救人员...</p>
+                <div style="margin-bottom:2rem; padding:2rem; background:white; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); box-sizing:border-box;">
+                    <h2 style="text-align:center; color:#1677ff; margin-bottom:1.5rem">第二页：法律法规解读</h2>
+                    <div style="display:flex; flex-direction:column; gap:1.5rem">
+                        <div>
+                            <h3 style="color:#1677ff; margin:0.5rem 0">《安全生产法》核心条款</h3>
+                            <p style="margin:0.5rem 0; line-height:1.5">根据《中华人民共和国安全生产法》（2021修正版）第25条规定：</p>
+                            <blockquote style="margin:0.5rem 0; padding:0.75rem 1rem; border-left:4px solid #1677ff; background:#f0f8ff; border-radius:0 8px 8px 0">
+                                <p style="margin:0; font-style:italic">生产经营单位的安全生产管理机构以及安全生产管理人员应当恪尽职守，依法履行职责。</p>
+                            </blockquote>
+                        </div>
+                        <div>
+                            <h3 style="color:#1677ff; margin:0.5rem 0">企业责任与义务</h3>
+                            <ul style="margin:0.5rem 0; padding-left:1.5rem; line-height:1.5">
+                                <li>建立健全全员安全生产责任制</li>
+                                <li>制定并实施安全生产规章制度</li>
+                                <li>组织开展安全生产教育和培训</li>
+                                <li>定期排查治理生产安全事故隐患</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             `;
-        } else if (title.includes("通知书") || title.includes("整改")) {
+        } else if (currentDocType === "Type-2") {
+            // Type-2: 标准公文 - 长文档画布 - 扩展长度
+            return `
+                <div style="box-sizing:border-box; max-width:100%; overflow-x:hidden">
+                    <h1 style="text-align:center; margin-bottom:2rem">安全生产管理制度</h1>
+                    
+                    <h2>1. 编制目的</h2>
+                    <p>为进一步加强公司安全生产管理，提高全员安全素质，预防和减少生产安全事故，保障员工生命财产安全，促进公司健康发展，特制定本制度。</p>
+                    
+                    <h2>2. 适用范围</h2>
+                    <p>本制度适用于公司所有部门、岗位和员工，包括正式员工、临时工、实习生等各类人员。</p>
+                    
+                    <h2>3. 培训对象与学时</h2>
+                    <p><strong>3.1 新员工：</strong>岗前安全培训不少于24学时，包括公司级、部门级、班组级三级教育。</p>
+                    <p><strong>3.2 在职员工：</strong>每年再培训时间不少于8学时。</p>
+                    <p><strong>3.3 特种作业人员：</strong>必须持证上岗，并按规定进行复审培训。</p>
+                    
+                    <h2>4. 培训内容</h2>
+                    <h3>4.1 公司级教育</h3>
+                    <p>主要内容包括：国家安全生产方针政策、法律法规；公司安全生产规章制度；典型事故案例分析等。</p>
+                    
+                    <h3>4.2 部门级教育</h3>
+                    <p>主要内容包括：本部门生产工艺特点、危险因素；安全操作规程；应急处置措施等。</p>
+                    
+                    <h3>4.3 班组级教育</h3>
+                    <p>主要内容包括：岗位安全操作规程；岗位之间衔接配合的安全事项；有关事故案例等。</p>
+                    
+                    <h2>5. 安全生产投入</h2>
+                    <h3>5.1 资金保障</h3>
+                    <p>公司每年提取安全生产费用不低于营业收入的2%，专门用于完善和改进安全生产条件。安全生产费用实行专户核算，按规定范围使用，不得挪作他用。</p>
+                    
+                    <h3>5.2 使用范围</h3>
+                    <ul>
+                        <li>安全设施设备的维护保养</li>
+                        <li>劳动防护用品配备</li>
+                        <li>安全生产宣传教育培训</li>
+                        <li>应急救援器材和设备配备</li>
+                        <li>重大危险源监控系统建设</li>
+                        <li>安全生产检查评价支出</li>
+                        <li>事故隐患整改支出</li>
+                    </ul>
+                    
+                    <h2>6. 安全教育培训</h2>
+                    <h3>6.1 新员工三级教育</h3>
+                    <p>新员工上岗前必须接受公司级、部门级、班组级三级安全教育，培训时间不少于24学时。培训内容应结合岗位实际，确保员工掌握必要的安全知识和技能。</p>
+                    
+                    <h3>6.2 日常安全教育</h3>
+                    <p>各部门每月至少组织一次安全学习活动，重点学习岗位操作规程和事故案例。安全管理部门定期组织专题培训，提高员工安全意识。</p>
+                    
+                    <h3>6.3 特殊时期教育</h3>
+                    <p>在节假日前后、季节变换、设备检修、新工艺应用等特殊时期，应及时开展针对性安全教育。</p>
+                    
+                    <h2>7. 隐患排查治理</h2>
+                    <h3>7.1 排查频次</h3>
+                    <ul>
+                        <li>公司级综合检查：每季度一次</li>
+                        <li>部门级专业检查：每月一次</li>
+                        <li>班组级日常检查：每周一次</li>
+                        <li>岗位级巡回检查：每班一次</li>
+                    </ul>
+                    
+                    <h3>7.2 隐患分级</h3>
+                    <p>一般隐患：危害和整改难度较小，发现后能够立即整改排除的隐患。</p>
+                    <p>重大隐患：危害和整改难度较大，应当全部或者局部停产停业，并经过一定时间整改治理方能排除的隐患。</p>
+                    
+                    <h3>7.3 治理要求</h3>
+                    <p>隐患治理应做到"五落实"：落实整改责任、落实整改措施、落实整改资金、落实整改时限、落实应急预案。</p>
+                    
+                    <h2>8. 应急管理</h2>
+                    <h3>8.1 应急预案体系</h3>
+                    <p>公司建立"1+3+N"应急预案体系，即1个综合预案、3个专项预案和多个现场处置方案。预案应定期修订完善，确保实用性和可操作性。</p>
+                    
+                    <h3>8.2 应急演练</h3>
+                    <p>每年至少组织一次综合应急演练，每半年至少组织一次专项应急演练。演练结束后应及时总结评估，完善应急预案。</p>
+                    
+                    <h3>8.3 应急队伍</h3>
+                    <p>公司组建应急救援队伍，由安全管理部门负责日常管理，定期开展培训和演练，提高应急处置能力。</p>
+                    
+                    <h2>9. 事故管理</h2>
+                    <h3>9.1 报告程序</h3>
+                    <p>发生生产安全事故后，现场有关人员应立即向部门负责人报告，部门负责人1小时内向安全管理部门报告，安全管理部门1小时内向公司领导和政府相关部门报告。</p>
+                    
+                    <h3>9.2 调查处理</h3>
+                    <p>按照"四不放过"原则（事故原因未查清不放过、责任人员未处理不放过、整改措施未落实不放过、有关人员未受教育不放过）进行事故调查处理。</p>
+                    
+                    <h3>9.3 统计分析</h3>
+                    <p>建立事故档案，定期进行统计分析，查找事故规律，制定预防措施。</p>
+                    
+                    <h2>10. 考核与奖惩</h2>
+                    <h3>10.1 考核指标</h3>
+                    <ul>
+                        <li>千人负伤率不超过3‰</li>
+                        <li>重大事故隐患整改率达到100%</li>
+                        <li>员工安全培训合格率达到100%</li>
+                        <li>特种作业人员持证上岗率达到100%</li>
+                    </ul>
+                    
+                    <h3>10.2 奖惩措施</h3>
+                    <p>对在安全生产工作中做出突出贡献的集体和个人给予表彰奖励；对违反安全生产规定的给予相应处罚。</p>
+                    
+                    <h2>11. 附则</h2>
+                    <p>本制度自发布之日起施行，解释权归公司安全生产委员会。</p>
+                </div>
+            `;
+        } else if (currentDocType === "Type-3") {
+            // Type-3: 业务单据
             return `
                 <p><strong>致：A生产车间</strong></p>
                 <p>经 2024年12月19日 现场安全检查，发现你部门存在以下安全隐患，现责令限期整改。</p>
@@ -408,63 +531,111 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>签收人：___________</span>
                 </div>
             `;
-        } else if (title.includes("试卷") || title.includes("考试")) {
+        } else if (currentDocType === "Type-4") {
+            // Type-4: 考试试卷 - 结构化试题展示
             return `
-                <div style="text-align:center; padding-bottom:1rem; border-bottom:1px dashed #ccc; margin-bottom:1rem">
-                    <p>考试时间：60分钟  总分：100分</p>
-                    <p>姓名：__________  部门：__________</p>
+                <div style="box-sizing:border-box; max-width:100%; overflow-x:hidden">
+                    <div style="text-align:center; margin-bottom:2rem">
+                        <h1 style="margin-bottom:0.5rem">安全生产知识考试卷</h1>
+                        <div>考试时间：90分钟 &nbsp;&nbsp;|&nbsp;&nbsp; 总分：100分</div>
+                    </div>
+                    
+                    <div style="margin-bottom:2rem; padding:0; background:#f8f9fa; border-radius:8px">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem">
+                            <div><strong>姓名：</strong> _________________</div>
+                            <div><strong>部门：</strong> _________________</div>
+                        </div>
+                        <div><strong>工号：</strong> _________________</div>
+                    </div>
+                    
+                    <div style="page-break-after:always; margin-bottom:2rem">
+                        <h2 style="margin-bottom:1rem; color:#1677ff">一、单项选择题（共5题，每题2分，共10分）</h2>
+                        
+                        <div style="margin-bottom:1.5rem; padding:1rem; border:1px solid #e8e8e8; border-radius:4px">
+                            <div><strong>1. 《安全生产法》规定，生产经营单位的( &nbsp;&nbsp;&nbsp;&nbsp; )对本单位的安全生产工作全面负责。</strong></div>
+                            <div style="margin:1rem 0 0 1rem">
+                                <div>A. 安全管理人员 &nbsp;&nbsp;&nbsp;&nbsp; B. 主要负责人 &nbsp;&nbsp;&nbsp;&nbsp; C. 分管安全领导 &nbsp;&nbsp;&nbsp;&nbsp; D. 安全总监</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom:1.5rem; padding:1rem; border:1px solid #e8e8e8; border-radius:4px">
+                            <div><strong>2. 根据国家标准，安全色中的红色表示( &nbsp;&nbsp;&nbsp;&nbsp; )。</strong></div>
+                            <div style="margin:1rem 0 0 1rem">
+                                <div>A. 禁止、停止 &nbsp;&nbsp;&nbsp;&nbsp; B. 注意、警告 &nbsp;&nbsp;&nbsp;&nbsp; C. 指令、必须遵守 &nbsp;&nbsp;&nbsp;&nbsp; D. 通行、安全</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom:1.5rem; padding:1rem; border:1px solid #e8e8e8; border-radius:4px">
+                            <div><strong>3. 从业人员有权对本单位安全生产工作中存在的问题提出批评、检举、控告，这是从业人员的( &nbsp;&nbsp;&nbsp;&nbsp; )。</strong></div>
+                            <div style="margin:1rem 0 0 1rem">
+                                <div>A. 知情权 &nbsp;&nbsp;&nbsp;&nbsp; B. 建议权 &nbsp;&nbsp;&nbsp;&nbsp; C. 批评权 &nbsp;&nbsp;&nbsp;&nbsp; D. 拒绝权</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom:1.5rem; padding:1rem; border:1px solid #e8e8e8; border-radius:4px">
+                            <div><strong>4. 灭火器的压力表指针在( &nbsp;&nbsp;&nbsp;&nbsp; )区域时表示压力正常。</strong></div>
+                            <div style="margin:1rem 0 0 1rem">
+                                <div>A. 红色 &nbsp;&nbsp;&nbsp;&nbsp; B. 黄色 &nbsp;&nbsp;&nbsp;&nbsp; C. 绿色 &nbsp;&nbsp;&nbsp;&nbsp; D. 白色</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom:1.5rem; padding:1rem; border:1px solid #e8e8e8; border-radius:4px">
+                            <div><strong>5. 高处作业是指凡在坠落高度基准面( &nbsp;&nbsp;&nbsp;&nbsp; )米以上有可能坠落的高处进行的作业。</strong></div>
+                            <div style="margin:1rem 0 0 1rem">
+                                <div>A. 1 &nbsp;&nbsp;&nbsp;&nbsp; B. 2 &nbsp;&nbsp;&nbsp;&nbsp; C. 3 &nbsp;&nbsp;&nbsp;&nbsp; D. 5</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="page-break-after:always; margin-bottom:2rem">
+                        <h2 style="margin-bottom:1rem; color:#52c41a">二、多项选择题（共2题，每题3分，共6分）</h2>
+                        
+                        <div style="margin-bottom:1.5rem; padding:1rem; border:1px solid #e8e8e8; border-radius:4px">
+                            <div><strong>1. 下列哪些属于从业人员的安全生产权利？（ &nbsp;&nbsp;&nbsp;&nbsp; ）</strong></div>
+                            <div style="margin:1rem 0 0 1rem">
+                                <div>A. 知情权 &nbsp;&nbsp;&nbsp;&nbsp; B. 批评权 &nbsp;&nbsp;&nbsp;&nbsp; C. 拒绝违章指挥权 &nbsp;&nbsp;&nbsp;&nbsp; D. 紧急避险权</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom:1.5rem; padding:1rem; border:1px solid #e8e8e8; border-radius:4px">
+                            <div><strong>2. 以下哪些行为属于违章作业？（ &nbsp;&nbsp;&nbsp;&nbsp; ）</strong></div>
+                            <div style="margin:1rem 0 0 1rem">
+                                <div>A. 未佩戴安全帽进入施工现场 &nbsp;&nbsp;&nbsp;&nbsp; B. 操作旋转设备戴手套 &nbsp;&nbsp;&nbsp;&nbsp; C. 酒后上岗作业 &nbsp;&nbsp;&nbsp;&nbsp; D. 按规程操作设备</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="page-break-after:always; margin-bottom:2rem">
+                        <h2 style="margin-bottom:1rem; color:#faad14">三、判断题（共2题，每题1分，共2分）</h2>
+                        
+                        <div style="margin-bottom:1rem; padding:1rem; border:1px solid #e8e8e8; border-radius:4px">
+                            <div><strong>1. 任何单位和个人不得阻挠和干涉对事故的依法调查处理。（ &nbsp;&nbsp;&nbsp;&nbsp; ）</strong></div>
+                            <div style="margin:0.5rem 0 0 1rem">正确 ☐ &nbsp;&nbsp;&nbsp;&nbsp; 错误 ☐</div>
+                        </div>
+                        
+                        <div style="margin-bottom:1rem; padding:1rem; border:1px solid #e8e8e8; border-radius:4px">
+                            <div><strong>2. 发生火灾时，应乘坐电梯快速逃生。（ &nbsp;&nbsp;&nbsp;&nbsp; ）</strong></div>
+                            <div style="margin:0.5rem 0 0 1rem">正确 ☐ &nbsp;&nbsp;&nbsp;&nbsp; 错误 ☐</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h2 style="margin-bottom:1rem; color:#ff4d4f">四、简答题（共2题，每题10分，共20分）</h2>
+                        
+                        <div style="margin-bottom:2rem; padding:1rem; border:1px solid #e8e8e8; border-radius:4px">
+                            <div><strong>1. 请简述你所在岗位的主要安全风险及防范措施。</strong></div>
+                            <div style="min-height:12rem; border:1px dashed #ddd; margin-top:1rem; padding:1rem; background:#fafafa"></div>
+                        </div>
+                        
+                        <div style="margin-bottom:2rem; padding:1rem; border:1px solid #e8e8e8; border-radius:4px">
+                            <div><strong>2. 当发生火灾时，你应该怎样正确报警？</strong></div>
+                            <div style="min-height:12rem; border:1px dashed #ddd; margin-top:1rem; padding:1rem; background:#fafafa"></div>
+                        </div>
+                    </div>
                 </div>
-                <h2>一、单选题（每题5分，共50分）</h2>
-                <p>1. 我国安全生产方针是（ ）。</p>
-                <p>A. 安全第一，预防为主，综合治理</p>
-                <p>B. 质量第一，兼顾安全</p>
-                <p>C. 安全至上</p>
-                <br>
-                <p>2. 灭火器压力表指针指示在（ ）区域代表压力正常。</p>
-                <p>A. 红色区   B. 黄色区   C. 绿色区</p>
-                <br>
-                <h2>二、判断题（每题5分，共50分）</h2>
-                <p>1. 从业人员有权拒绝违章指挥和强令冒险作业。（ √ ）</p>
-                <p>2. 发生火灾时，应乘坐电梯迅速逃生。（ × ）</p>
-            `;
-        } else if (title.includes("月报") || title.includes("汇报")) {
-            return `
-                <div style="text-align:center; color:#666; margin-bottom:1rem">报告月份：2024年12月 | 编制部门：安全环保部</div>
-                <h2>一、本月安全生产综述</h2>
-                <p>本月全厂安全形势总体平稳，无重伤及以上事故发生。全月累计安全生产 31 天。</p>
-                <br>
-                <h2>二、隐患排查治理情况</h2>
-                <p>本月共组织综合检查 4 次，专项检查 2 次。</p>
-                <ul>
-                    <li>发现隐患总数：45 项</li>
-                    <li>已整改：44 项</li>
-                    <li>整改率：97.8%</li>
-                </ul>
-                <br>
-                <h2>三、下月重点工作计划</h2>
-                <p>1. 开展春节前安全大检查。</p>
-                <p>2. 完成年度安全责任状签订工作。</p>
-            `;
-        } else if (title.includes("预案")) {
-            return `
-                <div style="background:#fff1f0; border:1px solid #ffa39e; padding:1rem; border-radius:4px; margin-bottom:1rem; color:#d9363e">
-                    <strong>⚠️ 注意：</strong> 本预案适用于公司内部火灾、触电等突发事故的应急处置。
-                </div>
-                <h2>1. 总则</h2>
-                <p>为建立健全突发事故应急机制，提高公司处置突发事件的能力，最大程度地预防和减少突发事件及其造成的损害，保障员工生命安全，制定本预案。</p>
-                <br>
-                <h2>2. 组织机构与职责</h2>
-                <h3>2.1 应急指挥部</h3>
-                <p>总指挥：总经理</p>
-                <p>副总指挥：安全总监、生产副总</p>
-                <br>
-                <h2>3. 应急响应流程</h2>
-                <p><strong>3.1 报警与接警</strong></p>
-                <p>事故发生后，第一发现人应立即向应急指挥部报告，并拨打内线电话 8888。</p>
-                <p><strong>3.2 紧急疏散</strong></p>
-                <p>听到警报后，所有人员应立即停止工作，沿疏散通道撤离至紧急集合点。</p>
             `;
         } else {
+            // 默认内容
             return `
                 <h2>1. 核心概述</h2>
                 <p>为贯彻落实"安全第一、预防为主"的方针，提高全员安全意识...</p>
@@ -483,128 +654,154 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getCreatorEditorContent(docTitle) {
-        // Dynamic Buttons based on context
+        // 根据文档类型动态生成 AI 交互按钮
         let actionButtonsHTML = "";
+        let docType = ""; // Type-1, Type-2, Type-3, Type-4
 
-        if (docTitle.includes("试卷")) {
+        // 判断文档类型
+        if (docTitle.includes("课件") || docTitle.includes("PPT") || docTitle.includes("演示文稿") || docTitle.includes("教材") || docTitle.includes("培训")) {
+            docType = "Type-1";
+            currentDocType = "Type-1"; // 设置全局变量
             actionButtonsHTML = `
-                <div class="sidebar-action-btn" onclick="alert('即将导入题库...')">
-                    <i class="ph ph-exam" style="color:#faad14"></i>
-                    <div class="btn-title">导入题库</div>
-                    <div class="btn-desc">提取知识点转习题</div>
-                </div>
-                <div class="sidebar-action-btn" onclick="alert('已推送至业务系统')">
-                    <i class="ph ph-cloud-arrow-up" style="color:#1677ff"></i>
-                    <div class="btn-title">导入业务系统</div>
-                    <div class="btn-desc">同步至培训平台</div>
-                </div>
+                <button onclick="alert('正在把课件导入企业知识库...')" style="padding:0.5rem 0.75rem; background:#e6f4ff; color:#1677ff; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-books"></i> 导入知识库
+                </button>
+                <button onclick="alert('正在重新生成当前页内容...')" style="padding:0.5rem 0.75rem; background:#e6f4ff; color:#1677ff; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-arrows-clockwise"></i> 重新生成当前页
+                </button>
+                <button onclick="alert('已根据 PPT 内容生成演讲备注...')" style="padding:0.5rem 0.75rem; background:#e6f4ff; color:#1677ff; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-notepad"></i> 生成讲稿
+                </button>
             `;
-        } else if (docTitle.includes("培训") || docTitle.includes("教材")) {
+        } else if (docTitle.includes("计划") || docTitle.includes("制度") || docTitle.includes("规定") || docTitle.includes("预案") || docTitle.includes("大纲") || docTitle.includes("公文")) {
+            docType = "Type-2";
+            currentDocType = "Type-2"; // 设置全局变量
             actionButtonsHTML = `
-                <div class="sidebar-action-btn" onclick="alert('正在解析并导入知识库...')">
-                    <i class="ph ph-books" style="color:#52c41a"></i>
-                    <div class="btn-title">导入知识库</div>
-                    <div class="btn-desc">更新企业知识库</div>
-                </div>
-                <div class="sidebar-action-btn" onclick="alert('已推送至业务系统')">
-                    <i class="ph ph-cloud-arrow-up" style="color:#1677ff"></i>
-                    <div class="btn-title">导入业务系统</div>
-                    <div class="btn-desc">同步至培训平台</div>
-                </div>
+                <button onclick="alert('检索法规库，自动插入相关法律条款...')" style="padding:0.5rem 0.75rem; background:#f6ffed; color:#52c41a; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-scroll"></i> 插入条款
+                </button>
+                <button onclick="alert('正在根据上下文补充缺失的章节...')" style="padding:0.5rem 0.75rem; background:#f6ffed; color:#52c41a; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-paragraph"></i> 续写建议
+                </button>
+                <button onclick="alert('已推送至 OA 系统进行审批发布')" style="padding:0.5rem 0.75rem; background:#f6ffed; color:#52c41a; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-cloud-arrow-up"></i> 导入业务系统
+                </button>
             `;
-        } else if (docTitle.includes("法规") || docTitle.includes("制度") || docTitle.includes("通知")) {
+        } else if (docTitle.includes("通知书") || docTitle.includes("整改") || docTitle.includes("月报") || docTitle.includes("报告") || docTitle.includes("简报") || docTitle.includes("单据")) {
+            docType = "Type-3";
+            currentDocType = "Type-3"; // 设置全局变量
             actionButtonsHTML = `
-                <div class="sidebar-action-btn" onclick="alert('正在解析并导入知识库...')">
-                    <i class="ph ph-books" style="color:#52c41a"></i>
-                    <div class="btn-title">导入知识库</div>
-                    <div class="btn-desc">更新法规数据库</div>
-                </div>
-                <div class="sidebar-action-btn" onclick="alert('已推送至业务系统')">
-                    <i class="ph ph-cloud-arrow-up" style="color:#1677ff"></i>
-                    <div class="btn-title">导入业务系统</div>
-                    <div class="btn-desc">同步至公文系统</div>
-                </div>
+                <button onclick="document.querySelector('[data-target=ledger]').click()" style="padding:0.5rem 0.75rem; background:#fffbe6; color:#d48806; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-table"></i> 查看台账关联
+                </button>
+                <button onclick="alert('已通过邮件或企业微信推送到相关责任人')" style="padding:0.5rem 0.75rem; background:#fffbe6; color:#d48806; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-paper-plane-tilt"></i> 一键分发
+                </button>
+            `;
+        } else if (docTitle.includes("试卷") || docTitle.includes("考试") || docTitle.includes("习题")) {
+            docType = "Type-4";
+            currentDocType = "Type-4"; // 设置全局变量
+            actionButtonsHTML = `
+                <button onclick="alert('正在从「全维数据台账-题库」中随机抽取题目...')" style="padding:0.5rem 0.75rem; background:#fff2e8; color:#d4380d; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-database"></i> 导入题库
+                </button>
+                <button onclick="alert('正在为每道题生成答案解析...')" style="padding:0.5rem 0.75rem; background:#fff2e8; color:#d4380d; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-lightbulb"></i> 生成解析
+                </button>
             `;
         } else {
+            // 默认通用功能
+            docType = "General";
+            currentDocType = "General"; // 设置全局变量
             actionButtonsHTML = `
-                <div class="sidebar-action-btn" onclick="alert('已发送邮件')">
-                    <i class="ph ph-envelope-simple" style="color:#ff4d4f"></i>
-                    <div class="btn-title">邮件发送</div>
-                    <div class="btn-desc">分发给相关人员</div>
-                </div>
-                <div class="sidebar-action-btn" onclick="alert('已推送至业务系统')">
-                    <i class="ph ph-cloud-arrow-up" style="color:#1677ff"></i>
-                    <div class="btn-title">导入业务系统</div>
-                    <div class="btn-desc">同步至办公OA</div>
-                </div>
+                <button onclick="alert('已发送邮件')" style="padding:0.5rem 0.75rem; background:#f5f5f5; color:#666; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-envelope-simple"></i> 邮件发送
+                </button>
+                <button onclick="alert('已推送至业务系统')" style="padding:0.5rem 0.75rem; background:#f5f5f5; color:#666; border:none; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:0.25rem">
+                    <i class="ph ph-cloud-arrow-up"></i> 导入业务系统
+                </button>
             `;
         }
 
         return `
-            <div class="creator-layout">
-                <!-- Left Sidebar: Feature Actions -->
-                <div class="structure-sidebar">
-                    <div class="structure-header">
-                        <button class="icon-btn" onclick="backToCreatorDashboard()" style="margin-right:0.5rem"><i class="ph ph-caret-left"></i></button>
-                        <span>文档处理</span>
-                    </div>
-                    <div class="sidebar-action-group" style="padding:1rem; overflow-y:auto">
-                        ${actionButtonsHTML}
-                        <div class="sidebar-action-btn" onclick="alert('版本已保存')">
-                            <i class="ph ph-floppy-disk"></i>
-                            <div class="btn-title">保存版本</div>
-                            <div class="btn-desc">创建当前快照</div>
+            <div class="creator-layout" style="display:flex; height:100%; flex:1">
+                <!-- 左侧：画布/编辑器 -->
+                <div class="editor-area" style="flex:1; display:flex; flex-direction:column; position:relative">
+                        
+                    <!-- 顶部工具栏 -->
+                    <div class="editor-toolbar" style="display:flex; align-items:center; padding:0.75rem 1rem; border-bottom:1px solid #eee; background:white">
+                        <button class="icon-btn" onclick="backToCreatorDashboard()" style="margin-right:1rem"><i class="ph ph-caret-left"></i></button>
+                        <span style="font-weight:600; margin-right:2rem">${docTitle}</span>
+                        <div style="display:flex; gap:0.25rem">
+                            <button class="icon-btn">H1</button>
+                            <button class="icon-btn">H2</button>
+                            <div style="width:1px; height:20px; background:#eee; margin:0 0.5rem"></div>
+                            <button class="icon-btn"><i class="ph ph-text-b"></i></button>
+                            <button class="icon-btn"><i class="ph ph-text-i"></i></button>
+                            <button class="icon-btn"><i class="ph ph-list-bullets"></i></button>
+                            <div style="width:1px; height:20px; background:#eee; margin:0 0.5rem"></div>
+                            <button class="icon-btn"><i class="ph ph-image"></i></button>
+                            <button class="icon-btn"><i class="ph ph-table"></i></button>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Center: Editor with Floating TOC -->
-                <div class="editor-area" style="position:relative">
-                    
-                    <!-- Floating TOC -->
-                    <div class="floating-toc">
-                        <div class="floating-toc-title">章节导航</div>
-                        <div class="toc-item active" style="font-size:0.8rem">1. 核心概述</div>
-                        <div class="toc-item" style="font-size:0.8rem">2. 详细规定</div>
-                        <div class="toc-item" style="font-size:0.8rem; padding-left:1rem">2.1 责任制</div>
-                        <div class="toc-item" style="font-size:0.8rem; padding-left:1rem">2.2 流程图</div>
-                        <div class="toc-item" style="font-size:0.8rem">3. 附录参考</div>
-                    </div>
-
-                    <div class="editor-toolbar">
-                        <button class="icon-btn">H1</button>
-                        <button class="icon-btn">H2</button>
-                        <div style="width:1px; height:20px; background:#eee; margin:0 0.5rem"></div>
-                        <button class="icon-btn"><i class="ph ph-text-b"></i></button>
-                        <button class="icon-btn"><i class="ph ph-text-i"></i></button>
                         <div style="flex:1"></div>
-                        <span style="font-size:0.875rem; color:#999; margin-right:1rem">已保存</span>
+                        <span style="font-size:0.8rem; padding:0.25rem 0.75rem; background:${docType === 'Type-1' ? '#e6f4ff' : docType === 'Type-2' ? '#f6ffed' : docType === 'Type-3' ? '#fffbe6' : docType === 'Type-4' ? '#fff2e8' : '#f5f5f5'}; color:${docType === 'Type-1' ? '#1677ff' : docType === 'Type-2' ? '#52c41a' : docType === 'Type-3' ? '#faad14' : docType === 'Type-4' ? '#ff4d4f' : '#666'}; border-radius:4px; margin-right:1rem">${docType === 'Type-1' ? '培训课件' : docType === 'Type-2' ? '标准公文' : docType === 'Type-3' ? '业务单据' : docType === 'Type-4' ? '考试试卷' : '文档'}</span>
+                        <span style="font-size:0.75rem; color:#52c41a"><i class="ph ph-check-circle"></i> 已保存</span>
                     </div>
-                    <div class="doc-wrapper">
-                <div class="doc-page" contenteditable="true">
+    
+                    <!-- 画布区域 -->
+                    <div class="doc-wrapper" style="flex:1; background:#f5f5f5; padding:2rem; overflow:visible;">
+                        <div class="doc-page" contenteditable="true" style="width:100%; margin:0 auto; background:white; padding:3rem; box-shadow:0 2px 8px rgba(0,0,0,0.08); border-radius:4px; height:auto; min-height:100vh;">
                             <h1 style="text-align:center; margin-bottom:2rem">${docTitle}</h1>
                             ${getMockDocContent(docTitle)}
                         </div>
                     </div>
                 </div>
-
-                <!-- Right Sidebar: AI Assistant -->
-                <div class="ai-sidebar">
-                    <div class="structure-header" style="border-left:none; justify-content:space-between">
-                        <span>AI 辅助</span>
-                        <i class="ph ph-sparkle" style="color:var(--primary-color)"></i>
-                    </div>
-                    <div style="padding:1rem">
-                        <div class="ai-action-card" style="margin-top:0">
-                            <div class="card-title">✨ 润色优化</div>
-                            <p style="font-size:0.875rem; color:#666; margin-bottom:0.5rem">选中文字太口语化？尝试转换为专业公文风格。</p>
-                            <button class="action-btn-sm primary" style="width:100%; justify-content:center">一键润色</button>
+    
+                <!-- 右侧：AI Chatbox -->
+                <div class="ai-sidebar" style="width:380px; border-left:1px solid #eee; display:flex; flex-direction:column; background:white">
+                    <!-- Chatbox 头部 -->
+                    <div style="padding:1rem; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between">
+                        <div style="display:flex; align-items:center; gap:0.5rem">
+                            <i class="ph ph-robot" style="font-size:1.25rem; color:var(--primary-color)"></i>
+                            <span style="font-weight:600">AI 创作助手</span>
                         </div>
-                        
-                        <div class="ai-action-card">
-                            <div class="card-title">📝 续写建议</div>
-                            <p style="font-size:0.875rem; color:#666; margin-bottom:0.5rem">根据当前"法律法规"章节，建议补充《刑法》相关条款。</p>
-                            <button class="action-btn-sm" style="width:100%; justify-content:center">生成内容</button>
+                        <span style="font-size:0.75rem; color:#666; background:#f0f0f0; padding:0.25rem 0.5rem; border-radius:4px">${docType}</span>
+                    </div>
+    
+                    <!-- AI 功能按钮区 -->
+                    <div style="padding:1rem; border-bottom:1px solid #eee">
+                        <div style="font-size:0.8rem; color:#666; margin-bottom:0.75rem"><i class="ph ph-magic-wand"></i> 快捷操作</div>
+                        <div style="display:flex; flex-wrap:wrap; gap:0.5rem">
+                            ${actionButtonsHTML}
+                        </div>
+                    </div>
+    
+                    <!-- 对话消息区 -->
+                    <div id="creator-chat-messages" style="flex:1; overflow-y:auto; padding:1rem">
+                        <div style="display:flex; gap:0.75rem; margin-bottom:1rem">
+                            <div style="width:32px; height:32px; background:var(--primary-color); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0">
+                                <i class="ph ph-robot" style="color:white; font-size:1rem"></i>
+                            </div>
+                            <div style="background:#f5f5f5; padding:0.75rem 1rem; border-radius:12px; border-top-left-radius:4px; font-size:0.9rem; line-height:1.5">
+                                你好！我是你的 AI 创作助手。当前文档类型为「<strong>${docType === 'Type-1' ? '培训课件' : docType === 'Type-2' ? '标准公文' : docType === 'Type-3' ? '业务单据' : docType === 'Type-4' ? '考试试卷' : '通用文档'}</strong>」，我可以帮你：
+                                <ul style="margin:0.5rem 0 0 0; padding-left:1.25rem">
+                                    ${docType === 'Type-1' ? '<li>导入知识库</li><li>重新生成当前页</li><li>生成演讲讲稿</li>' : ''}
+                                    ${docType === 'Type-2' ? '<li>插入法规条款</li><li>续写建议</li><li>导入 OA 系统</li>' : ''}
+                                    ${docType === 'Type-3' ? '<li>查看台账关联</li><li>一键分发</li>' : ''}
+                                    ${docType === 'Type-4' ? '<li>导入题库</li><li>生成答案解析</li>' : ''}
+                                    ${docType === 'General' ? '<li>文档编辑</li><li>邮件发送</li>' : ''}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 输入框 -->
+                    <div style="padding:1rem; border-top:1px solid #eee">
+                        <div style="display:flex; gap:0.5rem">
+                            <input type="text" placeholder="输入指令或描述你的需求..." style="flex:1; padding:0.75rem 1rem; border:1px solid #e5e7eb; border-radius:8px; outline:none; font-size:0.9rem" 
+                                   onfocus="this.style.borderColor='var(--primary-color)'" 
+                                   onblur="this.style.borderColor='#e5e7eb'">
+                            <button class="send-btn" style="padding:0.75rem 1rem; border-radius:8px"><i class="ph ph-paper-plane-right"></i></button>
                         </div>
                     </div>
                 </div>
@@ -613,7 +810,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Global Creator Navigation
-    window.openDoc = (title) => {
+    window.openDoc = (title, type) => {
+        // 设置当前文档类型
+        if (type) {
+            currentDocType = type;
+        }
+        
         let container = document.getElementById('creator-container');
         if (!container) {
             // Switch to Creator View if not active
@@ -632,7 +834,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.backToCreatorDashboard = () => {
         const container = document.getElementById('creator-container');
         if (container) {
-            container.innerHTML = getCreatorDashboardContent();
+            container.innerHTML = getCreatorDashboardContentNew();
             container.style.display = 'block';
             container.style.padding = '2rem';
         }
