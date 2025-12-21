@@ -653,7 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function getCreatorEditorContent(docTitle) {
+    function getCreatorEditorContent(docTitle, additionalMessages) {
         // 根据文档类型动态生成 AI 交互按钮
         let actionButtonsHTML = "";
         let docType = ""; // Type-1, Type-2, Type-3, Type-4
@@ -793,6 +793,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </ul>
                             </div>
                         </div>
+                        ${additionalMessages || ''}
                     </div>
     
                     <!-- 输入框 -->
@@ -810,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Global Creator Navigation
-    window.openDoc = (title, type) => {
+    window.openDoc = (title, type, additionalMessages) => {
         // 设置当前文档类型
         if (type) {
             currentDocType = type;
@@ -824,7 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (container) {
-            container.innerHTML = getCreatorEditorContent(title);
+            container.innerHTML = getCreatorEditorContent(title, additionalMessages);
             // Reset layout styles for flex editing
             container.style.display = 'flex';
             container.style.padding = '0';
@@ -923,7 +924,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="card-title">📑 资质审核报告</div>
                                 <div class="card-actions">
                                     <button class="action-btn-sm primary" onclick="alert('已保存至档案')">保存档案</button>
-                                    <button class="action-btn-sm" onclick="alert('协议已生成')">生成安全协议</button>
+                                    <button class="action-btn-sm" onclick="generateSafetyAgreement()">生成安全协议</button>
                                 </div>
                             </div>
                         </div>`;
@@ -963,8 +964,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                     《每日安全巡检简报.pdf》已生成。
                                 </div>
                                 <div class="card-actions">
-                                    <button class="action-btn-sm primary" onclick="alert('预览报告')">预览报告</button>
-                                    <button class="action-btn-sm" onclick="alert('已分发给相关负责人')">一键分发</button>
+                                    <button class="action-btn-sm primary" onclick="previewInspectionReport()">预览报告</button>
+                                    <button class="action-btn-sm" onclick="distributeReport()">一键分发</button>
                                 </div>
                             </div>
                         </div>`;
@@ -981,7 +982,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <div class="mock-bar" style="height:40%"><span>D车间</span></div>
                                 </div>
                                 <div class="card-actions">
-                                    <button class="action-btn-sm primary" onclick="alert('导出详细分析报告')">导出详细报告</button>
+                                    <button class="action-btn-sm primary" onclick="viewDetailedReport()">查看详细报告</button>
                                 </div>
                             </div>
                         </div>`;
@@ -998,7 +999,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     相关的培训记录表模板已就绪。
                                 </div>
                                 <div class="card-actions">
-                                    <button class="action-btn-sm primary" onclick="handleAction('insert_doc')">插入条款到文档</button>
+                                    <button class="action-btn-sm primary" onclick="openDocWithClause()">插入条款到文档</button>
                                 </div>
                             </div>
                         </div>`;
@@ -1025,7 +1026,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="card-title">🚨 隐患处置</div>
                                 <div class="card-actions">
                                     <button class="action-btn-sm primary" onclick="handleAction('view_ledger')">查看类似隐患记录</button>
-                                    <button class="action-btn-sm" onclick="alert('通知书已生成')">生成整改通知书</button>
+                                    <button class="action-btn-sm" onclick="generateRectificationNotice()">生成整改通知书</button>
                                     <button class="action-btn-sm" onclick="alert('已推送至业务系统')">导入业务系统</button>
                                 </div>
                             </div>
@@ -1284,4 +1285,303 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
     }
+
+    // Function to open document with clause inserted
+    window.openDocWithClause = () => {
+        // Prepare the additional message for the creator chat
+        const additionalMessage = `
+            <div style="display:flex; gap:0.75rem; margin-bottom:1rem">
+                <div style="width:32px; height:32px; background:var(--primary-color); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0">
+                    <i class="ph ph-robot" style="color:white; font-size:1rem"></i>
+                </div>
+                <div style="background:#f5f5f5; padding:0.75rem 1rem; border-radius:12px; border-top-left-radius:4px; font-size:0.9rem; line-height:1.5">
+                    我已将《安全生产法》第二十八条插入到文档中，您可以基于此条款进一步指导我如何制定培训计划或相关记录表。
+                </div>
+            </div>
+        `;
+        
+        // Open a new document in creator with additional message
+        openDoc('法规条款引用文档', null, additionalMessage);
+        
+        // Wait for the creator view to fully load before setting input focus
+        setTimeout(() => {
+            const setInputFocus = () => {
+                const creatorChatInput = document.querySelector('.ai-sidebar .chat-input');
+                
+                if (creatorChatInput) {
+                    // Set the input value
+                    creatorChatInput.value = "我已将《安全生产法》第二十八条插入到文档中，您可以基于此条款进一步指导我如何制定培训计划或相关记录表。";
+                    
+                    // Focus and scroll to the input
+                    creatorChatInput.focus();
+                    creatorChatInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    
+                    // Scroll chat messages to bottom
+                    const chatMessagesContainer = document.getElementById('creator-chat-messages');
+                    if (chatMessagesContainer) {
+                        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+                    }
+                    
+                    return true;
+                }
+                return false;
+            };
+            
+            // Try multiple times to ensure elements are available
+            let attempts = 0;
+            const maxAttempts = 5;
+            
+            const trySetInputFocus = () => {
+                if (!setInputFocus() && attempts < maxAttempts) {
+                    attempts++;
+                    setTimeout(trySetInputFocus, 300 * attempts); // Exponential backoff
+                }
+            };
+            
+            trySetInputFocus();
+        }, 500); // Give extra time for the view to switch and render
+    };
+
+    // Function to generate rectification notice
+    window.generateRectificationNotice = () => {
+        // Open a new document with rectification notice template
+        openDoc('安全隐患整改通知书');
+        
+        // Wait for the document to load and populate with template
+        setTimeout(() => {
+            const docPage = document.querySelector('.doc-page');
+            if (docPage) {
+                docPage.innerHTML = `
+                    <h1 style="text-align:center; margin-bottom:2rem">安全隐患整改通知书</h1>
+                    <div style="margin-bottom:1rem"><strong>编号：</strong> HZ-2025-001</div>
+                    <div style="margin-bottom:1rem"><strong>致：</strong> A车间负责人</div>
+                    <div style="margin-bottom:1rem"><strong>日期：</strong> 2025年12月20日</div>
+                    
+                    <h2>隐患描述</h2>
+                    <p>在2025年12月20日的安全检查中，发现A车间配电箱未上锁，存在严重的安全隐患。</p>
+                    
+                    <h2>整改要求</h2>
+                    <ol>
+                        <li>立即购买并在下班前安装专用挂锁</li>
+                        <li>对所有配电箱进行全面检查，确保均已上锁</li>
+                        <li>对相关责任人进行安全教育</li>
+                    </ol>
+                    
+                    <h2>整改期限</h2>
+                    <p>请于2025年12月22日前完成整改，并将整改情况书面反馈至安全部。</p>
+                    
+                    <div style="margin-top:3rem; display:flex; justify-content:space-between">
+                        <div><strong>签发人：</strong> 安全部</div>
+                        <div><strong>日期：</strong> 2025年12月20日</div>
+                    </div>
+                `;
+            }
+        }, 300);
+    };
+
+    // Function to preview inspection report
+    window.previewInspectionReport = () => {
+        // Open a new document with inspection report template
+        openDoc('每日安全巡检简报');
+        
+        // Wait for the document to load and populate with template
+        setTimeout(() => {
+            const docPage = document.querySelector('.doc-page');
+            if (docPage) {
+                docPage.innerHTML = `
+                    <h1 style="text-align:center; margin-bottom:2rem">每日安全巡检简报</h1>
+                    <div style="margin-bottom:1rem"><strong>日期：</strong> 2025年12月20日</div>
+                    <div style="margin-bottom:1rem"><strong>巡检员：</strong> 张三</div>
+                    
+                    <h2>巡检概要</h2>
+                    <p>今日共巡检5个区域，发现安全隐患2起，其中1起为严重隐患。</p>
+                    
+                    <h2>详细记录</h2>
+                    <table style="width:100%; border-collapse:collapse; margin:1rem 0">
+                        <thead>
+                            <tr style="background:#f5f5f5">
+                                <th style="border:1px solid #ddd; padding:0.5rem">序号</th>
+                                <th style="border:1px solid #ddd; padding:0.5rem">区域</th>
+                                <th style="border:1px solid #ddd; padding:0.5rem">隐患描述</th>
+                                <th style="border:1px solid #ddd; padding:0.5rem">风险等级</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border:1px solid #ddd; padding:0.5rem">1</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">A车间</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">配电箱未上锁</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem; color:red">严重</td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #ddd; padding:0.5rem">2</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">仓库</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">灭火器压力不足</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem; color:orange">中等</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h2>整改建议</h2>
+                    <ol>
+                        <li>立即对A车间配电箱加锁，并建立定期检查制度</li>
+                        <li>更换仓库灭火器，并进行全面消防设备检查</li>
+                    </ol>
+                `;
+            }
+        }, 300);
+    };
+
+    // Function to distribute report
+    window.distributeReport = () => {
+        // Show distribution dialog
+        const recipients = [
+            {name: "李主任", role: "生产部主管", email: "li@company.com"},
+            {name: "王经理", role: "安全部经理", email: "wang@company.com"},
+            {name: "张厂长", role: "厂区负责人", email: "zhang@company.com"}
+        ];
+        
+        let recipientList = "请选择分发对象：\n";
+        recipients.forEach((recipient, index) => {
+            recipientList += `${index + 1}. ${recipient.name} (${recipient.role})\n`;
+        });
+        
+        const selection = prompt(recipientList + "\n请输入序号（多个序号用逗号分隔）：", "1,2,3");
+        
+        if (selection) {
+            const selectedRecipients = [];
+            selection.split(",").forEach(index => {
+                const idx = parseInt(index.trim()) - 1;
+                if (idx >= 0 && idx < recipients.length) {
+                    selectedRecipients.push(recipients[idx]);
+                }
+            });
+            
+            if (selectedRecipients.length > 0) {
+                const names = selectedRecipients.map(r => r.name).join(", ");
+                alert(`报告已分发给：${names}`);
+            } else {
+                alert("未选择有效的收件人");
+            }
+        }
+    };
+
+    // Function to view detailed report
+    window.viewDetailedReport = () => {
+        // Open a new document in creator with detailed report template
+        openDoc('数据洞察详细报告');
+        
+        // Wait for the document to load and populate with template
+        setTimeout(() => {
+            const docPage = document.querySelector('.doc-page');
+            if (docPage) {
+                docPage.innerHTML = `
+                    <h1 style="text-align:center; margin-bottom:2rem">数据洞察详细报告</h1>
+                    <div style="margin-bottom:1rem"><strong>报告日期：</strong> 2025年12月20日</div>
+                    <div style="margin-bottom:1rem"><strong>分析周期：</strong> 2025年12月1日 - 2025年12月20日</div>
+                    
+                    <h2>总体概况</h2>
+                    <p>本月共发现安全隐患45起，较上月增加12%，主要集中在A车间。</p>
+                    
+                    <h2>各车间隐患分布</h2>
+                    <table style="width:100%; border-collapse:collapse; margin:1rem 0">
+                        <thead>
+                            <tr style="background:#f5f5f5">
+                                <th style="border:1px solid #ddd; padding:0.5rem">车间</th>
+                                <th style="border:1px solid #ddd; padding:0.5rem">隐患数量</th>
+                                <th style="border:1px solid #ddd; padding:0.5rem">占比</th>
+                                <th style="border:1px solid #ddd; padding:0.5rem">环比变化</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border:1px solid #ddd; padding:0.5rem">A车间</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">36</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">80%</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem; color:red">↑ 15%</td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #ddd; padding:0.5rem">B车间</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">6</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">13.3%</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem; color:green">↓ 5%</td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #ddd; padding:0.5rem">C车间</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">2</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">4.4%</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">-</td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid #ddd; padding:0.5rem">D车间</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">1</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">2.3%</td>
+                                <td style="border:1px solid #ddd; padding:0.5rem">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h2>隐患类型分析</h2>
+                    <p>电气安全隐患占比最高，达到45%，其次是消防安全和机械安全。</p>
+                    
+                    <h2>改进建议</h2>
+                    <ol>
+                        <li>加强对A车间的安全巡查和培训</li>
+                        <li>对电气设备进行全面检修</li>
+                        <li>完善隐患整改跟踪机制</li>
+                    </ol>
+                `;
+            }
+        }, 300);
+    };
+
+    // Function to generate safety agreement
+    window.generateSafetyAgreement = () => {
+        // Open a new document with safety agreement template
+        openDoc('承包商安全管理协议');
+        
+        // Wait for the document to load and populate with template
+        setTimeout(() => {
+            const docPage = document.querySelector('.doc-page');
+            if (docPage) {
+                docPage.innerHTML = `
+                    <h1 style="text-align:center; margin-bottom:2rem">承包商安全管理协议</h1>
+                    <div style="margin-bottom:1rem"><strong>甲方：</strong> XX制造有限公司</div>
+                    <div style="margin-bottom:1rem"><strong>乙方：</strong> XX建筑公司</div>
+                    <div style="margin-bottom:1rem"><strong>签订日期：</strong> 2025年12月20日</div>
+                    
+                    <h2>第一条 总则</h2>
+                    <p>为加强承包商在本公司施工期间的安全管理，明确双方安全责任，保障施工人员生命安全和身体健康，特制定本协议。</p>
+                    
+                    <h2>第二条 安全管理要求</h2>
+                    <ol>
+                        <li>乙方必须持有有效的营业执照、资质证书和安全生产许可证</li>
+                        <li>乙方必须为所有施工人员购买工伤保险和意外伤害险</li>
+                        <li>乙方必须配备专职安全管理人员，并持证上岗</li>
+                        <li>乙方必须对施工人员进行安全教育培训，未经培训不得上岗</li>
+                        <li>乙方必须遵守甲方的各项安全管理制度和操作规程</li>
+                    </ol>
+                    
+                    <h2>第三条 安全责任划分</h2>
+                    <p>乙方承担施工过程中因自身原因造成的安全事故全部责任，甲方有权监督乙方的安全管理工作。</p>
+                    
+                    <h2>第四条 违约责任</h2>
+                    <p>如乙方违反本协议规定，甲方有权要求限期整改，情节严重的可终止合同并追究相关责任。</p>
+                    
+                    <div style="margin-top:3rem; display:flex; justify-content:space-between">
+                        <div>
+                            <strong>甲方代表：</strong><br><br>
+                            签字：___________<br>
+                            日期：___________
+                        </div>
+                        <div>
+                            <strong>乙方代表：</strong><br><br>
+                            签字：___________<br>
+                            日期：___________
+                        </div>
+                    </div>
+                `;
+            }
+        }, 300);
+    };
 });

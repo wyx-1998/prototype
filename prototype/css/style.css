@@ -989,7 +989,6 @@ tr:hover {
 body.embedded-mode {
     background: #333;
     /* Simulate parent app background */
-    overflow: hidden;
 }
 
 .fake-app-bg {
@@ -1018,8 +1017,200 @@ body.embedded-mode {
     background: white;
     box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
     z-index: 100;
-
+    display: flex;
     flex-direction: column;
+}
+
+.embedded-sidebar .chat-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 10;
+}
+
+.embedded-sidebar .chat-messages {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: #fff;
+}
+
+.embedded-sidebar .message {
+    display: flex;
+    gap: 1rem;
+    max-width: 100%;
+}
+
+.embedded-sidebar .message.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.embedded-sidebar .message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.embedded-sidebar .message-avatar i {
+    font-size: 1.2rem;
+}
+
+.embedded-sidebar .message-content {
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.embedded-sidebar .message.ai .message-content {
+    background: #f5f5f5;
+    border-top-left-radius: 4px;
+}
+
+.embedded-sidebar .message.user .message-content {
+    background: #e6f4ff;
+    border-top-right-radius: 4px;
+}
+
+.embedded-sidebar .chat-input-area {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background: #fff;
+}
+
+.embedded-sidebar .input-wrapper {
+    position: relative;
+    border: 1px solid #d9d9d9;
+    border-radius: 12px;
+    padding: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.embedded-sidebar .input-wrapper:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+}
+
+.embedded-sidebar .chat-input {
+    width: 100%;
+    border: none;
+    padding: 0;
+    font-size: 1rem;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+    line-height: 1.5;
+    max-height: 200px;
+}
+
+.embedded-sidebar .chat-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 10;
+}
+
+.embedded-sidebar .chat-messages {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: #fff;
+}
+
+.embedded-sidebar .message {
+    display: flex;
+    gap: 1rem;
+    max-width: 100%;
+}
+
+.embedded-sidebar .message.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.embedded-sidebar .message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.embedded-sidebar .message-avatar i {
+    font-size: 1.2rem;
+}
+
+.embedded-sidebar .message-content {
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.embedded-sidebar .message.ai .message-content {
+    background: #f5f5f5;
+    border-top-left-radius: 4px;
+}
+
+.embedded-sidebar .message.user .message-content {
+    background: #e6f4ff;
+    border-top-right-radius: 4px;
+}
+
+.embedded-sidebar .chat-input-area {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background: #fff;
+}
+
+.embedded-sidebar .input-wrapper {
+    position: relative;
+    border: 1px solid #d9d9d9;
+    border-radius: 12px;
+    padding: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.embedded-sidebar .input-wrapper:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+}
+
+.embedded-sidebar .chat-input {
+    width: 100%;
+    border: none;
+    padding: 0;
+    font-size: 1rem;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+    line-height: 1.5;
+    max-height: 200px;
 }
 
 /* Mock Data Visualization */
