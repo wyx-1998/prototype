@@ -723,9 +723,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // 获取推荐数据源
-        const recommendedDataSources = window.parent.getRecommendedDataSources ? window.parent.getRecommendedDataSources(docType) : [];
-
         return `
             <div class="creator-layout" style="display:flex; height:100%; flex:1">
                 <!-- 左侧：画布/编辑器 -->
@@ -754,9 +751,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <!-- 画布区域 -->
                     <div class="doc-wrapper" style="flex:1; background:#f5f5f5; padding:2rem; overflow:visible;">
                         <div class="doc-page" contenteditable="true" style="width:100%; margin:0 auto; background:white; padding:3rem; box-shadow:0 2px 8px rgba(0,0,0,0.08); border-radius:4px; height:auto; min-height:100vh;">
-                            <h1 style="text-align:center; margin-bottom:2rem">${docTitle}</h1>
-                            ${getMockDocContent(docTitle)}
-                        </div>
+                            ${generateDocumentContent(docType, docTitle)}                        </div>
                     </div>
                 </div>
     
@@ -779,47 +774,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
     
-                    <!-- 推荐数据源区 -->
-                    <div style="padding:1rem; border-bottom:1px solid #eee">
-                        <div style="font-size:0.8rem; color:#666; margin-bottom:0.75rem">
-                            <i class="ph ph-database"></i> 推荐数据源
-                        </div>
-                        <div id="data-source-cards" style="display:flex; flex-direction:column; gap:0.5rem">
-                            ${recommendedDataSources.map(source => `
-                                <div class="data-source-card" data-id="${source.id}" style="border:1px solid #eee; border-radius:8px; padding:0.75rem; background:#fafafa">
-                                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem">
-                                        <div style="display:flex; align-items:center; gap:0.5rem">
-                                            <span style="font-size:1.2rem">${source.icon}</span>
-                                            <div>
-                                                <div style="font-weight:500; font-size:0.9rem">${source.name}</div>
-                                                <div style="font-size:0.75rem; color:#999">${source.count} 条记录</div>
-                                            </div>
-                                        </div>
-                                        <button onclick="removeDataSource('${source.id}')" style="background:none; border:none; color:#ff4d4f; cursor:pointer; font-size:1rem">
-                                            <i class="ph ph-x"></i>
-                                        </button>
-                                    </div>
-                                    <div style="display:flex; gap:0.5rem; flex-wrap:wrap">
-                                        <button onclick="toggleDataSourceDetails('${source.id}')" style="padding:0.25rem 0.5rem; background:#e6f4ff; color:#1677ff; border:none; border-radius:4px; font-size:0.75rem; cursor:pointer">
-                                            <i class="ph ph-caret-down"></i> 展开
-                                        </button>
-                                        <button onclick="filterDataSource('${source.id}')" style="padding:0.25rem 0.5rem; background:#fff7e6; color:#fa8c16; border:none; border-radius:4px; font-size:0.75rem; cursor:pointer">
-                                            <i class="ph ph-funnel"></i> 筛选
-                                        </button>
-                                    </div>
-                                    <div id="details-${source.id}" style="display:none; margin-top:0.75rem; padding-top:0.75rem; border-top:1px dashed #eee">
-                                        <div style="font-size:0.8rem; color:#666">
-                                            这里显示 ${source.name} 的详细信息预览...
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <button onclick="reopenDataSourceSelection()" style="margin-top:0.75rem; padding:0.5rem; width:100%; background:#f0f0f0; border:none; border-radius:4px; font-size:0.8rem; color:#666; cursor:pointer">
-                            <i class="ph ph-arrows-clockwise"></i> 重新选择数据集
-                        </button>
+                    <!-- 数据卡片区 -->
+                    <div id="creator-data-cards" style="padding:1rem; border-bottom:1px solid #eee; max-height:30%; overflow-y:auto;">
+                        ${getMockDataCards(docType)}
                     </div>
-    
+                    
                     <!-- 对话消息区 -->
                     <div id="creator-chat-messages" style="flex:1; overflow-y:auto; padding:1rem">
                         <div style="display:flex; gap:0.75rem; margin-bottom:1rem">
@@ -838,8 +797,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                         ${additionalMessages || ''}
-                    </div>
-    
+                    </div>    
                     <!-- 输入框 -->
                     <div style="padding:1rem; border-top:1px solid #eee">
                         <div style="display:flex; gap:0.5rem">
@@ -876,74 +834,286 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 数据源操作函数
-    // 移除数据源
-    function removeDataSource(sourceId) {
-        const card = document.querySelector(`.data-source-card[data-id="${sourceId}"]`);
-        if (card) {
-            card.remove();
-        }
-    }
-
-    // 展开/收起数据源详情
-    function toggleDataSourceDetails(sourceId) {
-        const details = document.getElementById(`details-${sourceId}`);
-        const button = event.target.closest('button');
-        if (details && button) {
-            if (details.style.display === 'none') {
-                details.style.display = 'block';
-                button.innerHTML = '<i class="ph ph-caret-up"></i> 收起';
-            } else {
-                details.style.display = 'none';
-                button.innerHTML = '<i class="ph ph-caret-down"></i> 展开';
-            }
-        }
-    }
-
-    // 筛选数据源
-    function filterDataSource(sourceId) {
-        alert(`正在对数据源 ${sourceId} 进行筛选设置`);
-        // 实际实现中会打开筛选对话框
-    }
-
-    // 重新打开数据源选择
-    function reopenDataSourceSelection() {
-        const chatMessages = document.getElementById('creator-chat-messages');
-        if (chatMessages) {
-            const message = `
-                <div style="display:flex; gap:0.75rem; margin-bottom:1rem">
-                    <div style="width:32px; height:32px; background:var(--primary-color); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0">
-                        <i class="ph ph-robot" style="color:white; font-size:1rem"></i>
+    // Function to simulate data cards for different document types
+    window.getMockDataCards = (docType) => {
+        switch(docType) {
+            case 'Type-1': // 培训课件
+                return `
+                    <div class="data-card" style="margin-bottom: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; font-size: 0.9rem;"><i class="ph ph-warning-circle"></i> 事故案例库</h4>
+                            <span style="font-size: 0.8rem; color: #666;">8 条</span>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-bottom: 0.5rem;">
+                            <div>✓ 2023-05-12 某车间坠落事故</div>
+                            <div>✓ 2024-02-03 外包施工高空坠物</div>
+                            <div>✓ 2024-08-19 脚手架倾覆事件</div>
+                            <div style="color: #1677ff; cursor: pointer;">[展开全部]</div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button style="font-size: 0.8rem; padding: 0.25rem 0.5rem; background: #f0f0f0; border: none; border-radius: 4px;">筛选调整</button>
+                        </div>
                     </div>
-                    <div style="background:#f5f5f5; padding:0.75rem 1rem; border-radius:12px; border-top-left-radius:4px; font-size:0.9rem; line-height:1.5">
-                        好的，请告诉我您需要哪些数据源？例如：
-                        <ul style="margin:0.5rem 0 0 0; padding-left:1.25rem">
-                            <li>"我要事故案例库和法规库"</li>
-                            <li>"换成历史文档库和组织架构"</li>
-                            <li>"只需要题库"</li>
-                        </ul>
-                        <input type="text" id="datasource-input" placeholder="请输入您的需求..." style="margin-top:0.75rem; padding:0.5rem; width:100%; border-radius:4px; border:1px solid #ddd">
-                        <button onclick="processDataSourceRequest()" style="margin-top:0.5rem; padding:0.5rem 1rem; background:var(--primary-color); color:white; border:none; border-radius:4px; cursor:pointer">
-                            确认选择
-                        </button>
+                    <div class="data-card" style="margin-bottom: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; font-size: 0.9rem;"><i class="ph ph-book-open"></i> 法规库</h4>
+                            <span style="font-size: 0.8rem; color: #666;">5 条</span>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-bottom: 0.5rem;">
+                            <div>✓ GB/T 3608-2008 高处作业分级</div>
+                            <div>✓ 安全生产法 第四十一条</div>
+                            <div>✓ 建筑施工高处作业安全技术规范</div>
+                            <div style="color: #1677ff; cursor: pointer;">[展开全部]</div>
+                        </div>
                     </div>
-                </div>
-            `;
-            chatMessages.insertAdjacentHTML('beforeend', message);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+                `;
+            case 'Type-2': // 标准公文
+                return `
+                    <div class="data-card" style="margin-bottom: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; font-size: 0.9rem;"><i class="ph ph-file-text"></i> 历史文档库</h4>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-bottom: 0.5rem;">
+                            <div>✓ 2024年度安全生产责任制</div>
+                            <div>✓ 2023年隐患排查管理制度</div>
+                        </div>
+                    </div>
+                    <div class="data-card" style="margin-bottom: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; font-size: 0.9rem;"><i class="ph ph-users"></i> 组织架构</h4>
+                            <span style="font-size: 0.8rem; color: #666;">最后更新：2025-12-01</span>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-bottom: 0.5rem;">
+                            <div>✓ 总经理、安全总监、车间主任等关键岗位</div>
+                            <div style="color: #1677ff; cursor: pointer;">[查看组织架构图]</div>
+                        </div>
+                    </div>
+                    <div class="data-card" style="margin-bottom: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; font-size: 0.9rem;"><i class="ph ph-book-open"></i> 法规库</h4>
+                            <span style="font-size: 0.8rem; color: #666;">15 条</span>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-bottom: 0.5rem;">
+                            <div>✓ 《安全生产法》（2021修订版）</div>
+                            <div>✓ GB 33000-2020 标准要求</div>
+                            <div>✓ 2024-2025新增法规3条</div>
+                            <div style="color: #1677ff; cursor: pointer;">[查看详情]</div>
+                        </div>
+                    </div>
+                `;
+            case 'Type-3': // 业务单据
+                return `
+                    <div class="data-card" style="margin-bottom: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; font-size: 0.9rem;"><i class="ph ph-clipboard"></i> 巡检记录</h4>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-bottom: 0.5rem;">
+                            <div style="padding: 0.5rem; border: 1px solid #eee; border-radius: 4px; margin-bottom: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <strong>10:15 仓库区域巡检</strong>
+                                    <span style="color: #faad14;">⚠️ 一般隐患</span>
+                                </div>
+                                <div>隐患：消防器材被货物遮挡</div>
+                                <div>位置：3号仓库西侧疏散通道</div>
+                                <div>责任人：仓储部 李明</div>
+                                <div>📷 照片：2 张</div>
+                            </div>
+                            <div style="padding: 0.5rem; border: 1px solid #eee; border-radius: 4px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <strong>08:30 1号车间巡检</strong>
+                                    <span style="color: #ff4d4f;">🔴 重大隐患</span>
+                                </div>
+                                <div>隐患：电气线路老化</div>
+                                <div>位置：1号车间东侧配电箱</div>
+                                <div>责任人：设备部 张伟</div>
+                                <div>📷 照片：3 张</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            case 'Type-4': // 考试试卷
+                return `
+                    <div class="data-card" style="margin-bottom: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; font-size: 0.9rem;"><i class="ph ph-question"></i> 题库</h4>
+                            <span style="font-size: 0.8rem; color: #666;">共 326 题</span>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-bottom: 0.5rem;">
+                            <div>单选题：156 题</div>
+                            <div>多选题：98 题</div>
+                            <div>判断题：72 题</div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button style="font-size: 0.8rem; padding: 0.25rem 0.5rem; background: #f0f0f0; border: none; border-radius: 4px;">查看详情</button>
+                        </div>
+                    </div>
+                    <div class="data-card" style="margin-bottom: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; font-size: 0.9rem;"><i class="ph ph-lightning"></i> 锂电池安全题目</h4>
+                            <span style="font-size: 0.8rem; color: #666;">16 题</span>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #333; margin-bottom: 0.5rem;">
+                            <div>单选题：8 题（新增于 2024-09）</div>
+                            <div>多选题：5 题</div>
+                            <div>判断题：3 题</div>
+                        </div>
+                    </div>
+                `;
+            default:
+                return '';
         }
-    }
+    };
 
-    // 处理数据源请求
-    function processDataSourceRequest() {
-        const input = document.getElementById('datasource-input');
-        if (input && input.value.trim()) {
-            // 这里会根据用户输入重新选择数据源
-            alert(`已根据您的需求"${input.value}"重新选择数据源`);
-            // 实际实现中会解析用户输入并更新数据源卡片
+    // Function to generate document content based on type and data
+    window.generateDocumentContent = (docType, title) => {
+        switch(docType) {
+            case 'Type-1': // 培训课件
+                return `
+                    <h1 style="text-align:center; margin-bottom:2rem">${title}</h1>
+                    <h2>第一部分：高处作业定义与分级</h2>
+                    <p>根据GB/T 3608-2008《高处作业分级》标准，高处作业是指凡在坠落高度基准面2m以上（含2m）有可能坠落的高处进行的作业。</p>
+                    
+                    <h2>第二部分：法律法规要求</h2>
+                    <p>根据《安全生产法》第四十一条规定，生产经营单位应当建立安全风险分级管控制度，按照安全风险分级采取相应的管控措施。</p>
+                    
+                    <h2>第三部分：典型事故警示</h2>
+                    <p>基于近期发生的几起高处作业事故案例，我们总结出以下关键风险点和预防措施：</p>
+                    <ul>
+                        <li>安全防护用品佩戴不规范</li>
+                        <li>作业环境安全检查不到位</li>
+                        <li>作业人员安全意识淡薄</li>
+                    </ul>
+                    
+                    <h2>第四部分：标准作业流程</h2>
+                    <p>高处作业标准流程包括：作业前准备、安全措施落实、作业过程监控、作业结束检查等环节。</p>
+                    
+                    <h2>第五部分：考核要求</h2>
+                    <p>根据《安全生产法》第二十八条规定，生产经营单位应当对从业人员进行安全生产教育和培训。</p>
+                `;
+            case 'Type-2': // 标准公文
+                return `
+                    <h1 style="text-align:center; margin-bottom:2rem">${title}</h1>
+                    <h2>1. 总则</h2>
+                    <p>1.1 编制目的：为明确公司各级人员安全生产责任，建立健全安全生产责任制，特制定本制度。</p>
+                    <p>1.2 编制依据：根据《中华人民共和国安全生产法》（2021年修订版）及相关法律法规要求。</p>
+                    
+                    <h2>2. 组织机构与职责</h2>
+                    <p>2.1 公司设立安全生产委员会，负责统一领导公司的安全生产工作。</p>
+                    <p>2.2 总经理对公司安全生产工作全面负责。</p>
+                    <p>2.3 安全总监负责日常安全生产监督管理工作。</p>
+                    
+                    <h2>3. 安全管理制度</h2>
+                    <p>3.1 安全生产会议制度：定期召开安全生产工作会议。</p>
+                    <p>3.2 安全教育培训制度：对员工进行安全生产教育和培训。</p>
+                    <p>3.3 安全检查制度：定期开展安全检查，及时消除安全隐患。</p>
+                    
+                    <h2>4. 考核与奖惩</h2>
+                    <p>4.1 公司将安全生产纳入绩效考核体系。</p>
+                    <p>4.2 对在安全生产工作中做出突出贡献的单位和个人给予表彰奖励。</p>
+                `;
+            case 'Type-3': // 业务单据
+                return `
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h1 style="margin-bottom: 0.5rem;">隐患整改通知书</h1>
+                        <div>文号：YH-2025-1221-001</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong>致：</strong>仓储部 李明
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong>隐患内容：</strong>消防器材被货物遮挡
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong>隐患位置：</strong>3号仓库西侧疏散通道
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong>整改要求：</strong>
+                        <ol>
+                            <li>立即清理遮挡消防器材的货物</li>
+                            <li>确保疏散通道畅通无阻</li>
+                            <li>加强日常巡查，防止类似问题再次发生</li>
+                        </ol>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong>整改期限：</strong>2025年12月24日前
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong>验收人：</strong>安全员（您）
+                    </div>
+                    
+                    <div style="margin-top: 3rem; display: flex; justify-content: space-between;">
+                        <div>
+                            <div>签发人签字：____________</div>
+                            <div>日期：2025年12月21日</div>
+                        </div>
+                        <div>
+                            <div>接收人签字：____________</div>
+                            <div>日期：_______年___月___日</div>
+                        </div>
+                    </div>
+                `;
+            case 'Type-4': // 考试试卷
+                return `
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h1>${title}</h1>
+                        <div>试卷编号：EX-2025-1221-001</div>
+                        <div>考试时间：60分钟　总分：100分</div>
+                    </div>
+                    
+                    <h2>一、单选题（共20题，每题2分，共40分）</h2>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>1. 锂电池充电时，应在什么环境下进行？</strong><br>
+                        A. 密闭空间<br>
+                        B. 通风良好场所<br>
+                        C. 潮湿环境<br>
+                        D. 高温场所<br>
+                        <div style="color: #1677ff; margin-top: 0.25rem;">答案：B</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <strong>2. 发现锂电池鼓包时，应首先采取什么措施？</strong><br>
+                        A. 立即充电<br>
+                        B. 继续使用<br>
+                        C. 停止使用并隔离<br>
+                        D. 放置在高温处加速反应<br>
+                        <div style="color: #1677ff; margin-top: 0.25rem;">答案：C</div>
+                    </div>
+                    
+                    <h2>二、多选题（共10题，每题3分，共30分）</h2>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>1. 电气作业前应进行哪些安全检查？</strong><br>
+                        A. 检查工具绝缘性能<br>
+                        B. 确认电源已切断<br>
+                        C. 悬挂警示标志<br>
+                        D. 穿戴防护用品<br>
+                        <div style="color: #1677ff; margin-top: 0.25rem;">答案：ABCD</div>
+                    </div>
+                    
+                    <h2>三、判断题（共10题，每题1分，共10分）</h2>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>1. 发现有人触电时，应立即用手拉开触电者。</strong><br>
+                        <div style="color: #1677ff; margin-top: 0.25rem;">答案：错误</div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <strong>注意事项：</strong>
+                        <ol>
+                            <li>请用黑色签字笔作答</li>
+                            <li>保持卷面整洁</li>
+                            <li>考试期间不得交头接耳</li>
+                        </ol>
+                    </div>
+                `;
+            default:
+                return `<h1 style="text-align:center; margin-bottom:2rem">${title}</h1><p>在这里开始您的创作...</p>`;
         }
-    }
-
+    };
     window.backToCreatorDashboard = () => {
         const container = document.getElementById('creator-container');
         if (container) {

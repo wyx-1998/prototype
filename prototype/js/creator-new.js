@@ -1,5 +1,32 @@
 // 基于四大作品类型的创作中心重新设计
 
+// 数据源推荐配置
+const dataSourceRecommendations = {
+    'Type-1': [
+        { id: 'accident_cases', name: '事故案例库', icon: '🔴', count: 8, color: '#ff4d4f' },
+        { id: 'regulations', name: '法规库', icon: '📜', count: 5, color: '#1677ff' },
+        { id: 'procedures', name: '作业流程库', icon: '📋', count: 3, color: '#52c41a' }
+    ],
+    'Type-2': [
+        { id: 'historical_docs', name: '历史文档库', icon: '📄', count: 12, color: '#722ed1' },
+        { id: 'org_structure', name: '组织架构', icon: '🏢', count: 1, color: '#fa8c16' },
+        { id: 'regulations', name: '法规库', icon: '📜', count: 5, color: '#1677ff' }
+    ],
+    'Type-3': [
+        { id: 'inspection_records', name: '巡检记录', icon: '📋', count: 15, color: '#faad14' },
+        { id: 'personnel_info', name: '人员信息', icon: '👤', count: 200, color: '#eb2f96' }
+    ],
+    'Type-4': [
+        { id: 'question_bank', name: '题库', icon: '📚', count: 326, color: '#52c41a' },
+        { id: 'knowledge_points', name: '知识点库', icon: '🧠', count: 45, color: '#13c2c2' }
+    ]
+};
+
+// 获取推荐数据源
+function getRecommendedDataSources(docType) {
+    return dataSourceRecommendations[docType] || [];
+}
+
 // 文件夹数据
 const foldersData = {
     '培训教材': [
@@ -72,6 +99,9 @@ function openFolder(folderName) {
         </div>
     `;
 }
+
+// 暴露函数给父级窗口
+window.getRecommendedDataSources = getRecommendedDataSources;
 
 // 全局作品数据
 // 四大作品类型数据 - 基于《创作中心作品类型梳理.md》
