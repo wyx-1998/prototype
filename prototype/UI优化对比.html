@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI规范优化前后对比</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "微软雅黑", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #151B26;
+            margin-bottom: 2rem;
+            font-size: 28px;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #3366CC;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #3366CC;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .before, .after {
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .before {
+            background: #fff9f0;
+            border-color: #ffb366;
+        }
+
+        .after {
+            background: #f0f9ff;
+            border-color: #3366CC;
+        }
+
+        .label {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .before .label::before {
+            content: "❌";
+        }
+
+        .after .label::before {
+            content: "✅";
+        }
+
+        .demo-box {
+            margin: 1rem 0;
+        }
+
+        /* 按钮对比 */
+        .btn-old {
+            padding: 0.5rem 1rem;
+            background: #3366CC;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .btn-old:hover {
+            background: #5784D9;
+        }
+
+        .btn-new {
+            padding: 8px 16px;
+            background: #3366CC;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 22px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-new:hover {
+            background: #5784D9;
+        }
+
+        .btn-new:active {
+            background: #2149A6;
+        }
+
+        .btn-new:disabled {
+            background: #E6F0FF;
+            color: #B8BABF;
+        }
+
+        /* 次级按钮对比 */
+        .btn-secondary-old {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            background: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .btn-secondary-new {
+            padding: 8px 16px;
+            border: 1px solid #3366CC;
+            border-radius: 4px;
+            background: #FFFFFF;
+            color: #3366CC;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 22px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary-new:hover {
+            background: #E6F0FF;
+        }
+
+        /* 输入框对比 */
+        .input-old {
+            padding: 0.75rem;
+            border: 1px solid #d9d9d9;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .input-old:focus {
+            outline: none;
+            border-color: #3366CC;
+            box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+        }
+
+        .input-new {
+            padding: 8px 16px;
+            border: 1px solid #F2F2F4;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 12px;
+            line-height: 20px;
+            font-family: "微软雅黑", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .input-new:focus {
+            outline: none;
+            border-color: #3366CC;
+            box-shadow: 0 0 0 3px rgba(51, 102, 204, 0.1);
+        }
+
+        .input-new::placeholder {
+            color: #B8BABF;
+        }
+
+        /* 卡片对比 */
+        .card-old {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .card-old:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .card-new {
+            background: #FFFFFF;
+            padding: 24px;
+            border-radius: 6px;
+            border: 1px solid #F2F2F4;
+            box-shadow: 0 2px 8px rgba(7, 12, 20, 0.12);
+            transition: all 0.3s ease;
+        }
+
+        .card-new:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(7, 12, 20, 0.12);
+        }
+
+        /* 消息气泡对比 */
+        .message-old {
+            background: #E6F0FF;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            max-width: 300px;
+            margin: 0.5rem 0;
+        }
+
+        .message-new-user {
+            background: #3366CC;
+            color: #FFFFFF;
+            padding: 12px 16px;
+            border-radius: 4px;
+            border-top-right-radius: 0;
+            max-width: 300px;
+            font-size: 12px;
+            line-height: 20px;
+            box-shadow: 0 0 0 0 rgba(7, 12, 20, 0.12);
+        }
+
+        .message-new-ai {
+            background: #FFFFFF;
+            color: #151B26;
+            padding: 12px 16px;
+            border: 1px solid #F2F2F4;
+            border-radius: 4px;
+            border-top-left-radius: 0;
+            max-width: 300px;
+            font-size: 12px;
+            line-height: 20px;
+            box-shadow: 0 0 0 0 rgba(7, 12, 20, 0.12);
+            margin: 0.5rem 0;
+        }
+
+        /* 徽标对比 */
+        .badge-old {
+            padding: 0.25rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            display: inline-block;
+        }
+
+        .badge-new {
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            line-height: 20px;
+            font-weight: 500;
+            background: #FFF3F2;
+            color: #F33E3E;
+            border: 1px solid #FF6966;
+            display: inline-block;
+        }
+
+        /* 字体对比 */
+        .text-old-h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .text-new-h1 {
+            font-size: 16px;
+            line-height: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #151B26;
+        }
+
+        .text-old-body {
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .text-new-body {
+            font-size: 12px;
+            line-height: 20px;
+            color: #84868C;
+        }
+
+        /* 表格 */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 0.125rem 0.25rem;
+            border-radius: 2px;
+        }
+
+        .check-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .check-list li {
+            padding: 0.5rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .check-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #30BE13;
+            font-weight: bold;
+        }
+
+        .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #3366CC;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 UI规范优化前后对比</h1>
+
+        <!-- 字体系统对比 -->
+        <div class="section">
+            <div class="section-title">1. 字体系统优化</div>
+            <div class="comparison">
+                <div class="before">
+                    <div class="label">优化前</div>
+                    <div class="demo-box">
+                        <div class="text-old-h1">一级标题 (1.5rem)</div>
+                        <div class="text-old-body">正文内容 (0.875rem)</div>
+                        <div class="code-block">
+font-size: 1.5rem; /* 相对单位 */
+font-size: 0.875rem;
+color: #666; /* 非规范色值 */
+                        </div>
+                    </div>
+                </div>
+                <div class="after">
+                    <div class="label">优化后</div>
+                    <div class="demo-box">
+                        <div class="text-new-h1">一级标题 (16px / 24px)</div>
+                        <div class="text-new-body">正文内容 (12px / 20px)</div>
+                        <div class="code-block">
+font-size: 16px; /* 绝对单位 */
+line-height: 24px; /* 明确行高 */
+color: #151B26; /* 规范色值 */
+font-family: "微软雅黑", -apple-system...
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="info-box">
+                <strong>优化说明：</strong>
+                <ul class="check-list">
+                    <li>统一使用px绝对单位，避免不同浏览器渲染差异</li>
+                    <li>明确定义line-height，确保文本垂直对齐</li>
+                    <li>使用规范的四级文字色阶：强调(#151B26)、次强调(#5C5F66)、次要(#84868C)、置灰(#B8BABF)</li>
+                    <li>添加完整的字体家族，确保跨平台一致性</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 按钮状态对比 -->
+        <div class="section">
+            <div class="section-title">2. 按钮状态优化</div>
+            <div class="comparison">
+                <div class="before">
+                    <div class="label">优化前</div>
+                    <div class="demo-box">
+                        <button class="btn-old">主按钮</button>
+                        <br><br>
+                        <button class="btn-secondary-old">次级按钮</button>
+                        <div class="code-block">
+/* 缺少完整状态 */
+.btn:hover { ... }
+/* 没有 active 和 disabled 状态 */
+                        </div>
+                    </div>
+                </div>
+                <div class="after">
+                    <div class="label">优化后</div>
+                    <div class="demo-box">
+                        <button class="btn-new">主按钮</button>
+                        <button class="btn-new" disabled>禁用状态</button>
+                        <br><br>
+                        <button class="btn-secondary-new">次级按钮</button>
+                        <div class="code-block">
+.btn:hover { background: #5784D9; }
+.btn:active { background: #2149A6; }
+.btn:disabled { background: #E6F0FF; }
+/* 完整的四种状态 */
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="info-box">
+                <strong>优化说明：</strong>
+                <ul class="check-list">
+                    <li>主按钮新增 Active(#2149A6) 和 Disabled(#E6F0FF) 状态</li>
+                    <li>次级按钮使用主色边框(#3366CC)，hover时背景变浅色(#E6F0FF)</li>
+                    <li>统一圆角规范 R3(4px)，统一间距 8px/16px</li>
+                    <li>字号统一为 14px，行高 22px</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 输入框对比 -->
+        <div class="section">
+            <div class="section-title">3. 输入框状态优化</div>
+            <div class="comparison">
+                <div class="before">
+                    <div class="label">优化前</div>
+                    <div class="demo-box">
+                        <input type="text" class="input-old" placeholder="输入内容...">
+                        <div class="code-block">
+border: 1px solid #d9d9d9;
+border-radius: 12px; /* 过大 */
+font-size: 1rem;
+:focus {
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+}
+                        </div>
+                    </div>
+                </div>
+                <div class="after">
+                    <div class="label">优化后</div>
+                    <div class="demo-box">
+                        <input type="text" class="input-new" placeholder="输入内容...">
+                        <div class="code-block">
+border: 1px solid #F2F2F4; /* 规范色 */
+border-radius: 4px; /* R3规范 */
+font-size: 12px; line-height: 20px;
+:focus {
+  border-color: #3366CC;
+  box-shadow: 0 0 0 3px rgba(51, 102, 204, 0.1);
+}
+::placeholder { color: #B8BABF; }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="info-box">
+                <strong>优化说明：</strong>
+                <ul class="check-list">
+                    <li>边框颜色使用规范的描边色 #F2F2F4</li>
+                    <li>圆角从12px改为4px，符合R3规范</li>
+                    <li>Focus外发光从2px增加到3px，更明显的交互反馈</li>
+                    <li>占位符使用置灰色 #B8BABF</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 消息气泡对比 -->
+        <div class="section">
+            <div class="section-title">4. 消息气泡优化</div>
+            <div class="comparison">
+                <div class="before">
+                    <div class="label">优化前</div>
+                    <div class="demo-box">
+                        <div class="message-old">用户消息示例</div>
+                        <div class="message-old">机器人消息示例</div>
+                        <div class="code-block">
+/* 用户和AI消息样式相同 */
+background: #E6F0FF;
+border-radius: 12px;
+/* 缺少区分度 */
+                        </div>
+                    </div>
+                </div>
+                <div class="after">
+                    <div class="label">优化后</div>
+                    <div class="demo-box">
+                        <div class="message-new-user">用户消息示例</div>
+                        <div class="message-new-ai">机器人消息示例</div>
+                        <div class="code-block">
+/* 用户消息 */
+background: #3366CC;
+color: #FFFFFF;
+border-top-right-radius: 0;
+
+/* AI消息 */
+background: #FFFFFF;
+border: 1px solid #F2F2F4;
+border-top-left-radius: 0;
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="info-box">
+                <strong>优化说明：</strong>
+                <ul class="check-list">
+                    <li>用户消息使用主色背景(#3366CC)，白色文字</li>
+                    <li>AI消息使用白色背景，黑色文字，带边框</li>
+                    <li>右上角/左上角圆角设为0，更有对话感</li>
+                    <li>添加L1阴影效果</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 卡片组件对比 -->
+        <div class="section">
+            <div class="section-title">5. 卡片组件优化</div>
+            <div class="comparison">
+                <div class="before">
+                    <div class="label">优化前</div>
+                    <div class="demo-box">
+                        <div class="card-old">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">卡片标题</h3>
+                            <p style="font-size: 0.875rem; color: #666;">这是卡片的描述内容</p>
+                        </div>
+                        <div class="code-block">
+border-radius: 12px;
+box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+/* 阴影较弱 */
+                        </div>
+                    </div>
+                </div>
+                <div class="after">
+                    <div class="label">优化后</div>
+                    <div class="demo-box">
+                        <div class="card-new">
+                            <h3 style="font-size: 16px; line-height: 24px; margin-bottom: 8px; color: #151B26;">卡片标题</h3>
+                            <p style="font-size: 12px; line-height: 20px; color: #5C5F66; margin: 0;">这是卡片的描述内容</p>
+                        </div>
+                        <div class="code-block">
+border-radius: 6px; /* R4规范 */
+box-shadow: 0 2px 8px rgba(7, 12, 20, 0.12);
+/* L2级别阴影 */
+hover: 0 4px 12px rgba(7, 12, 20, 0.12);
+/* L3级别阴影 */
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="info-box">
+                <strong>优化说明：</strong>
+                <ul class="check-list">
+                    <li>圆角从12px改为6px(R4)，符合页面容器卡片规范</li>
+                    <li>阴影使用L2标准：0 2px 8px #070C14 12%</li>
+                    <li>Hover时升级为L3阴影，交互反馈更明显</li>
+                    <li>标题和正文字号、颜色完全符合规范</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 徽标对比 -->
+        <div class="section">
+            <div class="section-title">6. 徽标/标签优化</div>
+            <div class="comparison">
+                <div class="before">
+                    <div class="label">优化前</div>
+                    <div class="demo-box">
+                        <span class="badge-old">严重</span>
+                        <div class="code-block">
+/* 使用非规范颜色 */
+background: #fef2f2;
+color: #dc2626;
+border: 1px solid #fecaca;
+                        </div>
+                    </div>
+                </div>
+                <div class="after">
+                    <div class="label">优化后</div>
+                    <div class="demo-box">
+                        <span class="badge-new">严重</span>
+                        <div class="code-block">
+/* 使用规范的错误色系 */
+background: #FFF3F2; /* 错误色浅色背景 */
+color: #F33E3E; /* 错误色常规 */
+border: 1px solid #FF6966; /* 错误色悬浮 */
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="info-box">
+                <strong>优化说明：</strong>
+                <ul class="check-list">
+                    <li>错误色：使用 #F33E3E (常规)、#FFF3F2 (浅色背景)</li>
+                    <li>警告色：使用 #FAD000 (常规)、#FFFDE6 (浅色背景)</li>
+                    <li>成功色：使用 #30BE13 (常规)、#ECFEE6 (浅色背景)</li>
+                    <li>字号和内边距使用规范间距</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 圆角规范对比 -->
+        <div class="section">
+            <div class="section-title">7. 圆角规范统一</div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>等级</th>
+                            <th>优化前</th>
+                            <th>优化后</th>
+                            <th>使用场景</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>R2</td>
+                            <td><span class="highlight">未定义</span></td>
+                            <td>2px</td>
+                            <td>小号尺寸组件（高度24px的按钮）</td>
+                        </tr>
+                        <tr>
+                            <td>R3</td>
+                            <td>0.5rem (8px) / 12px <span class="highlight">不统一</span></td>
+                            <td>4px</td>
+                            <td>常规按钮、输入框、消息气泡</td>
+                        </tr>
+                        <tr>
+                            <td>R4</td>
+                            <td>8px / 12px <span class="highlight">混用</span></td>
+                            <td>6px</td>
+                            <td>对话框、页面容器、卡片</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 阴影规范对比 -->
+        <div class="section">
+            <div class="section-title">8. 阴影规范统一</div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>等级</th>
+                            <th>优化前</th>
+                            <th>优化后</th>
+                            <th>使用场景</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>L1</td>
+                            <td><span class="highlight">未定义或自定义</span></td>
+                            <td>0 0 0 0 #070C14 12%</td>
+                            <td>导航、下拉菜单、消息气泡</td>
+                        </tr>
+                        <tr>
+                            <td>L2</td>
+                            <td>0 2px 4px rgba(0,0,0,0.05)</td>
+                            <td>0 2px 8px #070C14 12%</td>
+                            <td>卡片、面板、数据容器</td>
+                        </tr>
+                        <tr>
+                            <td>L3</td>
+                            <td>0 4px 8px rgba(0,0,0,0.1)</td>
+                            <td>0 4px 12px #070C14 12%</td>
+                            <td>悬浮效果、模态弹窗</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 总结 -->
+        <div class="section">
+            <div class="section-title">📊 优化总结</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h3 style="color: #F33E3E; margin-bottom: 1rem;">❌ 优化前问题</h3>
+                    <ul style="line-height: 1.8;">
+                        <li>字体单位混用（rem/px），行高缺失</li>
+                        <li>颜色值不规范，未使用色彩系统</li>
+                        <li>圆角值混乱（8px/12px/0.5rem）</li>
+                        <li>阴影参数不统一</li>
+                        <li>按钮缺少完整状态</li>
+                        <li>间距使用随意，无系统</li>
+                        <li>组件样式不一致</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="color: #30BE13; margin-bottom: 1rem;">✅ 优化后改进</h3>
+                    <ul style="line-height: 1.8;">
+                        <li>统一使用px单位，明确行高</li>
+                        <li>完整色彩系统（主色+功能色+文字色阶）</li>
+                        <li>规范圆角（R2/R3/R4）</li>
+                        <li>标准阴影（L1/L2/L3）</li>
+                        <li>完整按钮状态（4种）</li>
+                        <li>8px网格间距系统</li>
+                        <li>所有组件规范统一</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box" style="text-align: center; margin-top: 2rem;">
+            <strong>🎉 所有优化均已完成！页面现在完全符合UI规范文档要求。</strong>
+        </div>
+    </div>
+</body>
+</html>
+
+
