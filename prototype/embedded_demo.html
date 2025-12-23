@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>嵌入式演示 - 安全生产AI助手</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body class="embedded-mode">
+    <div class="fake-app-bg">
+        第三方业务系统 (ERP/OA/监控)
+    </div>
+
+    <!-- Embedded Sidebar -->
+    <div class="embedded-sidebar">
+        <div class="chat-header">
+            <div class="chat-title">
+                <i class="ph ph-sparkle" style="color:var(--primary-color); margin-right:8px"></i>AI 助手
+            </div>
+            <div class="chat-actions">
+                <button class="icon-btn" title="最小化" onclick="alert('最小化功能')"><i class="ph ph-minus"></i></button>
+                <button class="icon-btn" title="关闭"><i class="ph ph-x"></i></button>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages-container" style="background:#fff">
+            <div class="message ai">
+                <div class="message-avatar"><i class="ph ph-robot"></i></div>
+                <div class="message-content">
+                    您好，检测到您正在查看【设备维护台账】页面。<br><br>
+                    您可以问我：<br>
+                    1. 检查该设备的维修历史<br>
+                    2. 查询相关安全操作规程<br>
+                    3. 上传设备异常照片进行分析<br><br>
+                    <button onclick="openCreatorCenter()" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">打开创作中心</button>
+                    <button onclick="openCreatorModal()" style="background: #52c41a; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-left: 10px;">弹窗创作中心</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="input-wrapper">
+                <textarea class="chat-input" placeholder="输入问题或选中内容..." style="min-height:40px"></textarea>
+                <div class="input-actions">
+                    <div class="input-tools">
+                        <button class="icon-btn"><i class="ph ph-link"></i></button>
+                        <button class="icon-btn"><i class="ph ph-image"></i></button>
+                    </div>
+                    <button class="send-btn" id="send-msg-btn">
+                        <i class="ph ph-paper-plane-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple script to mimic the chat interaction from the main app
+        const btn = document.getElementById('send-msg-btn');
+        const container = document.getElementById('chat-messages-container');
+        const input = document.querySelector('.chat-input');
+
+        if (btn && input) {
+            btn.addEventListener('click', () => {
+                const text = input.value;
+                if (!text.trim()) return;
+
+                const userMsg = document.createElement('div');
+                userMsg.className = 'message user';
+                userMsg.innerHTML = `<div class="message-content">${text}</div>`;
+                container.appendChild(userMsg);
+                input.value = '';
+                container.scrollTop = container.scrollHeight;
+
+                setTimeout(() => {
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = 'message ai';
+                    aiMsg.innerHTML = `
+                        <div class="message-avatar"><i class="ph ph-robot"></i></div>
+                         <div class="message-content">正在分析当前上下文...<br>（这是嵌入式模式演示）</div>
+                    `;
+                    container.appendChild(aiMsg);
+                    container.scrollTop = container.scrollHeight;
+                }, 800);
+            });
+        }
+
+        // Open Creator Center in a new window/tab
+        function openCreatorCenter() {
+            // Open the main app's creator center in a new tab
+            window.open('index.html#creator', '_blank');
+        }
+
+        // Open Creator Center in a modal
+        function openCreatorModal() {
+            const modal = document.getElementById('creator-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                // Load creator content (simplified version)
+                loadCreatorContent();
+            }
+        }
+
+        // Close Creator Center modal
+        function closeCreatorModal() {
+            const modal = document.getElementById('creator-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Save and close Creator Center modal
+        function saveAndCloseCreator() {
+            // In a real implementation, this would save the document
+            alert('文档已保存!');
+            closeCreatorModal();
+        }
+
+        // Load simplified creator content
+        function loadCreatorContent() {
+            const content = document.getElementById('creator-content');
+            if (content) {
+                content.innerHTML = `
+                    <div style="display:flex; height:100%; flex:1">
+                        <!-- 左侧：画布/编辑器 -->
+                        <div style="flex:1; display:flex; flex-direction:column; position:relative">
+                            <!-- 顶部工具栏 -->
+                            <div style="display:flex; align-items:center; padding:0.75rem 1rem; border-bottom:1px solid #eee; background:white">
+                                <button class="icon-btn" onclick="closeCreatorModal()" style="margin-right:1rem"><i class="ph ph-caret-left"></i></button>
+                                <span style="font-weight:600; margin-right:2rem">新建文档</span>
+                                <div style="display:flex; gap:0.25rem">
+                                    <button class="icon-btn">H1</button>
+                                    <button class="icon-btn">H2</button>
+                                    <div style="width:1px; height:20px; background:#eee; margin:0 0.5rem"></div>
+                                    <button class="icon-btn"><i class="ph ph-text-b"></i></button>
+                                    <button class="icon-btn"><i class="ph ph-text-i"></i></button>
+                                    <button class="icon-btn"><i class="ph ph-list-bullets"></i></button>
+                                </div>
+                                <div style="flex:1"></div>
+                                <span style="font-size:0.75rem; color:#52c41a"><i class="ph ph-check-circle"></i> 已保存</span>
+                            </div>
+    
+                            <!-- 画布区域 -->
+                            <div style="flex:1; background:#f5f5f5; padding:2rem; overflow:visible;">
+                                <div contenteditable="true" style="width:100%; margin:0 auto; background:white; padding:3rem; box-shadow:0 2px 8px rgba(0,0,0,0.08); border-radius:4px; height:auto; min-height:100vh;">
+                                    <h1 style="text-align:center; margin-bottom:2rem">新建文档</h1>
+                                    <p>在这里开始您的创作...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    </script>
+
+    <!-- Creator Center Modal -->
+    <div id="creator-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="width: 90%; height: 90%; background: white; border-radius: 8px; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            <div style="padding: 1rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;">创作中心</h3>
+                <button onclick="closeCreatorModal()" style="border: none; background: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <div id="creator-content" style="flex: 1; overflow: auto; padding: 1rem;">
+                <!-- Creator content will be loaded here -->
+                <p>创作中心内容将在这里显示</p>
+            </div>
+            <div style="padding: 1rem; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 1rem;">
+                <button onclick="saveAndCloseCreator()" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">保存并关闭</button>
+                <button onclick="closeCreatorModal()" style="background: #f0f0f0; color: #333; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">取消</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
