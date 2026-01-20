@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隐患排查治理 - 国投集团智能安全生产管理系统</title>
+    <!-- Reusing existing styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Page specific styles -->
+    <link rel="stylesheet" href="css/hidden_danger.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Element Plus -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+    <script src="https://unpkg.com/element-plus"></script>
+    <!-- Element Plus Icons -->
+    <script src="https://unpkg.com/@element-plus/icons-vue"></script>
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- Top Header Navigation -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-area">
+                    <span class="logo-blue">LOGO</span>
+                    <span class="system-title">智能安全生产管理系统</span>
+                    <i class="ph ph-caret-left"></i>
+                </div>
+                <nav class="top-nav">
+                    <a href="#" class="nav-link">工作台</a>
+                    <a href="#" class="nav-link">应用中心</a>
+                    <a href="#" class="nav-link active">ai助手demo <i class="ph ph-x"></i></a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="header-icons">
+                    <i class="ph ph-globe"></i>
+                    <i class="ph ph-question"></i>
+                    <i class="ph ph-caret-right"></i>
+                </div>
+                <div class="header-tools">
+                    <i class="ph ph-t-shirt"></i>
+                    <i class="ph ph-headset"></i>
+                    <i class="ph ph-download-simple"></i>
+                    <i class="ph ph-envelope-simple"></i>
+                    <i class="ph ph-corners-out"></i>
+                    <i class="ph ph-power"></i>
+                </div>
+                <div class="user-profile-sm">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="User" class="avatar-sm">
+                    <span class="username">张三</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-body">
+            <!-- Left Sidebar -->
+            <aside class="left-sidebar">
+                <div class="sidebar-header">
+                    <i class="ph ph-list"></i>
+                </div>
+
+                <div class="sidebar-menu">
+                    <div class="menu-item active" onclick="navigateToPage('hidden_danger.html')">
+                        <i class="ph ph-camera"></i>
+                        <span>随手拍ai识别</span>
+                    </div>
+                    <div class="menu-item" onclick="navigateToPage('certificate_recognition.html')">
+                        <i class="ph ph-id-card"></i>
+                        <span>相关方证照识别</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="content-area">
+                <!-- Secondary Tab Bar -->
+                <div class="content-tabs">
+                    <div class="tab-item active">问题登记: 问题登记 <i class="ph ph-x"></i></div>
+                    <div class="tab-actions">
+                        <i class="ph ph-star"></i>
+                        <i class="ph ph-arrows-clockwise"></i>
+                    </div>
+                </div>
+
+                <!-- Scrollable Content -->
+                <div class="scroll-container">
+                    <div class="form-card">
+                        <div class="card-header">
+                            <h3>登记信息</h3>
+                            <i class="ph ph-caret-up"></i>
+                        </div>
+
+                        <div class="form-grid">
+                            <!-- Row 1 -->
+                            <div class="form-group required span-2">
+                                <label>地点</label>
+                                <input type="text" placeholder="请输入内容" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>所属区域</label>
+                                <div class="select-wrapper">
+                                    <select class="form-control">
+                                        <option>请选择</option>
+                                    </select>
+                                    <!-- Removed extra arrow -->
+                                </div>
+                            </div>
+
+                            <!-- Row 2 -->
+                            <div class="form-group">
+                                <label>问题所属部门/相关方</label>
+                                <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                                    <div class="search-input-wrapper">
+                                        <input type="text" placeholder="请选择" class="form-control">
+                                        <i class="ph ph-magnifying-glass search-icon"></i>
+                                    </div>
+                                    <div class="help-text hint" style="margin-top: 0;">初步确认问题所属单位</div>
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>问题描述</label>
+                                <div class="textarea-container" style="display: flex; gap: 8px; width: 100%;">
+                                    <div class="textarea-wrapper">
+                                        <textarea class="form-control" placeholder="请输入内容" rows="4"></textarea>
+                                        <span class="char-count">0/200</span>
+                                    </div>
+                                    <button class="btn-extract"
+                                        style="position: static; transform: none; margin-top: 4px;">隐患排查库</button>
+                                </div>
+                            </div>
+
+                            <!-- Row 3 -->
+                            <div class="form-group full-width">
+                                <label>建议治理措施</label>
+                                <div class="textarea-wrapper">
+                                    <textarea class="form-control" placeholder="请输入内容" rows="4"></textarea>
+                                    <span class="char-count">0/200</span>
+                                </div>
+                            </div>
+
+                            <!-- Row 4: Discoverer Info -->
+                            <div class="form-group required">
+                                <label>发现人</label>
+                                <div class="text-display">管理员</div>
+                            </div>
+                            <div class="form-group">
+                                <label>发现人部门</label>
+                                <div class="text-display">安全管理处</div>
+                            </div>
+                            <div class="form-group">
+                                <label>发现人班组</label>
+                                <div class="text-display">安全管理处</div>
+                            </div>
+
+                            <!-- Row 5 -->
+                            <div class="form-group required">
+                                <label>发现日期</label>
+                                <div class="date-input-wrapper">
+                                    <input type="date" value="2025-12-29" class="form-control date-input">
+                                </div>
+                            </div>
+
+                            <!-- Row 6 -->
+                            <div class="form-group">
+                                <label>无需提供整改照片</label>
+                                <div class="toggle-wrapper" style="justify-content: flex-start;">
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="noPhoto">
+                                        <label for="noPhoto"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Spacer to fill the row if needed, but grid flows automatically. Date (1), Toggle (1). One empty slot at end of row 5/6 combined? No, Date is row 5 col 1. Toggle is row 5 col 2 (if flow continues). 
+                                 Wait, "Row 5" in my comment above:
+                                 Discoverer items take 3 slots -> Full Row 4.
+                                 Date -> Row 5 Col 1.
+                                 Toggle -> Row 5 Col 2.
+                                 Row 5 Col 3 is empty.
+                                 "Problem Photos" -> Full Width -> Starts Row 6.
+                                 So Date and Toggle share a row. That looks fine.
+                            -->
+                            <div class="form-group"></div> <!-- Empty spacer for 3rd column -->
+
+                            <!-- Row 7: 问题照片 - Element Plus Photo Wall -->
+                            <div class="form-group required full-width">
+                                <label>问题照片</label>
+                                <div class="photo-upload-container" id="photoUploadApp">
+                                    <el-upload v-model:file-list="fileList" action="#" list-type="picture-card"
+                                        :auto-upload="false" :limit="5" accept="image/jpeg,image/png"
+                                        :on-preview="handlePreview" :on-remove="handleRemove" :on-change="handleChange"
+                                        :on-exceed="handleExceed">
+                                        <el-icon>
+                                            <Plus />
+                                        </el-icon>
+                                        <template #tip>
+                                            <div class="el-upload__tip">
+                                                支持 jpg/png 格式，最多上传 5 张
+                                            </div>
+                                        </template>
+                                    </el-upload>
+
+                                    <!-- AI识别按钮 -->
+                                    <el-button v-if="fileList.length > 0" class="ai-recognize-btn"
+                                        @click="triggerAIRecognition($event)">
+                                        <i class="ph ph-magic-wand"></i>
+                                        <span>AI智能分析</span>
+                                    </el-button>
+
+                                    <!-- 图片预览对话框 -->
+                                    <el-dialog v-model="dialogVisible" width="800px">
+                                        <img :src="dialogImageUrl" alt="预览图片" style="width: 100%;" />
+                                    </el-dialog>
+                                </div>
+                            </div>
+
+                            <!-- Row 8: 问题视频 - Element Plus Upload -->
+                            <div class="form-group full-width">
+                                <label>问题视频</label>
+                                <div class="video-upload-container" id="videoUploadApp">
+                                    <el-upload v-model:file-list="videoList" action="#" :auto-upload="false" :limit="5"
+                                        accept="video/mp4" :on-remove="handleVideoRemove" :on-change="handleVideoChange"
+                                        :on-exceed="handleVideoExceed" :before-upload="beforeVideoUpload">
+                                        <el-button type="primary">
+                                            <el-icon>
+                                                <VideoCamera />
+                                            </el-icon>
+                                            添加视频
+                                        </el-button>
+                                        <template #tip>
+                                            <div class="el-upload__tip">
+                                                支持 MP4 格式，最多 5 个，单个文件不超过 50MB
+                                            </div>
+                                        </template>
+                                        <template #file="{ file }">
+                                            <div class="video-file-item">
+                                                <el-icon class="video-icon">
+                                                    <VideoCamera />
+                                                </el-icon>
+                                                <span class="video-name">{{ file.name }}</span>
+                                                <span class="video-size">{{ formatSize(file.size) }}</span>
+                                                <el-icon class="video-remove" @click="handleVideoRemove(file)">
+                                                    <Close />
+                                                </el-icon>
+                                            </div>
+                                        </template>
+                                    </el-upload>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Actions -->
+                <footer class="bottom-bar">
+                    <button class="btn btn-default"><i class="ph ph-x-circle"></i> 关闭</button>
+                    <button class="btn btn-primary"><i class="ph ph-floppy-disk"></i> 保存</button>
+                    <button class="btn btn-primary"><i class="ph ph-paper-plane-right"></i> 提交</button>
+                </footer>
+            </main>
+
+            <!-- AI Assistant Sidebar -->
+            <aside class="ai-sidebar" id="aiSidebar">
+                <div class="ai-header">
+                    <!-- Title removed -->
+                    <div style="flex: 1;"></div> <!-- Spacer -->
+                    <div class="ai-controls">
+                        <i class="ph ph-chat-circle-plus" title="开始新对话"></i>
+                        <i class="ph ph-arrows-out-simple"></i>
+                        <i class="ph ph-x" onclick="toggleAI()"></i>
+                    </div>
+                </div>
+                <div class="ai-chat-body" id="aiChatBody">
+                    <!-- Initial Message -->
+                    <div class="chat-message ai">
+                        <!-- Avatar removed -->
+                        <div class="message-content">
+                            <p class="chat-text">您好，张三！我是您的安全生产AI助手，请向我提问吧</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Input Area -->
+                <div class="ai-input-area">
+                    <textarea placeholder="请输入您的问题..."></textarea>
+
+                    <!-- Controls Row: Toolbar Left, Actions Right -->
+                    <div class="input-controls-row">
+                        <div class="input-toolbar">
+                            <i class="ph ph-paperclip"></i>
+                            <i class="ph ph-image"></i>
+                        </div>
+                        <div class="input-actions">
+                            <i class="ph ph-microphone"></i>
+                            <button class="btn-send"><i class="ph ph-paper-plane-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Floating AI Icon -->
+            <div class="ai-floating-btn" onclick="toggleAI()">
+                <img src="../pic/AI助手@2x.svg" alt="AI" style="width:24px; height:24px;">
+            </div>
+
+            <!-- Modal for Auto-Identification -->
+            <div class="modal-overlay" id="aiModal" style="display: none;">
+                <div class="modal">
+                    <div class="modal-header">
+                        <span>AI智能识别</span>
+                        <i class="ph ph-x" onclick="closeModal()"></i>
+                    </div>
+                    <div class="modal-body">
+                        <p>已检测到用户上传<span id="photoCount">1</span>张照片，是否需要AI助手自动帮您识别照片内的隐患问题？</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default" onclick="closeModal()">取消</button>
+                        <button class="btn btn-primary" onclick="startRecognition()">AI识别</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/hidden_danger.js"></script>
+    <script>
+        // 页面导航函数
+        function navigateToPage(page) {
+            window.location.href = page;
+        }
+
+        // Element Plus Photo Wall 组件初始化
+        const { createApp, ref } = Vue;
+
+        const PhotoUploadApp = {
+            setup() {
+                const fileList = ref([]);
+                const dialogImageUrl = ref('');
+                const dialogVisible = ref(false);
+
+                // 预览图片
+                const handlePreview = (uploadFile) => {
+                    dialogImageUrl.value = uploadFile.url;
+                    dialogVisible.value = true;
+                };
+
+                // 删除图片
+                const handleRemove = (uploadFile, uploadFiles) => {
+                    console.log('删除图片:', uploadFile.name);
+                };
+
+                // 文件变化时触发AI识别弹窗
+                const handleChange = (uploadFile, uploadFiles) => {
+                    if (uploadFile.status === 'ready' && uploadFiles.length > 0) {
+                        // 显示AI识别弹窗
+                        setTimeout(() => {
+                            const photoCount = document.getElementById('photoCount');
+                            const aiModal = document.getElementById('aiModal');
+                            if (photoCount) photoCount.innerText = uploadFiles.length;
+                            if (aiModal) aiModal.style.display = 'flex';
+                        }, 300);
+                    }
+                };
+
+                // 超出数量限制
+                const handleExceed = (files, uploadFiles) => {
+                    ElementPlus.ElMessage.warning('最多只能上传 5 张图片');
+                };
+
+                // 触发AI识别
+                const triggerAIRecognition = (event) => {
+                    if (fileList.value.length === 0) {
+                        ElementPlus.ElMessage.warning('请先上传照片');
+                        return;
+                    }
+
+                    // 防止重复点击：检查是否正在分析中
+                    if (window.chatState && window.chatState.isAnalyzing) {
+                        ElementPlus.ElMessage.info('AI正在分析中，请稍候...');
+                        return;
+                    }
+
+                    // 触发粒子特效
+                    const btn = event?.target?.closest('.ai-recognize-btn') || document.querySelector('.ai-recognize-btn');
+                    if (btn && typeof createParticleEffect === 'function') {
+                        createParticleEffect(btn);
+                    }
+
+                    // 收集所有图片的URL
+                    const imageUrls = fileList.value.map(file => file.url || URL.createObjectURL(file.raw));
+
+                    // 打开AI助手侧边栏（仅当未打开时）
+                    const sidebar = document.getElementById('aiSidebar');
+                    if (sidebar && !sidebar.classList.contains('active')) {
+                        if (typeof toggleAI === 'function') {
+                            toggleAI();
+                        }
+                    }
+
+                    // 立即设置分析中标志，防止重复点击
+                    if (window.chatState) {
+                        window.chatState.isAnalyzing = true;
+                    }
+
+                    // 将图片发送到AI助手进行分析
+                    setTimeout(() => {
+                        // 存储图片到全局状态
+                        if (typeof window.chatState !== 'undefined') {
+                            window.chatState.pendingImages = imageUrls;
+                        }
+
+                        // 添加用户消息（显示图片）
+                        if (typeof addUserMessage === 'function') {
+                            addUserMessage('请帮我识别这些照片中的安全隐患', imageUrls, true);
+                        }
+
+                        // 模拟AI分析
+                        if (typeof simulateAIAnalysis === 'function') {
+                            simulateAIAnalysis();
+                        }
+                    }, 300);
+                };
+
+                return {
+                    fileList,
+                    dialogImageUrl,
+                    dialogVisible,
+                    handlePreview,
+                    handleRemove,
+                    handleChange,
+                    handleExceed,
+                    triggerAIRecognition
+                };
+            }
+        };
+
+        // 创建Vue应用并挂载
+        const app = createApp(PhotoUploadApp);
+        app.use(ElementPlus);
+
+        // 注册Element Plus图标
+        for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+            app.component(key, component);
+        }
+
+        app.mount('#photoUploadApp');
+    </script>
+
+    <script>
+        // Element Plus 视频上传组件初始化
+        const VideoUploadApp = {
+            setup() {
+                const videoList = Vue.ref([]);
+
+                // 格式化文件大小
+                const formatSize = (bytes) => {
+                    if (!bytes) return '0 B';
+                    const k = 1024;
+                    const sizes = ['B', 'KB', 'MB', 'GB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                };
+
+                // 上传前校验
+                const beforeVideoUpload = (file) => {
+                    const isMP4 = file.type === 'video/mp4';
+                    const isLt50M = file.size / 1024 / 1024 < 50;
+
+                    if (!isMP4) {
+                        ElementPlus.ElMessage.error('只能上传 MP4 格式的视频!');
+                        return false;
+                    }
+                    if (!isLt50M) {
+                        ElementPlus.ElMessage.error('视频大小不能超过 50MB!');
+                        return false;
+                    }
+                    return true;
+                };
+
+                // 删除视频
+                const handleVideoRemove = (file) => {
+                    const index = videoList.value.findIndex(f => f.uid === file.uid);
+                    if (index > -1) {
+                        videoList.value.splice(index, 1);
+                    }
+                    console.log('删除视频:', file.name);
+                };
+
+                // 文件变化
+                const handleVideoChange = (file, files) => {
+                    console.log('视频列表变化:', files.length);
+                };
+
+                // 超出数量限制
+                const handleVideoExceed = (files, uploadFiles) => {
+                    ElementPlus.ElMessage.warning('最多只能上传 5 个视频');
+                };
+
+                return {
+                    videoList,
+                    formatSize,
+                    beforeVideoUpload,
+                    handleVideoRemove,
+                    handleVideoChange,
+                    handleVideoExceed
+                };
+            }
+        };
+
+        // 创建视频上传Vue应用并挂载
+        const videoApp = Vue.createApp(VideoUploadApp);
+        videoApp.use(ElementPlus);
+
+        // 注册Element Plus图标
+        for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+            videoApp.component(key, component);
+        }
+
+        videoApp.mount('#videoUploadApp');
+    </script>
+</body>
+
+</html>
