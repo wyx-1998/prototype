@@ -1,0 +1,43 @@
+<!-- AI Assistant Component HTML Template -->
+<!-- 将此模板复制到您的页面中，放在 </body> 标签之前 -->
+
+<!-- AI 侧边栏 -->
+<aside class="ai-sidebar" id="aiSidebar">
+    <div class="ai-header">
+        <div style="flex: 1;"></div>
+        <div class="ai-controls">
+            <i class="ph ph-note-pencil" title="开始新对话"></i>
+            <i class="ph ph-arrows-out-simple"></i>
+            <i class="ph ph-x" onclick="toggleAI()"></i>
+        </div>
+    </div>
+    <div class="ai-chat-body" id="aiChatBody">
+        <!-- 初始消息 -->
+        <div class="chat-message ai">
+            <div class="message-content">
+                <p class="chat-text">您好，张三！我是您的安全生产AI助手，请向我提问吧</p>
+            </div>
+        </div>
+    </div>
+    <!-- 输入区域 -->
+    <div class="ai-input-area">
+        <textarea placeholder="请输入您的问题..."></textarea>
+
+        <!-- 控制行：工具栏左侧，操作按钮右侧 -->
+        <div class="input-controls-row">
+            <div class="input-toolbar">
+                <i class="ph ph-paperclip" title="上传文件"></i>
+                <i class="ph ph-plus" title="选择技能" id="skillsBtn"></i>
+            </div>
+            <div class="input-actions">
+                <i class="ph ph-microphone"></i>
+                <button class="btn-send"><i class="ph ph-paper-plane-right"></i></button>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- 浮动 AI 图标 -->
+<div class="ai-floating-btn" onclick="toggleAI()">
+    <img src="../pic/AI助手@2x.svg" alt="AI" style="width:24px; height:24px;">
+</div>

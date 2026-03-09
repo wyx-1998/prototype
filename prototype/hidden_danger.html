@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="css/style.css">
     <!-- Page specific styles -->
     <link rel="stylesheet" href="css/hidden_danger.css">
+    <!-- AI 助手组件样式 -->
+    <link rel="stylesheet" href="components/ai-assistant.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -273,10 +275,13 @@
             <!-- AI Assistant Sidebar -->
             <aside class="ai-sidebar" id="aiSidebar">
                 <div class="ai-header">
-                    <!-- Title removed -->
-                    <div style="flex: 1;"></div> <!-- Spacer -->
+                    <div class="ai-title-wrapper">
+                        <div class="ai-conversation-title" id="aiConversationTitle">新对话</div>
+                        <div class="ai-disclaimer" onclick="window.open('disclaimer.html', '_blank')">内容由AI生成 ></div>
+                    </div>
                     <div class="ai-controls">
-                        <i class="ph ph-chat-circle-plus" title="开始新对话"></i>
+                        <i class="ph ph-note-pencil" title="开始新对话"></i>
+                        <i class="ph ph-clock-counter-clockwise" title="历史对话"></i>
                         <i class="ph ph-arrows-out-simple"></i>
                         <i class="ph ph-x" onclick="toggleAI()"></i>
                     </div>
@@ -284,21 +289,59 @@
                 <div class="ai-chat-body" id="aiChatBody">
                     <!-- Initial Message -->
                     <div class="chat-message ai">
-                        <!-- Avatar removed -->
                         <div class="message-content">
                             <p class="chat-text">您好，张三！我是您的安全生产AI助手，请向我提问吧</p>
                         </div>
                     </div>
                 </div>
+
+                <!-- 历史对话面板 -->
+                <div class="history-panel" id="historyPanel">
+                    <div class="history-header">
+                        <i class="ph ph-arrow-left history-back-btn"></i>
+                        <span class="history-title">历史对话</span>
+                    </div>
+                    <div class="history-search">
+                        <input type="text" id="historySearch" placeholder="搜索对话...">
+                    </div>
+                    <div class="history-list" id="historyList">
+                        <!-- 历史对话列表将动态生成 -->
+                    </div>
+                </div>
+
                 <!-- Input Area -->
                 <div class="ai-input-area">
                     <textarea placeholder="请输入您的问题..."></textarea>
 
                     <!-- Controls Row: Toolbar Left, Actions Right -->
                     <div class="input-controls-row">
-                        <div class="input-toolbar">
-                            <i class="ph ph-paperclip"></i>
-                            <i class="ph ph-image"></i>
+                        <div class="input-toolbar" style="position: relative;">
+                            <i class="ph ph-paperclip" title="上传文件"></i>
+                            <i class="ph ph-squares-four" title="选择技能" id="skillsBtn"></i>
+
+                            <!-- Skills 技能选择面板 -->
+                            <div class="ai-skills-panel" id="aiSkillsPanel">
+                                <div class="skills-option" data-skill-id="hazard_analysis">
+                                    <i class="ph ph-warning"></i>
+                                    <span>隐患识别分析</span>
+                                </div>
+                                <div class="skills-option" data-skill-id="enterprise_certificate">
+                                    <i class="ph ph-building"></i>
+                                    <span>企业资质证照识别</span>
+                                </div>
+                                <div class="skills-option" data-skill-id="personnel_certificate">
+                                    <i class="ph ph-identification-card"></i>
+                                    <span>人员资质证照识别</span>
+                                </div>
+                                <div class="skills-option" data-skill-id="smart_qa">
+                                    <i class="ph ph-chats-circle"></i>
+                                    <span>智能问数</span>
+                                </div>
+                                <div class="skills-option" data-skill-id="courseware_generation">
+                                    <i class="ph ph-presentation"></i>
+                                    <span>课件生成</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="input-actions">
                             <i class="ph ph-microphone"></i>
@@ -312,6 +355,10 @@
             <div class="ai-floating-btn" onclick="toggleAI()">
                 <img src="../pic/AI助手@2x.svg" alt="AI" style="width:24px; height:24px;">
             </div>
+
+            <!-- 隐藏的文件上传input -->
+            <input type="file" id="aiFileInput" style="display: none;"
+                accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.doc,.docx,.xls,.xlsx,.pdf,.txt,.csv" multiple>
 
             <!-- Modal for Auto-Identification -->
             <div class="modal-overlay" id="aiModal" style="display: none;">
@@ -331,6 +378,64 @@
             </div>
         </div>
     </div>
+
+    <!-- AI 助手组件脚本 -->
+    <script src="components/ai-assistant.js?v=20260306"></script>
+
+    <!-- 初始化 AI 助手 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 初始化 AI 助手组件
+            AIAssistant.init({
+                userName: '张三',
+                welcomeMessage: '您好，{userName}！我是您的安全生产AI助手，请向我提问吧',
+                onAnalysisComplete: function (results) {
+                    console.log('AI 分析完成，共识别出', results.length, '个隐患');
+                },
+                onInsertToForm: function (selectedResults) {
+                    // 将分析结果插入到表单中
+                    console.log('选中的分析结果：', selectedResults);
+
+                    if (selectedResults.length === 0) {
+                        ElementPlus.ElMessage.warning('请先选择要插入的隐患分析结果');
+                        return;
+                    }
+
+                    // 收集选中的内容
+                    const descriptions = [];
+                    const measures = [];
+
+                    selectedResults.forEach(result => {
+                        descriptions.push(`【${result.name}】${result.description}`);
+                        measures.push(`【${result.name}】${result.measure || result.suggestion}`);
+                    });
+
+                    // 获取表单字段
+                    const descTextarea = document.querySelector('.form-group.full-width .textarea-wrapper textarea');
+                    const measureTextarea = document.querySelectorAll('.form-group.full-width .textarea-wrapper textarea')[1];
+
+                    // 插入内容
+                    if (descTextarea) {
+                        descTextarea.value = descriptions.join('\n\n');
+                        // 更新字数统计
+                        const charCount = descTextarea.parentElement.querySelector('.char-count');
+                        if (charCount) charCount.textContent = `${descTextarea.value.length}/200`;
+                    }
+
+                    if (measureTextarea) {
+                        measureTextarea.value = measures.join('\n\n');
+                        // 更新字数统计
+                        const charCount = measureTextarea.parentElement.querySelector('.char-count');
+                        if (charCount) charCount.textContent = `${measureTextarea.value.length}/200`;
+                    }
+
+                    ElementPlus.ElMessage.success('已成功插入到问题登记表');
+                }
+            });
+        });
+    </script>
+
+    <!-- 页面特定功能脚本 -->
     <script src="js/hidden_danger.js"></script>
     <script>
         // 页面导航函数
@@ -384,7 +489,7 @@
                     }
 
                     // 防止重复点击：检查是否正在分析中
-                    if (window.chatState && window.chatState.isAnalyzing) {
+                    if (AIAssistant && AIAssistant.state.isAnalyzing) {
                         ElementPlus.ElMessage.info('AI正在分析中，请稍候...');
                         return;
                     }
@@ -401,31 +506,21 @@
                     // 打开AI助手侧边栏（仅当未打开时）
                     const sidebar = document.getElementById('aiSidebar');
                     if (sidebar && !sidebar.classList.contains('active')) {
-                        if (typeof toggleAI === 'function') {
-                            toggleAI();
+                        if (typeof AIAssistant.toggleAI === 'function') {
+                            AIAssistant.toggleAI();
                         }
-                    }
-
-                    // 立即设置分析中标志，防止重复点击
-                    if (window.chatState) {
-                        window.chatState.isAnalyzing = true;
                     }
 
                     // 将图片发送到AI助手进行分析
                     setTimeout(() => {
-                        // 存储图片到全局状态
-                        if (typeof window.chatState !== 'undefined') {
-                            window.chatState.pendingImages = imageUrls;
-                        }
-
-                        // 添加用户消息（显示图片）
-                        if (typeof addUserMessage === 'function') {
-                            addUserMessage('请帮我识别这些照片中的安全隐患', imageUrls, true);
+                        // 添加用户消息（显示图片）并触发AI分析
+                        if (typeof AIAssistant.addUserMessage === 'function') {
+                            AIAssistant.addUserMessage('请帮我识别这些照片中的安全隐患', imageUrls, true);
                         }
 
                         // 模拟AI分析
-                        if (typeof simulateAIAnalysis === 'function') {
-                            simulateAIAnalysis();
+                        if (typeof AIAssistant.simulateAIAnalysis === 'function') {
+                            AIAssistant.simulateAIAnalysis();
                         }
                     }, 300);
                 };
