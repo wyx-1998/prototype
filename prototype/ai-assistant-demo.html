@@ -316,25 +316,9 @@
 
                         <!-- Skills 技能选择面板 -->
                         <div class="ai-skills-panel" id="aiSkillsPanel">
-                            <div class="skills-option" data-skill-id="hazard_analysis">
-                                <i class="ph ph-warning"></i>
-                                <span>隐患识别分析</span>
-                            </div>
-                            <div class="skills-option" data-skill-id="enterprise_certificate">
-                                <i class="ph ph-building"></i>
-                                <span>企业资质证照识别</span>
-                            </div>
-                            <div class="skills-option" data-skill-id="personnel_certificate">
-                                <i class="ph ph-identification-card"></i>
-                                <span>人员资质证照识别</span>
-                            </div>
-                            <div class="skills-option" data-skill-id="smart_qa">
-                                <i class="ph ph-chats-circle"></i>
-                                <span>智能问数</span>
-                            </div>
-                            <div class="skills-option" data-skill-id="courseware_generation">
-                                <i class="ph ph-presentation"></i>
-                                <span>课件生成</span>
+                            <div class="skills-panel-options" id="skillsPanelOptions"></div>
+                            <div class="skills-panel-footer">
+                                <button class="skills-manage-btn" onclick="openSkillsManageModal(); event.stopPropagation();">管理</button>
                             </div>
                         </div>
                     </div>
@@ -354,6 +338,55 @@
         <!-- 隐藏的文件上传input -->
         <input type="file" id="aiFileInput" style="display: none;"
             accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.doc,.docx,.xls,.xlsx,.pdf,.txt,.csv" multiple>
+
+        <!-- 技能管理弹窗 -->
+        <div class="skills-manage-overlay" id="skillsManageOverlay" onclick="closeSkillsManageModal(event)">
+            <div class="skills-manage-modal" onclick="event.stopPropagation()">
+                <div class="skills-manage-modal-header">
+                    <span class="skills-manage-modal-title">技能管理</span>
+                    <i class="ph ph-x skills-manage-modal-close" onclick="closeSkillsManageModal(null, true)"></i>
+                </div>
+                <div class="skills-manage-modal-body">
+                    <div class="skills-manage-toolbar">
+                        <div class="skills-manage-search">
+                            <i class="ph ph-magnifying-glass"></i>
+                            <input type="text" id="skillsManageSearch" placeholder="搜索技能名称 / 技能包 / 关键词">
+                        </div>
+                        <div class="skills-manage-filters">
+                            <select id="skillsManageEnabledFilter">
+                                <option value="all">全部状态</option>
+                                <option value="enabled">仅启用</option>
+                                <option value="disabled">仅停用</option>
+                            </select>
+                            <select id="skillsManageTypeFilter">
+                                <option value="all">全部类型</option>
+                                <option value="system">系统内置</option>
+                                <option value="custom">自定义</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="skills-manage-layout">
+                        <div class="skills-manage-list-panel">
+                            <div class="skills-manage-list-header">
+                                <span>技能清单</span>
+                                <span class="skills-manage-count" id="skillsManageCount">0 个技能</span>
+                            </div>
+                            <div class="skills-manage-list" id="skillsManageList"></div>
+                        </div>
+                        <div class="skills-manage-detail-panel">
+                            <div class="skills-manage-detail-header">
+                                <span>技能详情</span>
+                            </div>
+                            <div class="skills-manage-detail" id="skillsManageDetail"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="skills-manage-modal-footer">
+                    <button class="skills-manage-footer-btn secondary" onclick="closeSkillsManageModal(null, true)">关闭</button>
+                    <button class="skills-manage-footer-btn primary" onclick="AIAssistant.saveSkillsManagement()">保存</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- AI 助手组件脚本 -->
@@ -425,6 +458,24 @@
                 AIAssistant.simulateCoursewareGeneration();
             }, 500);
         }
+
+        function toggleAI(forceState) {
+            AIAssistant.toggleAI(forceState);
+        }
+
+        function openSkillsManageModal() {
+            AIAssistant.openSkillsManageModal();
+        }
+
+        function closeSkillsManageModal(event, force) {
+            AIAssistant.closeSkillsManageModal(event, force);
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                AIAssistant.closeSkillsManageModal(null, true);
+            }
+        });
     </script>
 </body>
 

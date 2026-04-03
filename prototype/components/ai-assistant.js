@@ -25,30 +25,96 @@
             isAnalyzing: false,
             analysisResults: [],
             selectedSkill: null, // 当前选中的技能
+            selectedManageSkill: null, // 技能管理弹窗中当前选中的技能
+            skillsSearch: '',
+            skillsEnabledFilter: 'all',
+            skillsTypeFilter: 'all',
+            skillsManageDraft: null,
             audioPlaying: {}, // 记录正在播放的音频状态 {msgId: utterance}
             currentConversationId: null, // 当前对话ID
             conversations: [] // 所有对话列表
         },
 
-        // 技能名称映射
-        skillNames: {
-            'hazard_analysis': '隐患识别分析',
-            'enterprise_certificate': '企业资质证照识别',
-            'personnel_certificate': '人员资质证照识别',
-            'smart_qa': '智能问数',
-            'courseware_generation': '课件生成'
-        },
+        // 技能数据
+        skills: [
+            {
+                id: 'hazard_analysis',
+                name: '隐患识别分析',
+                packageName: '安全巡检技能包',
+                description: '识别现场图片中的安全隐患，输出问题描述、整改措施与法规依据。',
+                enabled: true,
+                keywords: '隐患, 风险, 现场, 图片分析',
+                confidence: 92,
+                renderMode: '普通卡片',
+                skillType: '系统内置',
+                icon: 'ph-warning'
+            },
+            {
+                id: 'enterprise_certificate',
+                name: '企业资质证照识别',
+                packageName: '企业证照技能包',
+                description: '识别企业营业执照、安全生产许可证等资质证照信息。',
+                enabled: true,
+                keywords: '企业, 营业执照, 安全生产许可证',
+                confidence: 95,
+                renderMode: '普通',
+                skillType: '系统内置',
+                icon: 'ph-building'
+            },
+            {
+                id: 'personnel_certificate',
+                name: '人员资质证照识别',
+                packageName: '人员证照技能包',
+                description: '识别特种作业人员、从业人员相关资质证照与有效期信息。',
+                enabled: true,
+                keywords: '人员, 特种作业, 上岗证, 证照',
+                confidence: 90,
+                renderMode: '普通卡片',
+                skillType: '系统内置',
+                icon: 'ph-identification-card'
+            },
+            {
+                id: 'smart_qa',
+                name: '智能问数',
+                packageName: '智能分析技能包',
+                description: '基于业务数据和知识库进行问答与指标查询。',
+                enabled: true,
+                keywords: '问数, 统计, 指标, 数据问答',
+                confidence: 88,
+                renderMode: '普通',
+                skillType: '自定义',
+                icon: 'ph-chats-circle'
+            },
+            {
+                id: 'courseware_generation',
+                name: '课件生成',
+                packageName: '培训内容技能包',
+                description: '根据主题快速生成培训课件大纲与内容结构。',
+                enabled: true,
+                keywords: '培训, 课件, 大纲, 生成',
+                confidence: 85,
+                renderMode: '大纲',
+                skillType: '自定义',
+                icon: 'ph-presentation'
+            }
+        ],
 
         // 初始化函数
         init: function (options) {
             // 合并配置
             Object.assign(this.config, options || {});
 
+            this.state.selectedManageSkill = this.skills[0] ? this.skills[0].id : null;
+
             // 加载历史对话
             this.loadConversations();
 
             // 绑定事件
             this.bindEvents();
+
+            // 初始化技能相关 UI
+            this.renderSkillsPanel();
+            this.renderSkillsManageModal();
 
             // 设置欢迎语
             this.setWelcomeMessage();
@@ -96,6 +162,30 @@
                 skillsBtn.style.cursor = 'pointer';
             }
 
+            const skillsManageSearch = document.getElementById('skillsManageSearch');
+            if (skillsManageSearch) {
+                skillsManageSearch.addEventListener('input', function (e) {
+                    self.state.skillsSearch = e.target.value.trim();
+                    self.renderSkillsManageList();
+                });
+            }
+
+            const skillsManageEnabledFilter = document.getElementById('skillsManageEnabledFilter');
+            if (skillsManageEnabledFilter) {
+                skillsManageEnabledFilter.addEventListener('change', function (e) {
+                    self.state.skillsEnabledFilter = e.target.value;
+                    self.renderSkillsManageList();
+                });
+            }
+
+            const skillsManageTypeFilter = document.getElementById('skillsManageTypeFilter');
+            if (skillsManageTypeFilter) {
+                skillsManageTypeFilter.addEventListener('change', function (e) {
+                    self.state.skillsTypeFilter = e.target.value;
+                    self.renderSkillsManageList();
+                });
+            }
+
             // 新对话按钮（编辑图标）
             const newChatBtn = document.querySelector('.ai-controls .ph-note-pencil');
             if (newChatBtn) {
@@ -122,12 +212,6 @@
             if (chatBody) {
                 chatBody.onscroll = function () { self.handleChatScroll(); };
             }
-
-            // Skills 面板选项绑定
-            const skillsOptions = document.querySelectorAll('.skills-option');
-            skillsOptions.forEach(option => {
-                option.onclick = function () { self.selectSkill(this.dataset.skillId); };
-            });
 
             // 点击其他区域关闭 skills 面板
             document.addEventListener('click', function (e) {
@@ -296,9 +380,9 @@
                 contentHTML += '<div class="user-text-bubble">';
 
                 // 如果有技能标签，在文本左侧显示
-                if (skillId && this.skillNames[skillId]) {
-                    const skillName = this.skillNames[skillId];
-                    contentHTML += `<span class="skill-tag-message">${skillName}</span>`;
+                const selectedSkill = skillId ? this.getSkillById(skillId) : null;
+                if (selectedSkill) {
+                    contentHTML += `<span class="skill-tag-message">${selectedSkill.name}</span>`;
                 } else if (isHazardRequest) {
                     // 保留原有的隐患识别逻辑作为后备
                     contentHTML += '<span class="skill-tag">隐患识别</span> ';
@@ -946,9 +1030,240 @@
         },
 
         // ==================== Skills 技能选择 ====================
+        getSkillById: function (skillId) {
+            return this.skills.find(skill => skill.id === skillId) || null;
+        },
+
+        getManageSkillsSource: function () {
+            return this.state.skillsManageDraft || this.skills;
+        },
+
+        getManageSkillById: function (skillId) {
+            return this.getManageSkillsSource().find(skill => skill.id === skillId) || null;
+        },
+
+        getFilteredSkills: function () {
+            const keyword = this.state.skillsSearch.toLowerCase();
+            const skillsSource = this.getManageSkillsSource();
+
+            return skillsSource.filter(skill => {
+                const matchesKeyword = !keyword || [skill.name, skill.packageName, skill.keywords]
+                    .join(' ')
+                    .toLowerCase()
+                    .includes(keyword);
+                const matchesEnabled = this.state.skillsEnabledFilter === 'all'
+                    || (this.state.skillsEnabledFilter === 'enabled' && skill.enabled)
+                    || (this.state.skillsEnabledFilter === 'disabled' && !skill.enabled);
+                const typeValue = skill.skillType === '系统内置' ? 'system' : 'custom';
+                const matchesType = this.state.skillsTypeFilter === 'all' || this.state.skillsTypeFilter === typeValue;
+                return matchesKeyword && matchesEnabled && matchesType;
+            });
+        },
+
+        renderSkillsPanel: function () {
+            const container = document.getElementById('skillsPanelOptions');
+            if (!container) return;
+
+            const enabledSkills = this.skills.filter(skill => skill.enabled);
+            container.innerHTML = enabledSkills.map(skill => `
+                <div class="skills-option${this.state.selectedSkill === skill.id ? ' selected' : ''}" data-skill-id="${skill.id}">
+                    <i class="ph ${skill.icon}"></i>
+                    <span>${skill.name}</span>
+                </div>
+            `).join('');
+
+            const self = this;
+            container.querySelectorAll('.skills-option').forEach(option => {
+                option.onclick = function () {
+                    self.selectSkill(this.dataset.skillId);
+                };
+            });
+        },
+
+        renderSkillsManageModal: function () {
+            this.renderSkillsManageList();
+            this.renderSkillsManageDetail();
+        },
+
+        renderSkillsManageList: function () {
+            const list = document.getElementById('skillsManageList');
+            const count = document.getElementById('skillsManageCount');
+            if (!list || !count) return;
+
+            const filteredSkills = this.getFilteredSkills();
+            if (!filteredSkills.length) {
+                this.state.selectedManageSkill = null;
+                list.innerHTML = '<div class="skills-manage-empty">未找到匹配的技能</div>';
+                count.textContent = '0 个技能';
+                this.renderSkillsManageDetail();
+                return;
+            }
+
+            if (!filteredSkills.some(skill => skill.id === this.state.selectedManageSkill)) {
+                this.state.selectedManageSkill = filteredSkills[0].id;
+            }
+
+            count.textContent = `${filteredSkills.length} 个技能`;
+            list.innerHTML = filteredSkills.map(skill => `
+                <button class="skills-manage-list-item${skill.id === this.state.selectedManageSkill ? ' active' : ''}" onclick="AIAssistant.selectManageSkill('${skill.id}')">
+                    <div class="skills-manage-list-item-main">
+                        <div class="skills-manage-list-title-row">
+                            <span class="skills-manage-list-title">${skill.name}</span>
+                            <span class="skills-manage-list-status ${skill.enabled ? 'enabled' : 'disabled'}">${skill.enabled ? '已启用' : '已停用'}</span>
+                        </div>
+                        <div class="skills-manage-list-meta">${skill.packageName} · ${skill.skillType}</div>
+                    </div>
+                </button>
+            `).join('');
+
+            this.renderSkillsManageDetail();
+        },
+
+        renderSkillsManageDetail: function () {
+            const detail = document.getElementById('skillsManageDetail');
+            if (!detail) return;
+
+            const skill = this.getManageSkillById(this.state.selectedManageSkill);
+            if (!skill) {
+                detail.innerHTML = '<div class="skills-manage-empty">请选择左侧技能查看详情</div>';
+                return;
+            }
+
+            detail.innerHTML = `
+                <div class="skills-manage-section">
+                    <div class="skills-manage-section-title">基本信息</div>
+                    <div class="skills-manage-form-grid">
+                        <label class="skills-manage-field">
+                            <span>技能名称</span>
+                            <input type="text" value="${this.escapeHtml(skill.name)}" oninput="AIAssistant.updateManageSkillField('name', this.value)">
+                        </label>
+                        <label class="skills-manage-field">
+                            <span>技能包名称</span>
+                            <input type="text" value="${this.escapeHtml(skill.packageName)}" oninput="AIAssistant.updateManageSkillField('packageName', this.value)">
+                        </label>
+                        <label class="skills-manage-field skills-manage-field-full">
+                            <span>技能说明</span>
+                            <textarea rows="4" oninput="AIAssistant.updateManageSkillField('description', this.value)">${this.escapeHtml(skill.description)}</textarea>
+                        </label>
+                        <label class="skills-manage-field">
+                            <span>技能类型</span>
+                            <select onchange="AIAssistant.updateManageSkillField('skillType', this.value)">
+                                <option value="系统内置"${skill.skillType === '系统内置' ? ' selected' : ''}>系统内置</option>
+                                <option value="自定义"${skill.skillType === '自定义' ? ' selected' : ''}>自定义</option>
+                            </select>
+                        </label>
+                        <label class="skills-manage-field">
+                            <span>是否启用</span>
+                            <div class="skills-manage-switch-row">
+                                <label class="skills-manage-switch">
+                                    <input type="checkbox" ${skill.enabled ? 'checked' : ''} onchange="AIAssistant.updateManageSkillField('enabled', this.checked)">
+                                    <span class="skills-manage-switch-slider"></span>
+                                </label>
+                                <span class="skills-manage-switch-text">${skill.enabled ? '启用中' : '已停用'}</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="skills-manage-section">
+                    <div class="skills-manage-section-title">运行配置</div>
+                    <div class="skills-manage-form-grid">
+                        <label class="skills-manage-field skills-manage-field-full">
+                            <span>匹配关键词</span>
+                            <input type="text" value="${this.escapeHtml(skill.keywords)}" placeholder="多个关键词用逗号分隔" oninput="AIAssistant.updateManageSkillField('keywords', this.value)">
+                        </label>
+                        <label class="skills-manage-field">
+                            <span>置信度</span>
+                            <div class="skills-manage-confidence-row">
+                                <input type="range" min="0" max="100" value="${skill.confidence}" oninput="AIAssistant.updateManageSkillField('confidence', Number(this.value), true)">
+                                <input type="number" min="0" max="100" value="${skill.confidence}" oninput="AIAssistant.updateManageSkillField('confidence', Number(this.value), true)">
+                                <span>%</span>
+                            </div>
+                        </label>
+                        <label class="skills-manage-field">
+                            <span>渲染指令</span>
+                            <select onchange="AIAssistant.updateManageSkillField('renderMode', this.value)">
+                                <option value="普通"${skill.renderMode === '普通' ? ' selected' : ''}>普通</option>
+                                <option value="普通卡片"${skill.renderMode === '普通卡片' ? ' selected' : ''}>普通卡片</option>
+                                <option value="特殊卡片"${skill.renderMode === '特殊卡片' ? ' selected' : ''}>特殊卡片</option>
+                                <option value="大纲"${skill.renderMode === '大纲' ? ' selected' : ''}>大纲</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+            `;
+        },
+
+        selectManageSkill: function (skillId) {
+            this.state.selectedManageSkill = skillId;
+            this.renderSkillsManageList();
+        },
+
+        updateManageSkillField: function (field, value, clampNumber) {
+            const skill = this.getManageSkillById(this.state.selectedManageSkill);
+            if (!skill) return;
+
+            if (clampNumber) {
+                const numericValue = Number.isNaN(Number(value)) ? 0 : Number(value);
+                skill[field] = Math.max(0, Math.min(100, numericValue));
+            } else {
+                skill[field] = value;
+            }
+        },
+
+        saveSkillsManagement: function () {
+            if (this.state.skillsManageDraft) {
+                this.skills = this.state.skillsManageDraft.map(skill => ({ ...skill }));
+            }
+
+            const selectedSkill = this.getSkillById(this.state.selectedSkill);
+            if (selectedSkill && !selectedSkill.enabled) {
+                this.state.selectedSkill = null;
+            }
+
+            this.state.skillsManageDraft = null;
+            this.renderSkillsPanel();
+            this.updateSkillTag();
+            this.closeSkillsManageModal(null, true, true);
+        },
+
+        openSkillsManageModal: function () {
+            const skillsPanel = document.getElementById('aiSkillsPanel');
+            if (skillsPanel) {
+                skillsPanel.classList.remove('active');
+            }
+
+            this.state.skillsManageDraft = this.skills.map(skill => ({ ...skill }));
+            const filteredSkills = this.getFilteredSkills();
+            this.state.selectedManageSkill = this.state.selectedSkill && filteredSkills.some(skill => skill.id === this.state.selectedSkill)
+                ? this.state.selectedSkill
+                : (filteredSkills[0] ? filteredSkills[0].id : null);
+
+            this.renderSkillsManageModal();
+            const overlay = document.getElementById('skillsManageOverlay');
+            if (overlay) {
+                overlay.classList.add('active');
+            }
+        },
+
+        closeSkillsManageModal: function (event, force, keepDraft) {
+            const overlay = document.getElementById('skillsManageOverlay');
+            if (!overlay) return;
+
+            if (force || (event && event.target === overlay)) {
+                overlay.classList.remove('active');
+                if (!keepDraft) {
+                    this.state.skillsManageDraft = null;
+                }
+            }
+        },
+
         toggleSkillsPanel: function () {
             const panel = document.getElementById('aiSkillsPanel');
             if (panel) {
+                const enabledSkills = this.skills.filter(skill => skill.enabled);
+                if (!enabledSkills.length) return;
+
+                this.renderSkillsPanel();
                 const isActive = panel.classList.toggle('active');
                 if (isActive) {
                     // 动态计算面板位置（固定定位，避免被 overflow:hidden 裁剪）
@@ -964,69 +1279,54 @@
         },
 
         selectSkill: function (skillId) {
-            const self = this;
+            const skill = this.getSkillById(skillId);
+            if (!skill || !skill.enabled) return;
 
-            // 更新面板选中状态（单选）
-            const options = document.querySelectorAll('.skills-option');
-            options.forEach(opt => opt.classList.remove('selected'));
-
-            const selectedOption = document.querySelector(`.skills-option[data-skill-id="${skillId}"]`);
-            if (selectedOption) {
-                selectedOption.classList.add('selected');
-            }
-
-            // 更新状态
             this.state.selectedSkill = skillId;
-
-            // 在输入框上方显示标签
             this.updateSkillTag();
 
-            // 关闭面板
             const panel = document.getElementById('aiSkillsPanel');
             if (panel) {
                 panel.classList.remove('active');
             }
+
+            this.renderSkillsPanel();
         },
 
         updateSkillTag: function () {
             const toolbar = document.querySelector('.input-toolbar');
-            const skillsBtn = document.getElementById('skillsBtn'); // The plus button
+            const skillsBtn = document.getElementById('skillsBtn');
 
             if (!toolbar || !skillsBtn) return;
 
-            // 移除旧标签
             let existingTag = toolbar.querySelector('.skill-tag-common');
             if (existingTag) {
                 existingTag.remove();
             }
 
-            // 如果有选中的技能
-            if (this.state.selectedSkill) {
-                // 隐藏加号按钮
+            const selectedSkill = this.getSkillById(this.state.selectedSkill);
+
+            if (selectedSkill && selectedSkill.enabled) {
                 skillsBtn.style.display = 'none';
 
-                // 创建新标签
-                const skillName = this.skillNames[this.state.selectedSkill];
                 const tag = document.createElement('div');
                 tag.className = 'skill-tag-common';
                 tag.innerHTML = `
-                    <span>${skillName}</span>
+                    <span>${selectedSkill.name}</span>
                     <i class="ph ph-x" onclick="event.stopPropagation(); AIAssistant.removeSkillTag()"></i>
                 `;
 
-                // 插入到加号按钮的位置（或者之后，因为加号隐藏了，视觉上是替换）
                 toolbar.insertBefore(tag, skillsBtn.nextSibling);
 
-                // 确保Skills面板关闭
                 const panel = document.getElementById('aiSkillsPanel');
                 if (panel) panel.classList.remove('active');
-
             } else {
-                // 没有选中技能，显示加号按钮
+                if (selectedSkill && !selectedSkill.enabled) {
+                    this.state.selectedSkill = null;
+                }
                 skillsBtn.style.display = 'block';
             }
 
-            // 旧逻辑清除
             const inputArea = document.querySelector('.ai-input-area');
             let oldTagsContainer = inputArea.querySelector('.skill-tags-container');
             if (oldTagsContainer) {
@@ -1037,10 +1337,7 @@
         removeSkillTag: function () {
             this.state.selectedSkill = null;
             this.updateSkillTag();
-
-            // 移除面板中的选中状态
-            const options = document.querySelectorAll('.skills-option');
-            options.forEach(opt => opt.classList.remove('selected'));
+            this.renderSkillsPanel();
         },
 
         // ==================== AI 分析 ====================
@@ -2069,6 +2366,15 @@
             const hours = String(date.getHours()).padStart(2, '0');
             const minutes = String(date.getMinutes()).padStart(2, '0');
             return `${year}-${month}-${day} ${hours}:${minutes}`;
+        },
+
+        escapeHtml: function (value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         },
 
         // 更新对话标题显示
