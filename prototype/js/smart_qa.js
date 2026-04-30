@@ -107,18 +107,6 @@
                     </div>
                 </section>
 
-                <section class="smart-qa-demo-hint-card">
-                    <div class="hint-header">
-                        <i class="ph ph-lightbulb"></i>
-                        <span>建议演示提问</span>
-                    </div>
-                    <div class="hint-list">
-                        <div class="hint-item">有限空间作业前，现场安全确认要看哪些关键项？</div>
-                        <div class="hint-item">外委动火作业发现监护不到位，现场第一步应该怎么处理？</div>
-                        <div class="hint-item">高处作业安全带佩戴有哪些强制要求？</div>
-                        <div class="hint-item">某类作业票审批不完整，是否允许开工？</div>
-                    </div>
-                </section>
             </div>
         </div>
     `;

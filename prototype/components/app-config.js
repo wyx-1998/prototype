@@ -13,9 +13,19 @@
             contentAreaClass: ''
         },
         {
+            id: 'workbench_home',
+            path: 'workbench_home.html',
+            label: '工作台首页',
+            icon: 'ph-house',
+            sceneId: 'workbench_push',
+            moduleName: 'WorkbenchHomePage',
+            tabTitle: '工作台首页',
+            contentAreaClass: 'workbench-home-content-area'
+        },
+        {
             id: 'hidden_danger',
             path: 'hidden_danger.html',
-            label: '随手拍ai识别',
+            label: '智能隐患分析',
             icon: 'ph-camera',
             sceneId: 'hidden_danger',
             moduleName: 'HiddenDangerPage',
@@ -25,8 +35,8 @@
         {
             id: 'certificate_recognition',
             path: 'certificate_recognition.html',
-            label: '相关方证照识别',
-            icon: 'ph-id-card',
+            label: '辅助填报',
+            icon: 'ph-identification-card',
             sceneId: 'certificate_recognition',
             moduleName: 'CertificateRecognitionPage',
             tabTitle: '项目资质',
@@ -43,39 +53,61 @@
             contentAreaClass: 'smart-qa-content-area'
         },
         {
-            id: 'hidden_danger_list',
-            path: '隐患列表.html',
-            label: '隐患列表',
-            icon: 'ph-list-bullets',
-            sceneId: 'intelligent_report',
-            moduleName: 'HiddenDangerListPage',
-            tabTitle: '隐患治理',
-            contentAreaClass: 'hidden-danger-list-content-area'
-        },
-        {
-            id: 'workbench_home',
-            path: 'workbench_home.html',
-            label: '工作台首页',
-            icon: 'ph-house',
-            sceneId: 'workbench_push',
-            moduleName: 'WorkbenchHomePage',
-            tabTitle: '工作台首页',
-            contentAreaClass: 'workbench-home-content-area'
-        },
-        {
             id: 'intelligent_report',
             path: '智能问数与报告生成.html',
             label: '智能问数与报告生成',
             icon: 'ph-chart-line-up',
             sceneId: 'intelligent_report',
-            moduleName: 'IntelligentReportPage',
+            moduleName: 'HiddenDangerListPage',
             tabTitle: '智能问数与报告生成',
+            contentAreaClass: 'hidden-danger-list-content-area'
+        },
+        {
+            id: 'intelligent_inspection',
+            path: 'intelligent_inspection.html',
+            label: '智能巡检',
+            icon: 'ph-binoculars',
+            sceneId: 'intelligent_inspection',
+            moduleName: 'IntelligentInspectionPage',
+            tabTitle: '智能巡检',
+            contentAreaClass: 'smart-qa-content-area'
+        },
+        {
+            id: 'intelligent_inspection_report',
+            path: 'intelligent_inspection_report.html',
+            label: '智能巡检报告',
+            icon: 'ph-file-text',
+            sceneId: 'intelligent_inspection',
+            moduleName: 'IntelligentInspectionPage',
+            tabTitle: '智能巡检报告',
+            hiddenInSidebar: true,
+            contentAreaClass: 'smart-qa-content-area'
+        },
+        {
+            id: 'legal_regulation_library',
+            path: '法律法规标准库.html',
+            label: '文件解读',
+            icon: 'ph-scales',
+            sceneId: 'standard_file_interpretation',
+            moduleName: 'LegalRegulationLibraryPage',
+            tabTitle: '法律法规标准库',
+            contentAreaClass: 'legal-regulation-library-content-area'
+        },
+        {
+            id: 'standard_file_interpretation',
+            path: 'standard_file_interpretation.html',
+            label: '标准文件解读',
+            icon: 'ph-file-text',
+            sceneId: 'standard_file_interpretation',
+            moduleName: 'StandardFileInterpretationPage',
+            tabTitle: '标准文件解读',
+            hiddenInSidebar: true,
             contentAreaClass: 'smart-qa-content-area'
         },
         {
             id: 'emergency_plan_generation',
             path: '应急预案生成.html',
-            label: '应急预案生成',
+            label: '智能应急预案',
             icon: 'ph-siren',
             sceneId: 'emergency_plan_generation',
             moduleName: 'EmergencyPlanGenerationPage',
@@ -83,14 +115,15 @@
             contentAreaClass: 'smart-qa-content-area'
         },
         {
-            id: 'legal_regulation_library',
-            path: '法律法规标准库.html',
-            label: '法律法规标准库',
-            icon: 'ph-scales',
-            sceneId: 'standard_file_interpretation',
-            moduleName: 'LegalRegulationLibraryPage',
-            tabTitle: '法律法规标准库',
-            contentAreaClass: 'legal-regulation-library-content-area'
+            id: 'hidden_danger_list',
+            path: '隐患列表.html',
+            label: '隐患列表',
+            icon: 'ph-list-bullets',
+            sceneId: 'intelligent_report',
+            moduleName: 'HiddenDangerListPage',
+            tabTitle: '隐患治理',
+            hiddenInSidebar: true,
+            contentAreaClass: 'hidden-danger-list-content-area'
         },
         {
             id: 'legal_regulation_library_detail',
@@ -102,16 +135,6 @@
             tabTitle: '法律法规标准库新建',
             hiddenInSidebar: true,
             contentAreaClass: 'legal-regulation-library-content-area'
-        },
-        {
-            id: 'standard_file_interpretation',
-            path: 'standard_file_interpretation.html',
-            label: '标准文件解读',
-            icon: 'ph-file-text',
-            sceneId: 'standard_file_interpretation',
-            moduleName: 'StandardFileInterpretationPage',
-            tabTitle: '标准文件解读',
-            contentAreaClass: 'smart-qa-content-area'
         }
     ];
 

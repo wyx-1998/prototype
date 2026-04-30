@@ -1,5 +1,5 @@
 (function () {
-    const interpretationResultUrl = '../cailiao/安全标准解读样例/7fc39e3f_GB_T+33579-2017.html';
+    const interpretationResultUrl = 'standard_file_interpretation_report.html';
     const interpretationMessageName = 'GBT+33579-2017';
     const cleanupFns = [];
     const timerIds = [];
@@ -176,6 +176,7 @@
                                     <button class="library-expand-btn" type="button">展开 <i class="ph ph-caret-down"></i></button>
                                 </div>
                             </div>
+
 
                             <div class="legal-library-table-wrap">
                                 <table class="legal-library-table">
@@ -362,7 +363,7 @@
                     <button class="legal-library-toast-close" type="button" aria-label="关闭提醒"><i class="ph ph-x"></i></button>
                     <div class="legal-library-toast-head">
                         <div class="legal-library-toast-icon"><i class="ph-fill ph-file-text"></i></div>
-                        <div class="legal-library-toast-title">待办任务</div>
+                        <div class="legal-library-toast-title">文件解读</div>
                     </div>
                     <div class="legal-library-toast-text">${interpretationMessageName}文件已解读完毕，请查看解读详情。</div>
                     <div class="legal-library-toast-actions">

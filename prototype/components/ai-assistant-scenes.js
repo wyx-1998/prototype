@@ -220,6 +220,9 @@
         return {
             title: report.title || '',
             requestText: requestText,
+            routeName: report.routeName || '',
+            summary: report.summary || '',
+            inspectionPoints: Array.isArray(report.inspectionPoints) ? report.inspectionPoints : [],
             sections: Array.isArray(report.sections) ? report.sections : [],
             conversation: conversation,
             generatedAt: new Date().toISOString(),
@@ -237,10 +240,7 @@
         title.textContent = report.title;
         header.appendChild(title);
         if (report.openPath) {
-            const openButton = document.createElement('button');
-            openButton.className = 'report-open-btn';
-            openButton.innerHTML = '<i class="ph ph-arrows-out-simple"></i> 打开';
-            openButton.addEventListener('click', function () {
+            const openReport = function () {
                 const storageKey = 'report_workspace_payload:' + report.openPath;
                 const payload = createReportWorkspacePayload(aiAssistant, report);
                 try {
@@ -249,6 +249,23 @@
                     console.warn('保存报告工作区数据失败:', error);
                 }
                 window.open(report.openPath, '_blank');
+            };
+            wrapper.style.cursor = 'pointer';
+            wrapper.setAttribute('role', 'button');
+            wrapper.tabIndex = 0;
+            wrapper.addEventListener('click', openReport);
+            wrapper.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openReport();
+                }
+            });
+            const openButton = document.createElement('button');
+            openButton.className = 'report-open-btn';
+            openButton.innerHTML = '<i class="ph ph-arrows-out-simple"></i> 打开';
+            openButton.addEventListener('click', function (event) {
+                event.stopPropagation();
+                openReport();
             });
             header.appendChild(openButton);
         }
@@ -1364,6 +1381,218 @@
         }
     };
 
+    const inspectionRoutes = {
+        route_1: {
+            routeId: 'route_1',
+            routeName: '智能巡检路线1',
+            summary: '本次巡检共覆盖 3 个重点点位，发现 2 处异常，涉及作业票执行偏差和现场防护缺失。',
+            suggestions: ['继续查看巡检报告详情', '切换到智能巡检路线2再演示一次'],
+            points: [
+                {
+                    name: '脱硫塔北侧平台',
+                    camera: '摄像机画面显示平台通道畅通，作业人员 2 人在位，临边区域有物料临时堆放。',
+                    permit: '关联动火作业票 JT-20260430-013，监护人已到位，但票面上的结束时间仍显示为 09:00，未按现场延期情况更新。',
+                    hazard: '识别到一处临边警戒带缺失，平台边缘存在临时放置工具箱，可能影响人员通行。',
+                    issues: ['作业票延期信息未同步更新', '平台临边警戒带缺失'],
+                    status: '存在问题',
+                    advice: '补录作业票延期审批信息，并立即恢复临边警戒隔离。'
+                },
+                {
+                    name: '石膏浆液管廊转角',
+                    camera: '摄像机巡检画面清晰，区域内无异常滞留人员，照明和通道状态正常。',
+                    permit: '关联高处作业票 GZ-20260430-004，作业人员、监护人和防坠落措施信息完整。',
+                    hazard: '未发现明显隐患，区域内材料摆放规范，交叉作业隔离到位。',
+                    issues: [],
+                    status: '正常',
+                    advice: '保持当前作业组织方式，继续执行班中抽查。'
+                },
+                {
+                    name: '吸收塔检修吊篮点',
+                    camera: '画面显示吊篮下方设置了围栏，但现场有 1 名外委人员未佩戴护目镜。',
+                    permit: '关联高处作业票 GZ-20260430-009，票证齐全，但个人防护抽查结果未填写。',
+                    hazard: '识别到外委作业人员个体防护不到位，吊篮下方警示牌角度偏移。',
+                    issues: ['外委人员未佩戴护目镜', '个体防护抽查记录缺失'],
+                    status: '存在问题',
+                    advice: '立即补齐个体防护，并在作业票中补录现场抽查记录。'
+                }
+            ]
+        },
+        route_2: {
+            routeId: 'route_2',
+            routeName: '智能巡检路线2',
+            summary: '本次巡检共覆盖 3 个重点点位，整体状态平稳，仅发现 1 处轻微整改项。',
+            suggestions: ['打开智能巡检报告查看详情', '返回巡检主页面重新选择路线'],
+            points: [
+                {
+                    name: '脱硫循环泵平台',
+                    camera: '摄像机画面显示平台区域无积水，作业人员佩戴防护完整，现场秩序正常。',
+                    permit: '关联检维修作业票 JW-20260430-021，作业内容、监护人和危险点交底记录齐全。',
+                    hazard: '未发现明显异常。',
+                    issues: [],
+                    status: '正常',
+                    advice: '继续保持当前作业票执行质量。'
+                },
+                {
+                    name: '烟道检修平台',
+                    camera: '摄像机识别到平台一侧灭火器摆放被检修材料局部遮挡。',
+                    permit: '关联动火作业票 DH-20260430-006，审批链完整，气体检测记录有效。',
+                    hazard: '灭火器取用通道受阻，属于轻微整改项。',
+                    issues: ['灭火器前方材料堆放影响快速取用'],
+                    status: '存在问题',
+                    advice: '移开遮挡物，确保消防器材前方 1 米范围畅通。'
+                },
+                {
+                    name: '烟囱外部巡检步道',
+                    camera: '巡检步道照明正常，护栏完整，未识别到人员违规停留。',
+                    permit: '关联巡检作业确认单 XJ-20260430-002，责任人和巡检时段信息完整。',
+                    hazard: '未发现异常。',
+                    issues: [],
+                    status: '正常',
+                    advice: '保持当前巡检节奏。'
+                }
+            ]
+        }
+    };
+
+    function buildInspectionReport(route) {
+        const abnormalCount = route.points.filter(function (item) {
+            return item.status !== '正常';
+        }).length;
+        return {
+            title: '智能巡检报告',
+            openPath: 'intelligent_inspection_report.html',
+            routeName: route.routeName,
+            summary: route.summary,
+            abnormalCount: abnormalCount,
+            sections: [
+                { title: '巡检路线', text: route.routeName },
+                { title: '巡检概览', text: route.summary },
+                { title: '异常点位', text: abnormalCount ? ('共 ' + abnormalCount + ' 个点位存在问题，已生成问题清单和整改建议。') : '本次巡检点位均为正常状态。' }
+            ],
+            inspectionPoints: route.points.map(function (point, index) {
+                return {
+                    title: '点位' + (index + 1) + '：' + point.name,
+                    camera: point.camera,
+                    permit: point.permit,
+                    hazard: point.hazard,
+                    issues: point.issues,
+                    status: point.status,
+                    advice: point.advice
+                };
+            })
+        };
+    }
+
+    function renderInspectionPoint(aiAssistant, root, point, index, done) {
+        const card = document.createElement('div');
+        const isNormal = point.status === '正常';
+        card.className = 'smart-qa-answer-section report-rich-section';
+        card.innerHTML = [
+            '<div class="smart-qa-answer-title">点位' + (index + 1) + '：' + point.name + '</div>',
+            '<div class="report-query-summary inspection-progress-summary">',
+            '  <span class="report-query-chip inspection-progress-chip active">正在巡检</span>',
+            '</div>',
+            '<div class="report-text-list">',
+            '  <div class="report-text-item"></div>',
+            '  <div class="report-text-item"></div>',
+            '  <div class="report-text-item"></div>',
+            '</div>',
+            '  <div class="report-action-list inspection-issue-list"></div>',
+            '  <div class="report-query-summary inspection-status-summary" style="display:none;">',
+            '      <span class="report-query-chip inspection-status-chip ' + (isNormal ? 'success' : 'danger') + '">状态：' + point.status + '</span>',
+            '      <span class="report-query-chip inspection-complete-chip">✓ 已完成</span>',
+            '  </div>',
+            '</div>'
+        ].join('');
+        root.appendChild(card);
+        aiAssistant.scrollToBottom();
+
+        const items = card.querySelectorAll('.report-text-item');
+        const issueList = card.querySelector('.inspection-issue-list');
+        const progressChip = card.querySelector('.inspection-progress-chip');
+        const statusSummary = card.querySelector('.inspection-status-summary');
+        const targets = [
+            { element: items[0], text: '摄像机巡检：' + point.camera },
+            { element: items[1], text: '关联作业票检查：' + point.permit },
+            { element: items[2], text: '隐患分析：' + point.hazard }
+        ];
+
+        typeIntoTargets(aiAssistant, targets, 0, function () {
+            const finalizePoint = function () {
+                if (progressChip) {
+                    progressChip.classList.remove('active');
+                    progressChip.classList.add('done');
+                    progressChip.textContent = '点位巡检完成';
+                }
+                if (statusSummary) {
+                    statusSummary.style.display = '';
+                }
+                if (done) done();
+            };
+
+            if (point.issues && point.issues.length) {
+                point.issues.forEach(function (issue, issueIndex) {
+                    const row = document.createElement('div');
+                    row.className = 'report-action-item';
+                    issueList.appendChild(row);
+                    targets.push({ element: row, text: '问题' + (issueIndex + 1) + '：' + issue });
+                });
+                const advice = document.createElement('div');
+                advice.className = 'report-action-item';
+                issueList.appendChild(advice);
+                targets.push({ element: advice, text: '处置建议：' + point.advice });
+                typeIntoTargets(aiAssistant, targets.slice(3), 0, function () {
+                    finalizePoint();
+                });
+                return;
+            }
+
+            const normalRow = document.createElement('div');
+            normalRow.className = 'report-action-item';
+            issueList.appendChild(normalRow);
+            typeIntoTargets(aiAssistant, [
+                { element: normalRow, text: '检查结论：正常。' }
+            ], 0, function () {
+                finalizePoint();
+            });
+        });
+    }
+
+    function renderInspectionContent(aiAssistant, contentDiv, messageDiv, reply, done) {
+        contentDiv.className = 'message-content smart-qa-answer';
+        const summary = document.createElement('div');
+        summary.className = 'smart-qa-answer-section report-rich-section';
+        summary.innerHTML = '<div class="smart-qa-answer-title">巡检任务</div><div class="smart-qa-answer-text"></div>';
+        contentDiv.appendChild(summary);
+        aiAssistant.scrollToBottom();
+
+        const summaryText = summary.querySelector('.smart-qa-answer-text');
+        typeTextNode(aiAssistant, summaryText, reply.data.summary, function () {
+            let pointIndex = 0;
+            const renderNextPoint = function () {
+                if (pointIndex >= reply.data.points.length) {
+                    const reportSection = buildReportSection(reply.data.report, aiAssistant);
+                    contentDiv.appendChild(reportSection.container);
+                    aiAssistant.scrollToBottom();
+                    typeIntoTargets(aiAssistant, reportSection.targets, 0, function () {
+                        aiAssistant.updateStructuredMessagePayload(messageDiv, {
+                            answerHtml: contentDiv.innerHTML
+                        });
+                        if (done) done();
+                    });
+                    return;
+                }
+
+                renderInspectionPoint(aiAssistant, contentDiv, reply.data.points[pointIndex], pointIndex, function () {
+                    pointIndex += 1;
+                    renderNextPoint();
+                });
+            };
+
+            renderNextPoint();
+        });
+    }
+
     const scenes = {
         hidden_danger: {
             id: 'hidden_danger',
@@ -1477,6 +1706,40 @@
                 const reply = createReportReply(intelligentReportReplies[intent]);
                 reportSceneState.lastAnalysisContext = reply.contextSnapshot || null;
                 return reply;
+            }
+        },
+        intelligent_inspection: {
+            id: 'intelligent_inspection',
+            resolveReply: function (context) {
+                const extras = context.extras || {};
+                const text = context.text || '';
+                const shouldStart = extras.intent === 'start_inspection' || text.includes('智能巡检路线');
+                if (!shouldStart) {
+                    return null;
+                }
+                const route = inspectionRoutes[extras.routeId] || inspectionRoutes.route_1;
+                const report = buildInspectionReport(route);
+                return {
+                    thinkingText: '我先确认本次巡检路线和覆盖点位，再调取对应摄像机画面、关联作业票和隐患规则库。\n\n接着按点位逐一完成现场巡检、票证核验和隐患分析，并同步记录每个点位的结论。\n\n全部点位完成后，我会自动汇总生成智能巡检报告。',
+                    toolSummaries: [
+                        '调用智能巡检路线配置，确认巡检点位顺序。',
+                        '调用摄像机巡检能力，分析点位现场画面。',
+                        '调用作业票关联检查能力，核验现场票证执行情况。',
+                        '调用隐患分析能力，生成问题清单和整改建议。'
+                    ],
+                    data: {
+                        summary: route.routeName + '已启动，本次将依次完成 ' + route.points.length + ' 个点位的巡检任务。',
+                        points: route.points,
+                        report: report
+                    },
+                    renderContent: function (assistant, contentDiv, messageDiv, done) {
+                        renderInspectionContent(assistant, contentDiv, messageDiv, this, done);
+                    },
+                    suggestions: route.suggestions,
+                    thinkingStepDelay: 760,
+                    toolStepDelay: 620,
+                    finalDelayMs: 900
+                };
             }
         },
         emergency_plan_generation: {

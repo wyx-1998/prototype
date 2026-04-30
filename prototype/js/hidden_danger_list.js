@@ -2,10 +2,7 @@
     const template = `
         <div class="scroll-container hidden-danger-list-scroll-container">
             <div class="hidden-danger-list-page">
-                <section class="hidden-danger-context-tabs">
-                    <button class="context-tab-chip">隐患排查库 <i class="ph ph-x"></i></button>
-                    <button class="context-tab-chip active">隐患治理 <i class="ph ph-x"></i></button>
-                </section>
+                
 
                 <section class="hidden-danger-level-tabs">
                     <button class="level-tab active">一般隐患</button>

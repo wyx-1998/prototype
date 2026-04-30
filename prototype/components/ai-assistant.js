@@ -397,7 +397,8 @@
                 attachments: attachments,
                 skillId: skillId,
                 reply: reply,
-                isSceneRequest: true
+                isSceneRequest: true,
+                suppressHazardTag: !!request.suppressHazardTag
             });
         },
 
