@@ -14,6 +14,7 @@
             userName: '张三',
             welcomeMessage: '您好，{userName}！我是您的安全生产AI助手，请向我提问吧',
             sidebarWidth: 400,
+            sceneId: '',
             onAnalysisComplete: null, // 分析完成回调
             onInsertToForm: null // 插入表单回调
         },
@@ -32,7 +33,8 @@
             skillsManageDraft: null,
             audioPlaying: {}, // 记录正在播放的音频状态 {msgId: utterance}
             currentConversationId: null, // 当前对话ID
-            conversations: [] // 所有对话列表
+            conversations: [], // 所有对话列表
+            thinkingMode: false // 深度思考模式开关
         },
 
         // 技能数据
@@ -227,12 +229,14 @@
         toggleAI: function (forceState) {
             const sidebar = document.getElementById('aiSidebar');
             const floatingBtn = document.querySelector('.ai-floating-btn');
+            const appLayout = document.querySelector('.app-layout');
 
             // 如果指定了强制状态
             if (typeof forceState === 'boolean') {
                 if (forceState) {
                     sidebar.classList.add('active');
                     floatingBtn.classList.add('hidden');
+                    if (appLayout) appLayout.classList.add('ai-sidebar-open');
 
                     // 确保历史面板是关闭的，显示主对话界面
                     const historyPanel = document.getElementById('historyPanel');
@@ -246,6 +250,7 @@
                 } else {
                     sidebar.classList.remove('active');
                     floatingBtn.classList.remove('hidden');
+                    if (appLayout) appLayout.classList.remove('ai-sidebar-open');
                 }
                 return;
             }
@@ -254,9 +259,11 @@
             if (sidebar.classList.contains('active')) {
                 sidebar.classList.remove('active');
                 floatingBtn.classList.remove('hidden');
+                if (appLayout) appLayout.classList.remove('ai-sidebar-open');
             } else {
                 sidebar.classList.add('active');
                 floatingBtn.classList.add('hidden');
+                if (appLayout) appLayout.classList.add('ai-sidebar-open');
 
                 // 确保历史面板是关闭的，显示主对话界面
                 const historyPanel = document.getElementById('historyPanel');
@@ -297,18 +304,274 @@
             }
         },
 
+        setScene: function (options) {
+            Object.assign(this.config, options || {});
+
+            const scene = this.getCurrentScene();
+            if (scene && typeof scene.reset === 'function') {
+                scene.reset();
+            }
+
+            if (options && options.resetConversation) {
+                this.startNewConversation();
+            } else {
+                this.setWelcomeMessage();
+            }
+        },
+
+        getCurrentScene: function () {
+            if (!window.AIAssistantScenes || typeof window.AIAssistantScenes.getScene !== 'function') {
+                return null;
+            }
+            return window.AIAssistantScenes.getScene(this.config.sceneId);
+        },
+
+        resolveSceneReply: function (text, attachments, skillId, extras) {
+            const scene = this.getCurrentScene();
+            if (!scene || typeof scene.resolveReply !== 'function') {
+                return null;
+            }
+
+            return scene.resolveReply({
+                assistant: this,
+                text: text,
+                attachments: attachments || [],
+                skillId: skillId || null,
+                extras: extras || {},
+                normalizedText: String(text || '').replace(/\s+/g, '')
+            });
+        },
+
+        dispatchSceneRequest: function (options) {
+            const text = String(options && options.text ? options.text : '').trim();
+            const attachments = Array.isArray(options && options.attachments) ? [...options.attachments] : [];
+            const skillId = options && options.skillId ? options.skillId : null;
+            const reply = options && options.reply ? options.reply : null;
+            const isSceneRequest = options && typeof options.isSceneRequest === 'boolean'
+                ? options.isSceneRequest
+                : !!reply;
+            const suppressHazardTag = !!(options && options.suppressHazardTag);
+
+            if (!text && !attachments.length) {
+                return false;
+            }
+
+            this.addUserMessage(text, attachments, isSceneRequest && !suppressHazardTag, skillId);
+
+            const textarea = document.querySelector('.ai-input-area textarea');
+            if (textarea) {
+                textarea.value = '';
+            }
+
+            this.state.pendingImages = [];
+            this.state.selectedSkill = null;
+            this.updateImagePreview();
+            this.updateSkillTag();
+            this.updateSendButtonState();
+
+            setTimeout(() => {
+                this.saveCurrentConversation();
+            }, 500);
+
+            if (reply) {
+                this.runSceneReply(reply);
+                return true;
+            }
+
+            return false;
+        },
+
+        submitSceneRequest: function (options) {
+            const request = options || {};
+            const text = String(request.text || '').trim();
+            const attachments = Array.isArray(request.attachments) ? request.attachments : [];
+            const skillId = request.skillId || null;
+            const reply = request.reply || this.resolveSceneReply(text, attachments, skillId, request.extras);
+
+            if (!reply) {
+                return false;
+            }
+
+            return this.dispatchSceneRequest({
+                text: text,
+                attachments: attachments,
+                skillId: skillId,
+                reply: reply,
+                isSceneRequest: true
+            });
+        },
+
+        runSceneReply: function (reply) {
+            if (!reply) {
+                return false;
+            }
+
+            if (typeof reply.render === 'function') {
+                this.state.isAnalyzing = true;
+                reply.render(this);
+                return true;
+            }
+
+            if (reply.thinkingText || (reply.toolSummaries && reply.toolSummaries.length) || typeof reply.renderContent === 'function' || reply.answerHtml) {
+                this.renderStructuredSceneReply(reply);
+                return true;
+            }
+
+            if (reply.text) {
+                this.addAIMessage(reply.text, true, reply.suggestions);
+                setTimeout(() => {
+                    this.saveCurrentConversation();
+                }, 500);
+                return true;
+            }
+
+            return false;
+        },
+
+        renderStructuredSceneReply: function (reply) {
+            const self = this;
+            this.state.isAnalyzing = true;
+
+            const structuredPayload = this.normalizeAssistantOutput({
+                thinking: {
+                    text: reply.thinkingText || '',
+                    elapsedLabel: reply.thinkingElapsedLabel || null
+                },
+                toolChain: {
+                    summaries: reply.toolSummaries || []
+                }
+            });
+
+            const messageParts = this.createStructuredAIMessageShell(structuredPayload);
+            const startTime = Date.now();
+
+            const thinkingStepDelay = typeof reply.thinkingStepDelay === 'number' ? reply.thinkingStepDelay : 180;
+            const toolStepDelay = typeof reply.toolStepDelay === 'number' ? reply.toolStepDelay : 180;
+            const finalDelayMs = typeof reply.finalDelayMs === 'number' ? reply.finalDelayMs : 300;
+            self.state.currentThinkingStepDelay = thinkingStepDelay;
+            self.state.currentToolStepDelay = toolStepDelay;
+
+            const finalizeReply = function () {
+                self.appendMessageMeta(
+                    messageParts.messageDiv,
+                    messageParts.msgId,
+                    self.formatTimestamp(new Date()),
+                    reply.suggestions,
+                    function (text) {
+                        self.selectSuggestion(text);
+                    }
+                );
+                self.scrollToBottom();
+                self.state.isAnalyzing = false;
+                self.state.currentThinkingStepDelay = null;
+                self.state.currentToolStepDelay = null;
+                setTimeout(function () {
+                    self.saveCurrentConversation();
+                }, 500);
+            };
+
+            const showFinalAnswer = function () {
+                const elapsed = Number(((Date.now() - startTime) / 1000).toFixed(1));
+                self.updateStructuredMessagePayload(messageParts.messageDiv, {
+                    thinking: {
+                        elapsedSeconds: elapsed,
+                        elapsedLabel: reply.thinkingElapsedLabel || null
+                    }
+                });
+                self.setThinkingBlockCompleted(messageParts.processBlock, elapsed, reply.thinkingElapsedLabel || null);
+
+                setTimeout(function () {
+                    if (messageParts.processBlock) {
+                        messageParts.processBlock.classList.add('collapsed');
+                    }
+
+                    messageParts.resultContainer.style.display = '';
+
+                    if (typeof reply.renderContent === 'function') {
+                        reply.renderContent(self, messageParts.resultContainer, messageParts.messageDiv, function () {
+                            finalizeReply();
+                        });
+                        return;
+                    }
+
+                    if (reply.answerHtml) {
+                        messageParts.resultContainer.className = reply.resultClassName || 'message-content';
+                        setTimeout(function () {
+                            messageParts.resultContainer.innerHTML = reply.answerHtml;
+                            self.updateStructuredMessagePayload(messageParts.messageDiv, {
+                                answerHtml: messageParts.resultContainer.innerHTML
+                            });
+                            finalizeReply();
+                        }, finalDelayMs);
+                        return;
+                    }
+
+                    if (reply.text) {
+                        messageParts.resultContainer.className = reply.resultClassName || 'message-content';
+                        self.typeWriter(reply.text, messageParts.resultContainer, function () {
+                            self.updateStructuredMessagePayload(messageParts.messageDiv, {
+                                answerHtml: messageParts.resultContainer.innerHTML
+                            });
+                            finalizeReply();
+                        });
+                        return;
+                    }
+
+                    finalizeReply();
+                }, 300);
+            };
+
+            const showToolChain = function () {
+                if (!structuredPayload.toolChain.summaries.length) {
+                    setTimeout(showFinalAnswer, Math.max(260, Math.round(finalDelayMs * 0.6)));
+                    return;
+                }
+
+                self.scrollToBottom();
+                self.renderToolChainSummaries(structuredPayload.toolChain.summaries, messageParts.processStepsEl, function () {
+                    setTimeout(showFinalAnswer, Math.max(320, Math.round(finalDelayMs * 0.8)));
+                });
+            };
+
+            if (!structuredPayload.thinking.paragraphs.length) {
+                setTimeout(showToolChain, Math.max(180, Math.round(thinkingStepDelay * 0.5)));
+                return;
+            }
+
+            this.renderThinkingSteps(structuredPayload.thinking.paragraphs, messageParts.processStepsEl, function () {
+                setTimeout(showToolChain, Math.max(240, Math.round(thinkingStepDelay * 0.7)));
+            });
+        },
+
         // ==================== 消息处理 ====================
         sendMessage: function () {
             const textarea = document.querySelector('.ai-input-area textarea');
             const text = textarea.value.trim();
             const hasImages = this.state.pendingImages.length > 0;
+            const attachments = [...this.state.pendingImages];
             const selectedSkill = this.state.selectedSkill;
 
             if (!text && !hasImages) return;
 
+            const currentScene = this.getCurrentScene();
+            const suppressFallbackHazardTag = currentScene
+                && ['intelligent_report', 'smart_qa', 'standard_file_interpretation', 'emergency_plan_generation'].includes(currentScene.id);
+            const sceneReply = this.resolveSceneReply(text, attachments, selectedSkill);
+            if (sceneReply) {
+                this.dispatchSceneRequest({
+                    text: text,
+                    attachments: attachments,
+                    skillId: suppressFallbackHazardTag ? null : selectedSkill,
+                    reply: sceneReply,
+                    isSceneRequest: true,
+                    suppressHazardTag: suppressFallbackHazardTag
+                });
+                return;
+            }
+
             const isHazardRequest = text.includes('隐患') || text.includes('识别') || text.includes('照片') || text.includes('分析');
 
-            this.addUserMessage(text, [...this.state.pendingImages], isHazardRequest, selectedSkill);
+            this.addUserMessage(text, attachments, isHazardRequest && !suppressFallbackHazardTag, selectedSkill);
 
             textarea.value = '';
             this.state.pendingImages = [];
@@ -633,107 +896,163 @@
         // 流式显示分析结果
         streamAnalysisResults: function (analysisResults, element, callback) {
             const intro = analysisResults.querySelector('.analysis-intro');
-            const cards = analysisResults.querySelectorAll('.hazard-card');
+            const cards = Array.from(analysisResults.querySelectorAll('.hazard-card'));
             const batchActions = analysisResults.querySelector('.hazard-batch-actions');
 
-            // 创建 analysis-results 容器
             const resultsContainer = document.createElement('div');
             resultsContainer.className = 'analysis-results';
             element.appendChild(resultsContainer);
 
-            let step = 0;
             const self = this;
 
-            const showNext = () => {
-                if (step === 0) {
-                    // 第一步：显示介绍文字（打字机效果）
-                    if (intro) {
-                        const introText = intro.textContent;
-                        const introP = document.createElement('p');
-                        introP.className = 'chat-text analysis-intro';
-                        resultsContainer.appendChild(introP);
-                        this.typeText(introText, introP, () => {
-                            step++;
-                            setTimeout(showNext, 300);
-                        });
+            const bindHazardCardEvent = function (card, index) {
+                card.onclick = function (e) {
+                    e.stopPropagation();
+
+                    const checkbox = card.querySelector('.card-checkbox i');
+                    if (!checkbox) return;
+
+                    if (self.state.selectedCards.has(index)) {
+                        self.state.selectedCards.delete(index);
+                        card.classList.remove('selected');
+                        checkbox.className = 'ph ph-square';
                     } else {
-                        step++;
-                        showNext();
+                        self.state.selectedCards.add(index);
+                        card.classList.add('selected');
+                        checkbox.className = 'ph ph-check-square';
                     }
-                } else if (step <= cards.length) {
-                    // 第二步：逐个显示卡片
-                    const cardIndex = step - 1;
-                    if (cards[cardIndex]) {
-                        const card = cards[cardIndex].cloneNode(true);
-                        card.classList.add('stream-item');
-
-                        // 重新绑定点击事件 - 直接操作当前卡片元素
-                        const index = parseInt(card.getAttribute('data-index'));
-                        card.onclick = function(e) {
-                            // 阻止事件冒泡
-                            e.stopPropagation();
-
-                            const checkbox = card.querySelector('.card-checkbox i');
-
-                            if (self.state.selectedCards.has(index)) {
-                                self.state.selectedCards.delete(index);
-                                card.classList.remove('selected');
-                                checkbox.className = 'ph ph-square';
-                            } else {
-                                self.state.selectedCards.add(index);
-                                card.classList.add('selected');
-                                checkbox.className = 'ph ph-check-square';
-                            }
-                        };
-
-                        resultsContainer.appendChild(card);
-                        this.scrollToBottom();
-                    }
-                    step++;
-                    setTimeout(showNext, 200);
-                } else if (step === cards.length + 1) {
-                    // 第三步：显示按钮
-                    if (batchActions) {
-                        const actions = batchActions.cloneNode(true);
-                        actions.classList.add('stream-item');
-
-                        // 重新绑定按钮事件
-                        const selectAllBtn = actions.querySelector('.hazard-batch-btn.secondary');
-                        if (selectAllBtn) {
-                            selectAllBtn.onclick = function(e) {
-                                e.stopPropagation();
-                                // 选择所有当前显示的卡片
-                                const allCards = resultsContainer.querySelectorAll('.hazard-card');
-                                allCards.forEach((card) => {
-                                    const idx = parseInt(card.getAttribute('data-index'));
-                                    const checkbox = card.querySelector('.card-checkbox i');
-                                    self.state.selectedCards.add(idx);
-                                    card.classList.add('selected');
-                                    checkbox.className = 'ph ph-check-square';
-                                });
-                            };
-                        }
-
-                        const insertBtn = actions.querySelector('.hazard-batch-btn.primary');
-                        if (insertBtn) {
-                            insertBtn.onclick = function(e) {
-                                e.stopPropagation();
-                                self.insertToForm();
-                            };
-                        }
-
-                        resultsContainer.appendChild(actions);
-                        this.scrollToBottom();
-                    }
-                    step++;
-                    setTimeout(showNext, 200);
-                } else {
-                    // 完成
-                    if (callback) callback();
-                }
+                };
             };
 
-            showNext();
+            const renderBatchActions = function (done) {
+                if (!batchActions) {
+                    if (done) done();
+                    return;
+                }
+
+                const actions = batchActions.cloneNode(true);
+                actions.classList.add('stream-item');
+
+                const selectAllBtn = actions.querySelector('.hazard-batch-btn.secondary');
+                if (selectAllBtn) {
+                    selectAllBtn.onclick = function (e) {
+                        e.stopPropagation();
+                        const allCards = resultsContainer.querySelectorAll('.hazard-card');
+                        allCards.forEach((card) => {
+                            const idx = parseInt(card.getAttribute('data-index'));
+                            const checkbox = card.querySelector('.card-checkbox i');
+                            self.state.selectedCards.add(idx);
+                            card.classList.add('selected');
+                            if (checkbox) {
+                                checkbox.className = 'ph ph-check-square';
+                            }
+                        });
+                    };
+                }
+
+                const insertBtn = actions.querySelector('.hazard-batch-btn.primary');
+                if (insertBtn) {
+                    insertBtn.onclick = function (e) {
+                        e.stopPropagation();
+                        self.insertToForm();
+                    };
+                }
+
+                resultsContainer.appendChild(actions);
+                self.scrollToBottom();
+                if (done) done();
+            };
+
+            const renderCard = function (templateCard, done) {
+                const index = parseInt(templateCard.getAttribute('data-index'));
+                const card = document.createElement('div');
+                card.className = templateCard.className + ' stream-item';
+                card.setAttribute('data-index', index);
+
+                const headerRow = document.createElement('div');
+                headerRow.className = 'card-header-row';
+
+                const checkbox = document.createElement('div');
+                checkbox.className = 'card-checkbox';
+                checkbox.innerHTML = '<i class="ph ph-square"></i>';
+
+                const title = document.createElement('h4');
+                title.className = 'card-title';
+
+                headerRow.appendChild(checkbox);
+                headerRow.appendChild(title);
+                card.appendChild(headerRow);
+                bindHazardCardEvent(card, index);
+                resultsContainer.appendChild(card);
+                self.scrollToBottom();
+
+                const fieldTemplates = Array.from(templateCard.querySelectorAll('.card-field')).map((field) => ({
+                    label: field.querySelector('.field-label') ? field.querySelector('.field-label').textContent : '',
+                    value: field.querySelector('.field-value') ? field.querySelector('.field-value').textContent : ''
+                }));
+
+                const renderField = function (fieldIndex) {
+                    if (fieldIndex >= fieldTemplates.length) {
+                        if (done) done();
+                        return;
+                    }
+
+                    const fieldData = fieldTemplates[fieldIndex];
+                    const fieldDiv = document.createElement('div');
+                    fieldDiv.className = 'card-field';
+
+                    const labelSpan = document.createElement('span');
+                    labelSpan.className = 'field-label';
+                    labelSpan.textContent = fieldData.label;
+
+                    const valueSpan = document.createElement('span');
+                    valueSpan.className = 'field-value';
+
+                    fieldDiv.appendChild(labelSpan);
+                    fieldDiv.appendChild(valueSpan);
+                    card.appendChild(fieldDiv);
+                    self.scrollToBottom();
+
+                    self.typeText(fieldData.value, valueSpan, function () {
+                        setTimeout(function () {
+                            renderField(fieldIndex + 1);
+                        }, 120);
+                    });
+                };
+
+                self.typeText(templateCard.querySelector('.card-title').textContent, title, function () {
+                    setTimeout(function () {
+                        renderField(0);
+                    }, 120);
+                });
+            };
+
+            const renderCards = function (cardIndex) {
+                if (cardIndex >= cards.length) {
+                    renderBatchActions(callback);
+                    return;
+                }
+
+                renderCard(cards[cardIndex], function () {
+                    setTimeout(function () {
+                        renderCards(cardIndex + 1);
+                    }, 220);
+                });
+            };
+
+            if (intro) {
+                const introP = document.createElement('p');
+                introP.className = 'chat-text analysis-intro';
+                resultsContainer.appendChild(introP);
+                this.typeText(intro.textContent, introP, function () {
+                    setTimeout(function () {
+                        renderCards(0);
+                    }, 260);
+                });
+                return;
+            }
+
+            renderCards(0);
         },
 
         // ==================== 图片处理 ====================
@@ -1342,6 +1661,11 @@
 
         // ==================== AI 分析 ====================
         simulateAIAnalysis: function () {
+            if (this.state.thinkingMode) {
+                this.simulateAIAnalysisWithThinking();
+                return;
+            }
+
             const self = this;
             this.state.isAnalyzing = true;
 
@@ -1360,6 +1684,531 @@
                     self.config.onAnalysisComplete(self.state.analysisResults);
                 }
             }, 2500);
+        },
+
+        // ==================== 思考模式开关 ====================
+        toggleThinkingMode: function () {
+            this.state.thinkingMode = !this.state.thinkingMode;
+            const btn = document.getElementById('thinkingModeBtn');
+            if (btn) {
+                if (this.state.thinkingMode) {
+                    btn.classList.add('active');
+                    btn.title = '关闭深度思考模式';
+                } else {
+                    btn.classList.remove('active');
+                    btn.title = '开启深度思考模式';
+                }
+            }
+        },
+
+        // ==================== 带思考过程的 AI 分析 ====================
+        simulateAIAnalysisWithThinking: function () {
+            const self = this;
+            this.state.isAnalyzing = true;
+
+            const structuredPayload = this.normalizeAssistantOutput({
+                thinking: {
+                    text:
+                        '让我仔细观察这张图片中的各个细节...\n\n' +
+                        '首先，我注意到图片左侧有几根电线，部分绝缘层看起来有磨损的迹象。电线裸露是高风险隐患，需要重点关注。\n\n' +
+                        '接着看管道区域，管道表面有明显的锈蚀和裂缝痕迹，这可能导致液体泄漏，进而增加地面湿滑风险，存在人员摔伤的可能性。\n\n' +
+                        '还有一处电线固定方式不规范，没有使用专用线夹，悬空的线路在长期使用中容易因摩擦导致绝缘破损。\n\n' +
+                        '综合判断，这张图片共存在 3 处安全隐患，我将结合相关安全法规给出具体的整改建议...'
+                },
+                toolChain: {
+                    summaries: [
+                        '调用图片细节识别工具，定位现场中的电线、管道与固定方式等关键区域。',
+                        '调用隐患规则匹配工具，对照电气安全与设备完好性规则筛查异常点。',
+                        '调用整改建议生成工具，汇总风险摘要并组织后续整改建议。'
+                    ]
+                }
+            });
+
+            const messageParts = this.createStructuredAIMessageShell(structuredPayload);
+            const startTime = Date.now();
+
+            this.renderThinkingSteps(structuredPayload.thinking.paragraphs, messageParts.processStepsEl, function () {
+                const elapsed = Number(((Date.now() - startTime) / 1000).toFixed(1));
+                self.updateStructuredMessagePayload(messageParts.messageDiv, {
+                    thinking: { elapsedSeconds: elapsed }
+                });
+
+                const showFinalAnswer = function () {
+                    self.setThinkingBlockCompleted(messageParts.processBlock, elapsed);
+                    setTimeout(function () {
+                        if (messageParts.processBlock) {
+                            messageParts.processBlock.classList.add('collapsed');
+                        }
+                        messageParts.resultContainer.style.display = '';
+                        self.showAnalysisResultsInContainer(messageParts.resultContainer, messageParts.messageDiv);
+                        self.updateStructuredMessagePayload(messageParts.messageDiv, {
+                            answerHtml: messageParts.resultContainer.innerHTML
+                        });
+                        self.state.isAnalyzing = false;
+
+                        if (self.config.onAnalysisComplete) {
+                            self.config.onAnalysisComplete(self.state.analysisResults);
+                        }
+                    }, 300);
+                };
+
+                const showToolChain = function () {
+                    if (!structuredPayload.toolChain.summaries.length) {
+                        setTimeout(showFinalAnswer, 200);
+                        return;
+                    }
+
+                    self.scrollToBottom();
+                    self.renderToolChainSummaries(structuredPayload.toolChain.summaries, messageParts.processStepsEl, function () {
+                        setTimeout(showFinalAnswer, 300);
+                    });
+                };
+
+                setTimeout(showToolChain, 240);
+            });
+        },
+
+        normalizeAssistantOutput: function (raw) {
+            const thinkingText = raw && raw.thinking && raw.thinking.text
+                ? String(raw.thinking.text)
+                : '';
+            const thinkingParagraphs = thinkingText
+                .split(/\n\s*\n/)
+                .map(function (item) { return item.trim(); })
+                .filter(function (item) { return item.length > 0; });
+            const toolSummaries = raw && raw.toolChain && Array.isArray(raw.toolChain.summaries)
+                ? raw.toolChain.summaries
+                    .map(function (item) { return String(item || '').trim(); })
+                    .filter(function (item) { return item.length > 0; })
+                : [];
+
+            return {
+                type: 'ai',
+                version: 2,
+                thinking: {
+                    text: thinkingText,
+                    paragraphs: thinkingParagraphs,
+                    elapsedSeconds: raw && raw.thinking ? raw.thinking.elapsedSeconds : null,
+                    elapsedLabel: raw && raw.thinking ? raw.thinking.elapsedLabel || null : null
+                },
+                toolChain: {
+                    summaries: toolSummaries
+                },
+                answerHtml: raw && raw.answerHtml ? raw.answerHtml : ''
+            };
+        },
+
+        createStructuredAIMessageShell: function (payload) {
+            const chatBody = document.getElementById('aiChatBody');
+            const messageDiv = document.createElement('div');
+            const msgId = 'ai-msg-' + Date.now();
+            messageDiv.className = 'chat-message ai';
+
+            const hasThinking = payload.thinking && payload.thinking.paragraphs.length;
+            const hasToolChain = payload.toolChain && payload.toolChain.summaries.length;
+            const processBlock = hasThinking || hasToolChain
+                ? this.createProcessBlock()
+                : null;
+
+            if (processBlock) {
+                messageDiv.appendChild(processBlock);
+            }
+
+            const resultContainer = document.createElement('div');
+            resultContainer.className = 'message-content';
+            resultContainer.id = msgId;
+            if (processBlock) {
+                resultContainer.style.display = 'none';
+            }
+            messageDiv.appendChild(resultContainer);
+
+            chatBody.appendChild(messageDiv);
+            this.updateStructuredMessagePayload(messageDiv, payload);
+            this.scrollToBottom();
+
+            return {
+                messageDiv: messageDiv,
+                processBlock: processBlock,
+                processStepsEl: processBlock ? processBlock.querySelector('.process-steps') : null,
+                resultContainer: resultContainer,
+                msgId: msgId
+            };
+        },
+
+        createProcessBlock: function () {
+            const block = document.createElement('div');
+            block.className = 'process-block';
+            block.innerHTML = `
+                <div class="process-block-header" onclick="AIAssistant.toggleProcessBlock(this.parentElement)">
+                    <span class="process-block-status-icon spinning"><i class="ph ph-arrows-clockwise"></i></span>
+                    <span class="process-block-label">正在思考...</span>
+                </div>
+                <div class="process-content">
+                    <div class="process-steps"></div>
+                </div>
+            `;
+            return block;
+        },
+
+        createProcessStepItem: function (type) {
+            const stepItem = document.createElement('div');
+            stepItem.className = 'process-step-item';
+            stepItem.classList.add(type === 'tool' ? 'tool' : 'thinking');
+
+            const stepNode = document.createElement('span');
+            stepNode.className = 'process-step-node';
+            stepNode.setAttribute('aria-hidden', 'true');
+
+            if (type === 'tool') {
+                stepNode.innerHTML = '<i class="ph ph-wrench"></i>';
+            } else {
+                stepNode.textContent = '•';
+            }
+
+            const stepBody = document.createElement('div');
+            stepBody.className = 'process-step-body';
+
+            const stepTextGroup = document.createElement('div');
+            stepTextGroup.className = 'process-step-text-group';
+            stepBody.appendChild(stepTextGroup);
+
+            stepItem.appendChild(stepNode);
+            stepItem.appendChild(stepBody);
+
+            return {
+                stepItem: stepItem,
+                stepTextGroup: stepTextGroup
+            };
+        },
+
+        renderThinkingSteps: function (steps, container, callback) {
+            if (!container) {
+                if (callback) callback();
+                return;
+            }
+
+            if (!steps || !steps.length) {
+                if (callback) callback();
+                return;
+            }
+
+            const self = this;
+            const thinkingStep = this.createProcessStepItem('thinking');
+            let stepIndex = 0;
+
+            container.appendChild(thinkingStep.stepItem);
+            this.scrollToBottom();
+
+            const renderNextStep = function () {
+                if (stepIndex >= steps.length) {
+                    if (callback) callback();
+                    return;
+                }
+
+                const stepText = document.createElement('p');
+                stepText.className = 'process-step-text';
+                thinkingStep.stepTextGroup.appendChild(stepText);
+                self.scrollToBottom();
+
+                self.typeText(steps[stepIndex], stepText, function () {
+                    stepIndex++;
+                    setTimeout(renderNextStep, self.state.currentThinkingStepDelay || 180);
+                });
+            };
+
+            renderNextStep();
+        },
+
+        renderThinkingStepsStatic: function (steps, container) {
+            if (!container || !steps || !steps.length) {
+                return;
+            }
+
+            const thinkingStep = this.createProcessStepItem('thinking');
+            steps.forEach(function (item) {
+                const stepText = document.createElement('p');
+                stepText.className = 'process-step-text';
+                stepText.textContent = item;
+                thinkingStep.stepTextGroup.appendChild(stepText);
+            });
+            container.appendChild(thinkingStep.stepItem);
+        },
+
+        renderToolChainSummaries: function (summaries, container, callback) {
+            if (!container) {
+                if (callback) callback();
+                return;
+            }
+
+            if (!summaries || !summaries.length) {
+                if (callback) callback();
+                return;
+            }
+
+            const self = this;
+            let summaryIndex = 0;
+
+            const renderNextSummary = function () {
+                if (summaryIndex >= summaries.length) {
+                    if (callback) callback();
+                    return;
+                }
+
+                const toolStep = self.createProcessStepItem('tool');
+                const summaryText = document.createElement('p');
+                summaryText.className = 'process-step-text';
+
+                toolStep.stepTextGroup.appendChild(summaryText);
+                container.appendChild(toolStep.stepItem);
+                self.scrollToBottom();
+
+                self.typeText(summaries[summaryIndex], summaryText, function () {
+                    summaryIndex++;
+                    setTimeout(renderNextSummary, self.state.currentToolStepDelay || 180);
+                });
+            };
+
+            renderNextSummary();
+        },
+
+        renderToolChainSummariesStatic: function (summaries, container) {
+            if (!container || !summaries || !summaries.length) {
+                return;
+            }
+
+            const self = this;
+            summaries.forEach(function (item) {
+                const toolStep = self.createProcessStepItem('tool');
+                const summaryText = document.createElement('p');
+                summaryText.className = 'process-step-text';
+                summaryText.textContent = item;
+
+                toolStep.stepTextGroup.appendChild(summaryText);
+                container.appendChild(toolStep.stepItem);
+            });
+        },
+
+        setThinkingBlockCompleted: function (blockEl, elapsedSeconds, elapsedLabel) {
+            if (!blockEl) return;
+            const label = elapsedLabel
+                ? `已思考（用时 ${elapsedLabel}）`
+                : typeof elapsedSeconds === 'number'
+                    ? `已思考（用时 ${elapsedSeconds.toFixed(1)} 秒）`
+                    : '已思考';
+            const header = blockEl.querySelector('.process-block-header');
+            header.innerHTML = `
+                <span class="process-block-status-icon"><i class="ph ph-check-circle" style="color:#3366CC"></i></span>
+                <span class="process-block-title-group">
+                    <span class="process-block-label">${label}</span>
+                    <span class="process-block-toggle-btn" title="收起" aria-label="收起"><i class="ph ph-caret-down"></i></span>
+                </span>
+            `;
+            header.onclick = () => this.toggleProcessBlock(blockEl);
+        },
+
+        setToolChainBlockCompleted: function (blockEl, summaryCount) {
+            if (!blockEl) return;
+            this.setThinkingBlockCompleted(blockEl, null);
+        },
+
+        updateStructuredMessagePayload: function (messageDiv, partialPayload) {
+            if (!messageDiv) return null;
+
+            const currentPayload = this.parseStructuredMessagePayload(messageDiv.dataset.structuredPayload) || {};
+            const nextPayload = Object.assign({}, currentPayload, partialPayload || {});
+
+            if (partialPayload && partialPayload.thinking) {
+                nextPayload.thinking = Object.assign({}, currentPayload.thinking || {}, partialPayload.thinking);
+            }
+
+            if (partialPayload && partialPayload.toolChain) {
+                nextPayload.toolChain = Object.assign({}, currentPayload.toolChain || {}, partialPayload.toolChain);
+            }
+
+            nextPayload.version = nextPayload.version || 2;
+            messageDiv.dataset.messageVersion = String(nextPayload.version);
+            messageDiv.dataset.structuredPayload = encodeURIComponent(JSON.stringify(nextPayload));
+            return nextPayload;
+        },
+
+        parseStructuredMessagePayload: function (encodedPayload) {
+            if (!encodedPayload) {
+                return null;
+            }
+
+            try {
+                return JSON.parse(decodeURIComponent(encodedPayload));
+            } catch (error) {
+                console.warn('解析结构化消息失败:', error);
+                return null;
+            }
+        },
+
+        renderSavedStructuredAIMessage: function (msg, chatBody) {
+            const normalizedPayload = this.normalizeAssistantOutput({
+                thinking: msg.thinking,
+                toolChain: msg.toolChain,
+                answerHtml: msg.answerHtml || msg.content || ''
+            });
+            const messageParts = this.createStructuredAIMessageShell(normalizedPayload);
+
+            if (messageParts.processBlock) {
+                this.renderThinkingStepsStatic(normalizedPayload.thinking.paragraphs, messageParts.processStepsEl);
+                this.renderToolChainSummariesStatic(normalizedPayload.toolChain.summaries, messageParts.processStepsEl);
+                this.setThinkingBlockCompleted(messageParts.processBlock, normalizedPayload.thinking.elapsedSeconds, normalizedPayload.thinking.elapsedLabel);
+                messageParts.processBlock.classList.add('collapsed');
+            }
+
+            messageParts.resultContainer.style.display = '';
+            messageParts.resultContainer.innerHTML = normalizedPayload.answerHtml || '';
+            this.updateStructuredMessagePayload(messageParts.messageDiv, {
+                answerHtml: normalizedPayload.answerHtml || ''
+            });
+        },
+
+        toggleProcessBlock: function (blockEl) {
+            if (!blockEl) return;
+            blockEl.classList.toggle('collapsed');
+            const toggleBtn = blockEl.querySelector('.process-block-toggle-btn');
+            if (toggleBtn) {
+                const isCollapsed = blockEl.classList.contains('collapsed');
+                toggleBtn.title = isCollapsed ? '展开' : '收起';
+                toggleBtn.setAttribute('aria-label', isCollapsed ? '展开' : '收起');
+            }
+        },
+
+        // 展开/折叠思考区块
+        toggleThinkingBlock: function (blockEl) {
+            this.toggleProcessBlock(blockEl);
+        },
+
+        buildHazardAnalysisHTML: function () {
+            let cardsHTML = '<div class="analysis-results">';
+            cardsHTML += '<p class="chat-text analysis-intro">这张图片显示了一些电线和管道的布局，可能存在一些安全隐患。以下是一些可能的隐患：</p>';
+
+            this.state.analysisResults.forEach((result, index) => {
+                cardsHTML += `
+                    <div class="hazard-card" data-index="${index}" onclick="AIAssistant.toggleCardSelection(${index})">
+                        <div class="card-header-row">
+                            <div class="card-checkbox">
+                                <i class="ph ph-square"></i>
+                            </div>
+                            <h4 class="card-title">${result.name}</h4>
+                        </div>
+                        <div class="card-field">
+                            <span class="field-label">问题描述：</span>
+                            <span class="field-value">${result.description}</span>
+                        </div>
+                        <div class="card-field">
+                            <span class="field-label">整改措施：</span>
+                            <span class="field-value">${result.measure}</span>
+                        </div>
+                        <div class="card-field">
+                            <span class="field-label">法规依据：</span>
+                            <span class="field-value">${result.regulation}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            cardsHTML += `
+            <div class="hazard-batch-actions">
+                <button class="hazard-batch-btn secondary" onclick="AIAssistant.selectAllHazards()">
+                    <i class="ph ph-check-square"></i>
+                    全部选择
+                </button>
+                <button class="hazard-batch-btn primary" onclick="event.stopPropagation(); AIAssistant.insertToForm()">
+                    <i class="ph ph-file-arrow-down"></i>
+                    插入问题登记表
+                </button>
+            </div>
+            `;
+            cardsHTML += '</div>';
+            return cardsHTML;
+        },
+
+        getHazardSuggestions: function () {
+            return [
+                '如何整改这些隐患？',
+                '需要准备哪些整改材料？',
+                '整改完成后如何验收？'
+            ];
+        },
+
+        appendMessageMeta: function (messageDiv, msgId, timestamp, suggestions, onSuggestionClick) {
+            const actionsDiv = document.createElement('div');
+            actionsDiv.innerHTML = `
+                <div class="message-timestamp">${timestamp}</div>
+                <div class="message-actions">
+                    <span class="action-btn" data-msg-id="${msgId}" onclick="AIAssistant.toggleAudioPlay('${msgId}')" title="语音播放"><i class="ph ph-speaker-high"></i></span>
+                    <span class="action-btn" onclick="AIAssistant.copyMessage('${msgId}')" title="复制"><i class="ph ph-copy"></i></span>
+                    <span class="action-btn" onclick="AIAssistant.likeMessage('${msgId}')" title="点赞"><i class="ph ph-thumbs-up"></i></span>
+                    <span class="action-btn" onclick="AIAssistant.dislikeMessage('${msgId}')" title="踩"><i class="ph ph-thumbs-down"></i></span>
+                    <span class="action-btn" onclick="AIAssistant.regenerateMessage('${msgId}')" title="重新生成"><i class="ph ph-arrow-clockwise"></i></span>
+                </div>
+            `;
+            messageDiv.appendChild(actionsDiv.firstElementChild);
+            messageDiv.appendChild(actionsDiv.lastElementChild);
+
+            if (suggestions && suggestions.length > 0) {
+                const suggestionsDiv = document.createElement('div');
+                suggestionsDiv.className = 'message-suggestions';
+                suggestions.forEach((suggestion) => {
+                    const escapedText = suggestion.replace(/'/g, "\\'");
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.className = 'suggestion-item';
+                    suggestionItem.onclick = () => onSuggestionClick(escapedText);
+                    suggestionItem.innerHTML = `<span>${suggestion}</span><i class="ph ph-arrow-right"></i>`;
+                    suggestionsDiv.appendChild(suggestionItem);
+                });
+                messageDiv.appendChild(suggestionsDiv);
+            }
+        },
+
+        // 在指定容器中输出分析结果（思考模式专用）
+        showAnalysisResultsInContainer: function (contentDiv, messageDiv) {
+            const self = this;
+            this.state.analysisResults = [
+                {
+                    id: 0,
+                    name: '电线裸露',
+                    description: '电线绝缘层破损或缺失，导致内部金属导线直接暴露在外。这种情况极易造成人员触电事故，尤其在潮湿环境或意外接触时风险更高，也可能引发短路和火灾。',
+                    measure: '使用绝缘胶带或绝缘套管对裸露的电线进行包裹，确保电线完全绝缘。',
+                    regulation: '《用电安全导则》GB/T 13869-2017 第5.2.1条规定"用电产品应处于完好状态，绝缘应无破损"，第6.2.1条明确要求"电气线路应具有足够的绝缘强度、机械强度和导电能力，其绝缘不应破损"。'
+                },
+                {
+                    id: 1,
+                    name: '管道损坏',
+                    description: '管道表面出现裂缝、孔洞或严重锈蚀，可能导致液体或气体泄漏。这不仅会造成资源浪费，还可能引发地面湿滑、设备损坏，甚至产生有害气体或液体对环境和人员造成危害。',
+                    measure: '检查所有管道，对损坏的部分进行更换或修复。',
+                    regulation: '《中华人民共和国安全生产法》第三十六条规定"生产经营单位必须对安全设备进行经常性维护、保养，并定期检测，保证正常运转"。'
+                },
+                {
+                    id: 2,
+                    name: '电线固定不当',
+                    description: '电线未使用专用固定件，处于悬空、拖拽或随意摆放状态。长期摩擦会导致绝缘层磨损，也可能被人员或设备意外拉扯，造成线路断开或短路。',
+                    measure: '使用电线夹或扎带将电线固定在适当的位置，防止电线因移动而磨损。',
+                    regulation: '《用电安全导则》GB/T 13869-2017 第6.3.1条规定"电气线路的敷设应稳固，连接应可靠，避免因振动、拉伸、弯曲等导致绝缘破损或接触不良"。'
+                }
+            ];
+
+            const timestamp = this.formatTimestamp(new Date());
+            const msgId = contentDiv.id;
+            const answerHtml = this.buildHazardAnalysisHTML();
+            const suggestions = this.getHazardSuggestions();
+
+            this.streamHTML(answerHtml, contentDiv, () => {
+                if (messageDiv && messageDiv.dataset.messageVersion === '2') {
+                    this.updateStructuredMessagePayload(messageDiv, {
+                        answerHtml: answerHtml
+                    });
+                }
+
+                this.appendMessageMeta(messageDiv, msgId, timestamp, suggestions, function (text) {
+                    self.selectSuggestion(text);
+                });
+                self.scrollToBottom();
+            });
         },
 
         showAnalysisResults: function () {
@@ -1387,71 +2236,8 @@
                 }
             ];
 
-            // 第一阶段：生成纯文本内容用于流式输出
-            let plainText = '这张图片显示了一些电线和管道的布局，可能存在一些安全隐患。以下是一些可能的隐患：\n\n';
-
-            this.state.analysisResults.forEach((result, index) => {
-                plainText += `${index + 1}. ${result.name}\n`;
-                plainText += `问题描述：${result.description}\n`;
-                plainText += `整改措施：${result.measure}\n`;
-                plainText += `法规依据：${result.regulation}\n\n`;
-            });
-
-            // 第二阶段：生成富文本HTML（卡片格式）的函数
-            const generateCardsHTML = () => {
-                let cardsHTML = '<div class="analysis-results">';
-                cardsHTML += '<p class="chat-text analysis-intro">这张图片显示了一些电线和管道的布局，可能存在一些安全隐患。以下是一些可能的隐患：</p>';
-
-                this.state.analysisResults.forEach((result, index) => {
-                    cardsHTML += `
-                        <div class="hazard-card" data-index="${index}" onclick="AIAssistant.toggleCardSelection(${index})">
-                            <div class="card-header-row">
-                                <div class="card-checkbox">
-                                    <i class="ph ph-square"></i>
-                                </div>
-                                <h4 class="card-title">${result.name}</h4>
-                            </div>
-                            <div class="card-field">
-                                <span class="field-label">问题描述：</span>
-                                <span class="field-value">${result.description}</span>
-                            </div>
-                            <div class="card-field">
-                                <span class="field-label">整改措施：</span>
-                                <span class="field-value">${result.measure}</span>
-                            </div>
-                            <div class="card-field">
-                                <span class="field-label">法规依据：</span>
-                                <span class="field-value">${result.regulation}</span>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                cardsHTML += `
-                <div class="hazard-batch-actions">
-                    <button class="hazard-batch-btn secondary" onclick="AIAssistant.selectAllHazards()">
-                        <i class="ph ph-check-square"></i>
-                        全部选择
-                    </button>
-                    <button class="hazard-batch-btn primary" onclick="event.stopPropagation(); AIAssistant.insertToForm()">
-                        <i class="ph ph-file-arrow-down"></i>
-                        插入问题登记表
-                    </button>
-                </div>
-                `;
-                cardsHTML += '</div>';
-                return cardsHTML;
-            };
-
-            // 建议列表
-            const suggestions = [
-                '如何整改这些隐患？',
-                '需要准备哪些整改材料？',
-                '整改完成后如何验收？'
-            ];
-
-            // 先流式输出纯文本，完成后渲染成卡片格式
-            this.addAIMessageWithTransform(plainText, generateCardsHTML, suggestions);
+            const suggestions = this.getHazardSuggestions();
+            this.addAIMessage(this.buildHazardAnalysisHTML(), true, suggestions);
         },
 
         // ==================== 证照识别功能 ====================
@@ -2507,16 +3293,31 @@
 
             messageElements.forEach(el => {
                 const isAI = el.classList.contains('ai');
-                const isUser = el.classList.contains('user');
                 const contentEl = el.querySelector('.message-content, .user-text-bubble');
 
-                if (contentEl) {
+                if (!contentEl) {
+                    return;
+                }
+
+                if (isAI && el.dataset.messageVersion === '2') {
+                    const payload = this.parseStructuredMessagePayload(el.dataset.structuredPayload);
                     messages.push({
-                        type: isAI ? 'ai' : 'user',
+                        type: 'ai',
+                        version: 2,
                         content: contentEl.innerHTML,
+                        answerHtml: contentEl.innerHTML,
+                        thinking: payload && payload.thinking ? payload.thinking : null,
+                        toolChain: payload && payload.toolChain ? payload.toolChain : null,
                         timestamp: new Date().toISOString()
                     });
+                    return;
                 }
+
+                messages.push({
+                    type: isAI ? 'ai' : 'user',
+                    content: contentEl.innerHTML,
+                    timestamp: new Date().toISOString()
+                });
             });
 
             return messages;
@@ -2600,6 +3401,36 @@
 
             // 加载历史消息
             conv.messages.forEach(msg => {
+                if (msg.type === 'ai' && msg.version === 2) {
+                    this.renderSavedStructuredAIMessage(msg, chatBody);
+                    return;
+                }
+
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'chat-message ' + msg.type;
+                messageDiv.innerHTML = `<div class="message-content">${msg.content}</div>`;
+                chatBody.appendChild(messageDiv);
+            });
+
+            this.scrollToBottom();
+        },
+
+        loadConversationMessages: function (conversation) {
+            if (!conversation || !Array.isArray(conversation.messages)) return;
+
+            const chatBody = document.getElementById('aiChatBody');
+            if (!chatBody) return;
+
+            this.state.currentConversationId = conversation.id || null;
+            this.updateConversationTitle(conversation.title || '新对话');
+            chatBody.innerHTML = '';
+
+            conversation.messages.forEach(msg => {
+                if (msg.type === 'ai' && msg.version === 2) {
+                    this.renderSavedStructuredAIMessage(msg, chatBody);
+                    return;
+                }
+
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'chat-message ' + msg.type;
                 messageDiv.innerHTML = `<div class="message-content">${msg.content}</div>`;

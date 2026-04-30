@@ -1,0 +1,116 @@
+.emergency-plan-scroll-container {
+    padding: 12px;
+}
+
+.emergency-plan-page {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.emergency-plan-header-card,
+.emergency-plan-scene-card {
+    background: #fff;
+    border: 1px solid #e7ebf0;
+}
+
+.emergency-plan-header-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #f7fbff 0%, #ffffff 50%, #f4f7ff 100%);
+}
+
+.emergency-plan-title {
+    color: #151b26;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.emergency-plan-subtitle {
+    color: #667085;
+    font-size: 14px;
+}
+
+.emergency-plan-entry-btn {
+    height: 36px;
+    padding: 0 18px;
+    border: 1px solid #3366cc;
+    background: #3366cc;
+    color: #fff;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.emergency-plan-scene-card {
+    padding: 16px 18px 18px;
+}
+
+.emergency-plan-question-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 14px;
+}
+
+.emergency-plan-question-item {
+    padding: 14px 16px;
+    border: 1px dashed #cbd5e1;
+    background: #fafcff;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: left;
+    cursor: pointer;
+}
+
+.emergency-plan-question-item:hover {
+    border-color: #3366cc;
+    background: #f4f8ff;
+}
+
+.emergency-plan-capability-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.emergency-plan-capability-item {
+    min-height: 84px;
+    border: 1px solid #edf1f6;
+    background: #fbfcfe;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #344054;
+    font-size: 14px;
+}
+
+.emergency-plan-capability-item i {
+    color: #3366cc;
+    font-size: 22px;
+}
+
+@media (max-width: 1400px) {
+    .emergency-plan-capability-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 960px) {
+    .emergency-plan-question-grid,
+    .emergency-plan-capability-list {
+        grid-template-columns: 1fr;
+    }
+
+    .emergency-plan-header-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

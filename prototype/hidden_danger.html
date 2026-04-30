@@ -30,61 +30,11 @@
 
 <body>
     <div class="app-layout">
-        <!-- Top Header Navigation -->
-        <header class="top-header">
-            <div class="header-left">
-                <div class="logo-area">
-                    <span class="logo-blue">LOGO</span>
-                    <span class="system-title">智能安全生产管理系统</span>
-                    <i class="ph ph-caret-left"></i>
-                </div>
-                <nav class="top-nav">
-                    <a href="#" class="nav-link">工作台</a>
-                    <a href="#" class="nav-link">应用中心</a>
-                    <a href="#" class="nav-link active">ai助手demo <i class="ph ph-x"></i></a>
-                </nav>
-            </div>
-            <div class="header-right">
-                <div class="header-icons">
-                    <i class="ph ph-globe"></i>
-                    <i class="ph ph-question"></i>
-                    <i class="ph ph-caret-right"></i>
-                </div>
-                <div class="header-tools">
-                    <i class="ph ph-t-shirt"></i>
-                    <i class="ph ph-headset"></i>
-                    <i class="ph ph-download-simple"></i>
-                    <i class="ph ph-envelope-simple"></i>
-                    <i class="ph ph-corners-out"></i>
-                    <i class="ph ph-power"></i>
-                </div>
-                <div class="user-profile-sm">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="User" class="avatar-sm">
-                    <span class="username">张三</span>
-                </div>
-            </div>
-        </header>
+        <header id="appShellHeader"></header>
 
         <div class="main-body">
-            <!-- Left Sidebar -->
-            <aside class="left-sidebar">
-                <div class="sidebar-header">
-                    <i class="ph ph-list"></i>
-                </div>
+            <aside id="appShellSidebar"></aside>
 
-                <div class="sidebar-menu">
-                    <div class="menu-item active" onclick="navigateToPage('hidden_danger.html')">
-                        <i class="ph ph-camera"></i>
-                        <span>随手拍ai识别</span>
-                    </div>
-                    <div class="menu-item" onclick="navigateToPage('certificate_recognition.html')">
-                        <i class="ph ph-id-card"></i>
-                        <span>相关方证照识别</span>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Main Content Area -->
             <main class="content-area">
                 <!-- Secondary Tab Bar -->
                 <div class="content-tabs">
@@ -272,93 +222,7 @@
                 </footer>
             </main>
 
-            <!-- AI Assistant Sidebar -->
-            <aside class="ai-sidebar" id="aiSidebar">
-                <div class="ai-header">
-                    <div class="ai-title-wrapper">
-                        <div class="ai-conversation-title" id="aiConversationTitle">新对话</div>
-                        <div class="ai-disclaimer" onclick="window.open('disclaimer.html', '_blank')">内容由AI生成 ></div>
-                    </div>
-                    <div class="ai-controls">
-                        <i class="ph ph-note-pencil" title="开始新对话"></i>
-                        <i class="ph ph-clock-counter-clockwise" title="历史对话"></i>
-                        <i class="ph ph-arrows-out-simple"></i>
-                        <i class="ph ph-x" onclick="toggleAI()"></i>
-                    </div>
-                </div>
-                <div class="ai-chat-body" id="aiChatBody">
-                    <!-- Initial Message -->
-                    <div class="chat-message ai">
-                        <div class="message-content">
-                            <p class="chat-text">您好，张三！我是您的安全生产AI助手，请向我提问吧</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 历史对话面板 -->
-                <div class="history-panel" id="historyPanel">
-                    <div class="history-header">
-                        <i class="ph ph-arrow-left history-back-btn"></i>
-                        <span class="history-title">历史对话</span>
-                    </div>
-                    <div class="history-search">
-                        <input type="text" id="historySearch" placeholder="搜索对话...">
-                    </div>
-                    <div class="history-list" id="historyList">
-                        <!-- 历史对话列表将动态生成 -->
-                    </div>
-                </div>
-
-                <!-- Input Area -->
-                <div class="ai-input-area">
-                    <textarea placeholder="请输入您的问题..."></textarea>
-
-                    <!-- Controls Row: Toolbar Left, Actions Right -->
-                    <div class="input-controls-row">
-                        <div class="input-toolbar" style="position: relative;">
-                            <i class="ph ph-paperclip" title="上传文件"></i>
-                            <i class="ph ph-squares-four" title="选择技能" id="skillsBtn"></i>
-
-                            <!-- Skills 技能选择面板 -->
-                            <div class="ai-skills-panel" id="aiSkillsPanel">
-                                <div class="skills-option" data-skill-id="hazard_analysis">
-                                    <i class="ph ph-warning"></i>
-                                    <span>隐患识别分析</span>
-                                </div>
-                                <div class="skills-option" data-skill-id="enterprise_certificate">
-                                    <i class="ph ph-building"></i>
-                                    <span>企业资质证照识别</span>
-                                </div>
-                                <div class="skills-option" data-skill-id="personnel_certificate">
-                                    <i class="ph ph-identification-card"></i>
-                                    <span>人员资质证照识别</span>
-                                </div>
-                                <div class="skills-option" data-skill-id="smart_qa">
-                                    <i class="ph ph-chats-circle"></i>
-                                    <span>智能问数</span>
-                                </div>
-                                <div class="skills-option" data-skill-id="courseware_generation">
-                                    <i class="ph ph-presentation"></i>
-                                    <span>课件生成</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="input-actions">
-                            <i class="ph ph-microphone"></i>
-                            <button class="btn-send"><i class="ph ph-paper-plane-right"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Floating AI Icon -->
-            <div class="ai-floating-btn" onclick="toggleAI()">
-                <img src="../pic/AI助手@2x.svg" alt="AI" style="width:24px; height:24px;">
-            </div>
-
-            <!-- 隐藏的文件上传input -->
-            <input type="file" id="aiFileInput" style="display: none;"
-                accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.doc,.docx,.xls,.xlsx,.pdf,.txt,.csv" multiple>
+            <div id="aiAssistantMount"></div>
 
             <!-- Modal for Auto-Identification -->
             <div class="modal-overlay" id="aiModal" style="display: none;">
@@ -379,63 +243,11 @@
         </div>
     </div>
 
-    <!-- AI 助手组件脚本 -->
+    <script src="components/app-config.js"></script>
+    <script src="components/app-shell.js"></script>
+    <script src="components/ai-assistant-shell.js"></script>
+    <script src="components/ai-assistant-scenes.js"></script>
     <script src="components/ai-assistant.js?v=20260306"></script>
-
-    <!-- 初始化 AI 助手 -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // 初始化 AI 助手组件
-            AIAssistant.init({
-                userName: '张三',
-                welcomeMessage: '您好，{userName}！我是您的安全生产AI助手，请向我提问吧',
-                onAnalysisComplete: function (results) {
-                    console.log('AI 分析完成，共识别出', results.length, '个隐患');
-                },
-                onInsertToForm: function (selectedResults) {
-                    // 将分析结果插入到表单中
-                    console.log('选中的分析结果：', selectedResults);
-
-                    if (selectedResults.length === 0) {
-                        ElementPlus.ElMessage.warning('请先选择要插入的隐患分析结果');
-                        return;
-                    }
-
-                    // 收集选中的内容
-                    const descriptions = [];
-                    const measures = [];
-
-                    selectedResults.forEach(result => {
-                        descriptions.push(`【${result.name}】${result.description}`);
-                        measures.push(`【${result.name}】${result.measure || result.suggestion}`);
-                    });
-
-                    // 获取表单字段
-                    const descTextarea = document.querySelector('.form-group.full-width .textarea-wrapper textarea');
-                    const measureTextarea = document.querySelectorAll('.form-group.full-width .textarea-wrapper textarea')[1];
-
-                    // 插入内容
-                    if (descTextarea) {
-                        descTextarea.value = descriptions.join('\n\n');
-                        // 更新字数统计
-                        const charCount = descTextarea.parentElement.querySelector('.char-count');
-                        if (charCount) charCount.textContent = `${descTextarea.value.length}/200`;
-                    }
-
-                    if (measureTextarea) {
-                        measureTextarea.value = measures.join('\n\n');
-                        // 更新字数统计
-                        const charCount = measureTextarea.parentElement.querySelector('.char-count');
-                        if (charCount) charCount.textContent = `${measureTextarea.value.length}/200`;
-                    }
-
-                    ElementPlus.ElMessage.success('已成功插入到问题登记表');
-                }
-            });
-        });
-    </script>
-
-    <!-- 页面特定功能脚本 -->
     <script src="js/hidden_danger.js"></script>
     <script>
         // 页面导航函数

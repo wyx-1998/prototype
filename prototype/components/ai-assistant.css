@@ -14,20 +14,30 @@
 }
 
 /* ==================== AI 侧边栏 ==================== */
-.ai-sidebar {
+.ai-assistant-shell-mount {
     width: 0;
+    flex: 0 0 0;
+}
+
+.ai-sidebar {
+    width: 400px;
     background: #fff;
     border-left: 1px solid var(--ai-border-color);
     display: flex;
     flex-direction: column;
-    transition: width 0.3s ease;
     overflow: hidden;
-    position: relative;
-    flex-shrink: 0;
+    position: fixed;
+    top: var(--header-height, 48px);
+    right: 0;
+    bottom: 0;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+    z-index: 950;
 }
 
 .ai-sidebar.active {
-    width: 400px;
+    transform: translateX(0);
 }
 
 .ai-header {
@@ -122,6 +132,8 @@
 .chat-message.user {
     align-self: flex-end;
     flex-direction: row-reverse;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .chat-message .avatar {
@@ -186,6 +198,38 @@
     line-height: 1.6;
     color: var(--ai-text-dark);
     margin: 0;
+}
+
+.smart-qa-answer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    line-height: 1.7;
+}
+
+.smart-qa-answer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.smart-qa-answer-title {
+    color: var(--ai-primary-blue);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.smart-qa-answer-text,
+.smart-qa-answer-step {
+    white-space: normal;
+    word-break: break-word;
+    font-size: 14px;
+}
+
+.smart-qa-answer-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 /* 分析介绍文字 */
@@ -383,11 +427,19 @@
     border-radius: 12px;
     font-size: 13px;
     line-height: 1.5;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .chat-message.user .message-content {
     background: transparent;
     padding: 0;
+    max-width: min(100%, 420px);
+    min-width: 0;
 }
 
 /* 技能标签 */
@@ -504,6 +556,242 @@
 .input-toolbar i:hover,
 .input-actions i:hover {
     color: var(--ai-primary-blue);
+}
+
+/* ==================== 思考模式开关 ==================== */
+.thinking-mode-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px 3px 8px;
+    border-radius: 999px;
+    border: 1px solid #d0d5dd;
+    background: transparent;
+    color: var(--ai-text-gray);
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.thinking-mode-toggle i {
+    font-size: 14px;
+    color: var(--ai-text-gray);
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.thinking-mode-toggle:hover {
+    border-color: var(--ai-primary-blue);
+    color: var(--ai-primary-blue);
+}
+
+.thinking-mode-toggle:hover i {
+    color: var(--ai-primary-blue);
+}
+
+.thinking-mode-toggle.active {
+    background: #eaf2ff;
+    border-color: #b9cdf6;
+    color: var(--ai-primary-blue);
+    box-shadow: none;
+    animation: none;
+}
+
+.thinking-mode-toggle.active i {
+    color: var(--ai-primary-blue);
+}
+
+.thinking-mode-toggle.active:hover {
+    background: #eaf2ff;
+    border-color: #b9cdf6;
+    color: var(--ai-primary-blue);
+}
+
+.thinking-mode-toggle.active:hover i {
+    color: var(--ai-primary-blue);
+}
+
+/* ==================== 思考过程区块 ==================== */
+.process-block {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+    margin-bottom: 10px;
+    transition: none;
+}
+
+.process-block-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 0;
+    cursor: pointer;
+    user-select: none;
+    background: transparent;
+    border-left: none;
+    border-radius: 0;
+    transition: none;
+}
+
+.process-block.collapsed .process-block-header {
+    border-radius: 0;
+}
+
+.process-block-header:hover {
+    background: transparent;
+}
+
+.process-block-status-icon {
+    font-size: 13px;
+    color: var(--ai-primary-blue);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* 思考中的旋转动画 */
+.process-block-status-icon.spinning i {
+    display: inline-block;
+    animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.process-block-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #555;
+}
+
+.process-block-title-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.process-block-toggle-btn {
+    width: 16px;
+    height: 16px;
+    color: #8f96a3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.process-block-toggle-btn i {
+    font-size: 13px;
+    transition: transform 0.3s ease;
+}
+
+.process-block-header:hover .process-block-toggle-btn {
+    color: var(--ai-primary-blue);
+}
+
+.process-block.collapsed .process-block-toggle-btn i {
+    transform: rotate(-90deg);
+}
+
+.process-content {
+    padding: 4px 0 4px 22px;
+    overflow: visible;
+    transition: opacity 0.2s ease;
+    opacity: 1;
+}
+
+.process-block.collapsed .process-content {
+    display: none;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    overflow: visible;
+}
+
+.process-steps {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-left: 0;
+}
+
+.process-steps::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: #e5e7eb;
+}
+
+.process-step-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding-bottom: 10px;
+}
+
+.process-step-item:last-child {
+    padding-bottom: 0;
+}
+
+.process-step-node {
+    width: 14px;
+    min-width: 14px;
+    height: 14px;
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    background: #fff;
+    z-index: 1;
+    line-height: 1;
+    font-size: 12px;
+}
+
+.process-step-item.tool .process-step-node {
+    color: #3366CC;
+    font-size: 12px;
+}
+
+.process-step-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.process-step-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.process-step-text {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.75;
+    margin: 0;
+    white-space: pre-wrap;
+    flex: 1;
+}
+
+/* 思考内容的打字光标 */
+.process-content .typing-cursor {
+    background: #aaa;
+    width: 1.5px;
+    height: 0.9em;
 }
 
 /* ==================== 图片预览 ==================== */
@@ -927,6 +1215,70 @@
     margin-right: 6px;
 }
 
+/* 文件解读结果卡片 */
+.file-interpretation-results {
+    gap: 0;
+}
+
+.file-interpretation-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid #d9e2f2;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.file-interpretation-card:hover {
+    border-color: var(--ai-primary-blue);
+    box-shadow: 0 4px 14px rgba(51, 102, 204, 0.12);
+}
+
+.file-interpretation-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(51, 102, 204, 0.08);
+    color: var(--ai-primary-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 22px;
+}
+
+.file-interpretation-card-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.file-interpretation-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ai-text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-interpretation-card-desc {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--ai-text-gray);
+}
+
+.file-interpretation-card-action {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--ai-primary-blue);
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
 /* ==================== 浮动按钮 ==================== */
 .ai-floating-btn {
     position: fixed;
@@ -1034,12 +1386,9 @@
 
 /* ==================== 响应式设计 ==================== */
 @media (max-width: 768px) {
-    .ai-sidebar.active {
-        width: 100% !;
-        position: fixed;
+    .ai-sidebar {
+        width: 100%;
         top: 0;
-        right: 0;
-        bottom: 0;
         z-index: 1000;
     }
 }

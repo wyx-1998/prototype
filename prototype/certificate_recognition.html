@@ -5,88 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>相关方证照识别 - 国投集团智能安全生产管理系统</title>
-    <!-- Reusing existing styles -->
     <link rel="stylesheet" href="css/style.css">
-    <!-- Page specific styles -->
     <link rel="stylesheet" href="css/hidden_danger.css">
-    <!-- AI 助手组件样式 -->
     <link rel="stylesheet" href="components/ai-assistant.css">
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
         rel="stylesheet">
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- Element Plus -->
     <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
     <script src="https://unpkg.com/element-plus"></script>
-    <!-- Element Plus Icons -->
     <script src="https://unpkg.com/@element-plus/icons-vue"></script>
 </head>
 
 <body>
     <div class="app-layout">
-        <!-- Top Header Navigation -->
-        <header class="top-header">
-            <div class="header-left">
-                <div class="logo-area">
-                    <span class="logo-blue">LOGO</span>
-                    <span class="system-title">智能安全生产管理系统</span>
-                    <i class="ph ph-caret-left"></i>
-                </div>
-                <nav class="top-nav">
-                    <a href="#" class="nav-link">工作台</a>
-                    <a href="#" class="nav-link">应用中心</a>
-                    <a href="#" class="nav-link active">ai助手demo <i class="ph ph-x"></i></a>
-                </nav>
-            </div>
-            <div class="header-right">
-                <div class="header-icons">
-                    <i class="ph ph-globe"></i>
-                    <i class="ph ph-question"></i>
-                    <i class="ph ph-caret-right"></i>
-                </div>
-                <div class="header-tools">
-                    <i class="ph ph-t-shirt"></i>
-                    <i class="ph ph-headset"></i>
-                    <i class="ph ph-download-simple"></i>
-                    <i class="ph ph-envelope-simple"></i>
-                    <i class="ph ph-corners-out"></i>
-                    <i class="ph ph-power"></i>
-                </div>
-                <div class="user-profile-sm">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="User" class="avatar-sm">
-                    <span class="username">张三</span>
-                </div>
-            </div>
-        </header>
+        <header id="appShellHeader"></header>
 
         <div class="main-body">
-            <!-- Left Sidebar -->
-            <aside class="left-sidebar">
-                <div class="sidebar-header">
-                    <i class="ph ph-list"></i>
-                </div>
+            <aside id="appShellSidebar"></aside>
 
-                <div class="sidebar-menu">
-                    <div class="menu-item" onclick="navigateToPage('hidden_danger.html')">
-                        <i class="ph ph-camera"></i>
-                        <span>随手拍ai识别</span>
-                    </div>
-                    <div class="menu-item active" onclick="navigateToPage('certificate_recognition.html')">
-                        <i class="ph ph-id-card"></i>
-                        <span>相关方证照识别</span>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Main Content Area -->
             <main class="content-area">
-                <!-- Secondary Tab Bar -->
                 <div class="content-tabs">
                     <div class="tab-item active">项目资质 <i class="ph ph-x"></i></div>
                     <div class="tab-actions">
@@ -95,7 +35,6 @@
                     </div>
                 </div>
 
-                <!-- Scrollable Content -->
                 <div class="scroll-container">
                     <div class="form-card">
                         <div class="card-header">
@@ -104,7 +43,6 @@
                         </div>
 
                         <div class="form-grid">
-                            <!-- Row 1 -->
                             <div class="form-group required">
                                 <label>资质类型</label>
                                 <input type="text" placeholder="营业执照" value="营业执照" class="form-control" id="qualificationType">
@@ -118,7 +56,6 @@
                                 <input type="text" placeholder="请输入内容" class="form-control" id="companyName">
                             </div>
 
-                            <!-- Row 2 -->
                             <div class="form-group required">
                                 <label>成立日期</label>
                                 <div class="date-input-wrapper">
@@ -134,12 +71,10 @@
                                 <input type="text" placeholder="请输入内容" class="form-control" id="registeredCapital">
                             </div>
 
-                            <!-- Row 3 -->
                             <div class="form-group required">
                                 <label>类型</label>
                                 <input type="text" placeholder="请输入内容" class="form-control" id="companyType">
                             </div>
-
                             <div class="form-group required">
                                 <label>登记机关</label>
                                 <input type="text" placeholder="请输入内容" class="form-control" id="registrationAuthority">
@@ -151,13 +86,11 @@
                                 </div>
                             </div>
 
-                            <!-- Row 4: 住所 - Full Width -->
                             <div class="form-group required full-width">
                                 <label>住所</label>
                                 <input type="text" placeholder="请输入内容" class="form-control" id="address">
                             </div>
 
-                            <!-- Row 5: 经营范围 - Full Width -->
                             <div class="form-group full-width">
                                 <label>经营范围</label>
                                 <div class="textarea-wrapper">
@@ -166,21 +99,13 @@
                                 </div>
                             </div>
 
-                            <!-- Row 6: 资质附件 - Full Width with Element Plus Upload -->
                             <div class="form-group full-width">
                                 <label>资质附件</label>
                                 <div class="file-upload-container" id="fileUploadApp">
                                     <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-                                        <el-upload 
-                                            v-model:file-list="fileList" 
-                                            action="#" 
-                                            :auto-upload="false" 
-                                            :limit="5"
-                                            accept="image/jpeg,image/png,application/pdf"
-                                            :on-preview="handlePreview" 
-                                            :on-remove="handleRemove" 
-                                            :on-change="handleChange"
-                                            :on-exceed="handleExceed">
+                                        <el-upload v-model:file-list="fileList" action="#" :auto-upload="false" :limit="5"
+                                            accept="image/jpeg,image/png,application/pdf" :on-preview="handlePreview"
+                                            :on-remove="handleRemove" :on-change="handleChange" :on-exceed="handleExceed">
                                             <el-button type="primary">
                                                 <el-icon><UploadFilled /></el-icon>
                                                 选择文件
@@ -192,12 +117,8 @@
                                             </template>
                                         </el-upload>
 
-                                        <!-- AI识别按钮 - 放在文件列表底部 -->
-                                        <el-button 
-                                            v-if="fileList.length > 0" 
-                                            class="ai-recognize-btn"
-                                            @click="triggerAIRecognition($event)"
-                                            style="align-self: flex-start;">
+                                        <el-button v-if="fileList.length > 0" class="ai-recognize-btn"
+                                            @click="triggerAIRecognition($event)" style="align-self: flex-start;">
                                             <i class="ph ph-magic-wand"></i>
                                             <span>AI智能分析</span>
                                         </el-button>
@@ -207,7 +128,6 @@
                         </div>
                     </div>
 
-                    <!-- 人员清单表格 -->
                     <div class="form-card" style="margin-top: 16px;">
                         <div class="card-header">
                             <h3>人员清单</h3>
@@ -215,21 +135,15 @@
                         </div>
 
                         <div id="personnelTableApp" style="padding: 24px;">
-                            <!-- 添加人员按钮 -->
                             <div style="margin-bottom: 16px;">
                                 <el-button type="primary" @click="showAddPersonnelDialog">
                                     <i class="ph ph-plus"></i>
                                     添加人员
                                 </el-button>
                             </div>
-                            <el-table 
-                                :data="personnelData" 
-                                style="width: 100%"
+                            <el-table :data="personnelData" style="width: 100%"
                                 :header-cell-style="{background: '#F8FAFC', color: '#151B26', fontWeight: '600', fontSize: '12px', padding: '16px'}"
-                                :cell-style="{fontSize: '12px', padding: '12px 16px'}"
-                                stripe>
-                                
-                                <!-- 头像列 -->
+                                :cell-style="{fontSize: '12px', padding: '12px 16px'}" stripe>
                                 <el-table-column label="头像" width="80" align="center">
                                     <template #default="scope">
                                         <el-popover placement="right" :width="200" trigger="hover">
@@ -240,8 +154,6 @@
                                         </el-popover>
                                     </template>
                                 </el-table-column>
-
-                                <!-- 姓名列 -->
                                 <el-table-column label="姓名" width="120">
                                     <template #default="scope">
                                         <span style="color: #3366CC; text-decoration: underline; cursor: pointer;">
@@ -249,46 +161,24 @@
                                         </span>
                                     </template>
                                 </el-table-column>
-
-                                <!-- 性别列 -->
-                                <el-table-column prop="gender" label="性别" width="80" align="center">
-                                </el-table-column>
-
-                                <!-- 联系电话列 -->
-                                <el-table-column prop="phone" label="联系电话" width="140">
-                                </el-table-column>
-
-                                <!-- 年龄列 -->
-                                <el-table-column prop="age" label="年龄" width="80" align="center">
-                                </el-table-column>
-
-                                <!-- 证书状态列 -->
+                                <el-table-column prop="gender" label="性别" width="80" align="center"></el-table-column>
+                                <el-table-column prop="phone" label="联系电话" width="140"></el-table-column>
+                                <el-table-column prop="age" label="年龄" width="80" align="center"></el-table-column>
                                 <el-table-column label="证书状态" width="120" align="center">
                                     <template #default="scope">
-                                        <el-tag 
-                                            :type="scope.row.certStatus === '正常' ? 'success' : scope.row.certStatus === '即将过期' ? 'warning' : 'danger'"
-                                            size="small">
+                                        <el-tag :type="scope.row.certStatus === '正常' ? 'success' : scope.row.certStatus === '即将过期' ? 'warning' : 'danger'" size="small">
                                             {{ scope.row.certStatus }}
                                         </el-tag>
                                     </template>
                                 </el-table-column>
-
-                                <!-- 资质证书（校验结果）列 - 文本 -->
-                                <el-table-column prop="certCheckResult" label="资质证书（校验结果）" width="180">
-                                </el-table-column>
-
-                                <!-- 状态列 - 标签 -->
+                                <el-table-column prop="certCheckResult" label="资质证书（校验结果）" width="180"></el-table-column>
                                 <el-table-column label="状态" width="100" align="center">
                                     <template #default="scope">
-                                        <el-tag 
-                                            :type="scope.row.status === '入场' ? 'primary' : 'info'"
-                                            size="small">
+                                        <el-tag :type="scope.row.status === '入场' ? 'primary' : 'info'" size="small">
                                             {{ scope.row.status }}
                                         </el-tag>
                                     </template>
                                 </el-table-column>
-
-                                <!-- 入场安全教育培训列 -->
                                 <el-table-column label="入场安全教育培训" width="160" align="center">
                                     <template #default="scope">
                                         <span :style="{color: scope.row.safetyTraining === '已完成' ? '#30BE13' : '#84868C'}">
@@ -296,29 +186,15 @@
                                         </span>
                                     </template>
                                 </el-table-column>
-
-                                <!-- 操作列 -->
                                 <el-table-column label="操作" width="140" align="center" fixed="right">
                                     <template #default="scope">
-                                        <el-button 
-                                            link 
-                                            type="primary" 
-                                            size="small"
-                                            @click="handleView(scope.row)">
+                                        <el-button link type="primary" size="small" @click="handleView(scope.row)">
                                             <i class="ph ph-eye"></i>
                                         </el-button>
-                                        <el-button 
-                                            link 
-                                            type="primary" 
-                                            size="small"
-                                            @click="handleEdit(scope.row)">
+                                        <el-button link type="primary" size="small" @click="handleEdit(scope.row)">
                                             <i class="ph ph-pencil"></i>
                                         </el-button>
-                                        <el-button 
-                                            link 
-                                            type="danger" 
-                                            size="small"
-                                            @click="handleDelete(scope.row)">
+                                        <el-button link type="danger" size="small" @click="handleDelete(scope.row)">
                                             <i class="ph ph-trash"></i>
                                         </el-button>
                                     </template>
@@ -328,7 +204,6 @@
                     </div>
                 </div>
 
-                <!-- Footer Actions -->
                 <footer class="bottom-bar">
                     <button class="btn btn-default"><i class="ph ph-x-circle"></i> 关闭</button>
                     <button class="btn btn-primary"><i class="ph ph-floppy-disk"></i> 保存</button>
@@ -336,95 +211,8 @@
                 </footer>
             </main>
 
-            <!-- AI Assistant Sidebar -->
-            <aside class="ai-sidebar" id="aiSidebar">
-                <div class="ai-header">
-                    <div class="ai-title-wrapper">
-                        <div class="ai-conversation-title" id="aiConversationTitle">新对话</div>
-                        <div class="ai-disclaimer" onclick="window.open('disclaimer.html', '_blank')">内容由AI生成 ></div>
-                    </div>
-                    <div class="ai-controls">
-                        <i class="ph ph-note-pencil" title="开始新对话"></i>
-                        <i class="ph ph-clock-counter-clockwise" title="历史对话"></i>
-                        <i class="ph ph-arrows-out-simple"></i>
-                        <i class="ph ph-x" onclick="toggleAI()"></i>
-                    </div>
-                </div>
-                <div class="ai-chat-body" id="aiChatBody">
-                    <!-- Initial Message -->
-                    <div class="chat-message ai">
-                        <div class="message-content">
-                            <p class="chat-text">您好，张三！我是您的安全生产AI助手，请向我提问吧</p>
-                        </div>
-                    </div>
-                </div>
+            <div id="aiAssistantMount"></div>
 
-                <!-- 历史对话面板 -->
-                <div class="history-panel" id="historyPanel">
-                    <div class="history-header">
-                        <i class="ph ph-arrow-left history-back-btn"></i>
-                        <span class="history-title">历史对话</span>
-                    </div>
-                    <div class="history-search">
-                        <input type="text" id="historySearch" placeholder="搜索对话...">
-                    </div>
-                    <div class="history-list" id="historyList">
-                        <!-- 历史对话列表将动态生成 -->
-                    </div>
-                </div>
-
-                <!-- Input Area -->
-                <div class="ai-input-area">
-                    <textarea placeholder="请输入您的问题..."></textarea>
-
-                    <!-- Controls Row: Toolbar Left, Actions Right -->
-                    <div class="input-controls-row">
-                        <div class="input-toolbar" style="position: relative;">
-                            <i class="ph ph-paperclip" title="上传文件"></i>
-                            <i class="ph ph-squares-four" title="选择技能" id="skillsBtn"></i>
-
-                            <!-- Skills 技能选择面板 -->
-                            <div class="ai-skills-panel" id="aiSkillsPanel">
-                                <div class="skills-option" data-skill-id="hazard_analysis">
-                                    <i class="ph ph-warning"></i>
-                                    <span>隐患识别分析</span>
-                                </div>
-                                <div class="skills-option" data-skill-id="enterprise_certificate">
-                                    <i class="ph ph-building"></i>
-                                    <span>企业资质证照识别</span>
-                                </div>
-                                <div class="skills-option" data-skill-id="personnel_certificate">
-                                    <i class="ph ph-identification-card"></i>
-                                    <span>人员资质证照识别</span>
-                                </div>
-                                <div class="skills-option" data-skill-id="smart_qa">
-                                    <i class="ph ph-chats-circle"></i>
-                                    <span>智能问数</span>
-                                </div>
-                                <div class="skills-option" data-skill-id="courseware_generation">
-                                    <i class="ph ph-presentation"></i>
-                                    <span>课件生成</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="input-actions">
-                            <i class="ph ph-microphone"></i>
-                            <button class="btn-send"><i class="ph ph-paper-plane-right"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Floating AI Icon -->
-            <div class="ai-floating-btn" onclick="toggleAI()">
-                <img src="../pic/AI助手@2x.svg" alt="AI" style="width:24px; height:24px;">
-            </div>
-
-            <!-- 隐藏的文件上传input -->
-            <input type="file" id="aiFileInput" style="display: none;"
-                accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.doc,.docx,.xls,.xlsx,.pdf,.txt,.csv" multiple>
-
-            <!-- Modal for Auto-Identification -->
             <div class="modal-overlay" id="aiModal" style="display: none;">
                 <div class="modal">
                     <div class="modal-header">
@@ -441,30 +229,16 @@
                 </div>
             </div>
 
-            <!-- 添加人员方式选择对话框 -->
             <div id="addPersonnelDialogApp">
-                <el-dialog 
-                    v-model="addMethodDialogVisible" 
-                    title="添加人员" 
-                    width="500px"
-                    append-to-body
-                    :close-on-click-modal="false">
+                <el-dialog v-model="addMethodDialogVisible" title="添加人员" width="500px" append-to-body :close-on-click-modal="false">
                     <div style="text-align: center; padding: 20px 0;">
                         <p style="font-size: 14px; color: #5C5F66; margin-bottom: 24px;">请选择添加人员的方式</p>
                         <div style="display: flex; gap: 16px; justify-content: center;">
-                            <el-button 
-                                type="primary" 
-                                size="large"
-                                @click="selectFromList"
-                                style="width: 180px;">
+                            <el-button type="primary" size="large" @click="selectFromList" style="width: 180px;">
                                 <i class="ph ph-users"></i>
                                 从人员清单中选择
                             </el-button>
-                            <el-button 
-                                type="primary" 
-                                size="large"
-                                @click="recognizeCredential"
-                                style="width: 180px;">
+                            <el-button type="primary" size="large" @click="recognizeCredential" style="width: 180px;">
                                 <i class="ph ph-scan"></i>
                                 识别证照录入
                             </el-button>
@@ -475,68 +249,49 @@
         </div>
     </div>
 
+    <script src="components/app-config.js"></script>
+    <script src="components/app-shell.js"></script>
+    <script src="components/ai-assistant-shell.js"></script>
+    <script src="components/ai-assistant-scenes.js"></script>
+    <script src="components/ai-assistant.js?v=20260306"></script>
     <script src="js/certificate_recognition.js"></script>
-    
-    <script>
-        // 页面导航函数
-        function navigateToPage(page) {
-            window.location.href = page;
-        }
 
-        // Element Plus 文件上传组件初始化
+    <script>
         const { createApp, ref } = Vue;
 
         const FileUploadApp = {
             setup() {
                 const fileList = ref([]);
 
-                // 预览文件
-                const handlePreview = (uploadFile) => {
-                    console.log('预览文件:', uploadFile.name);
-                    // 如果是图片,可以预览
+                const toStoredFiles = function (files) {
+                    return files.map(function (file) {
+                        if (file.raw) {
+                            return {
+                                url: URL.createObjectURL(file.raw),
+                                name: file.name,
+                                size: file.size || ''
+                            };
+                        }
+                        return file;
+                    });
+                };
+
+                const handlePreview = function (uploadFile) {
                     if (uploadFile.raw && uploadFile.raw.type.startsWith('image/')) {
-                        const url = URL.createObjectURL(uploadFile.raw);
-                        previewFullImage(url);
+                        CertificateRecognitionPage.previewFullImage(URL.createObjectURL(uploadFile.raw));
                     } else {
                         ElementPlus.ElMessage.info('PDF文件无法预览,请下载后查看');
                     }
                 };
 
-                // 删除文件
-                const handleRemove = (uploadFile, uploadFiles) => {
-                    console.log('删除文件:', uploadFile.name);
-                    // 同步更新全局状态
-                    if (window.chatState) {
-                        window.chatState.uploadedFiles = uploadFiles.map(f => {
-                            if (f.raw) {
-                                return {
-                                    url: URL.createObjectURL(f.raw),
-                                    name: f.name
-                                };
-                            }
-                            return f;
-                        });
-                    }
+                const handleRemove = function (uploadFile, uploadFiles) {
+                    CertificateRecognitionPage.setUploadedFiles(toStoredFiles(uploadFiles));
                 };
 
-                // 文件变化时触发AI识别弹窗
-                const handleChange = (uploadFile, uploadFiles) => {
+                const handleChange = function (uploadFile, uploadFiles) {
                     if (uploadFile.status === 'ready' && uploadFiles.length > 0) {
-                        // 更新全局状态
-                        if (window.chatState) {
-                            window.chatState.uploadedFiles = uploadFiles.map(f => {
-                                if (f.raw) {
-                                    return {
-                                        url: URL.createObjectURL(f.raw),
-                                        name: f.name
-                                    };
-                                }
-                                return f;
-                            });
-                        }
-
-                        // 显示AI识别弹窗
-                        setTimeout(() => {
+                        CertificateRecognitionPage.setUploadedFiles(toStoredFiles(uploadFiles));
+                        setTimeout(function () {
                             const fileCount = document.getElementById('fileCount');
                             const aiModal = document.getElementById('aiModal');
                             if (fileCount) fileCount.innerText = uploadFiles.length;
@@ -545,71 +300,14 @@
                     }
                 };
 
-                // 超出数量限制
-                const handleExceed = (files, uploadFiles) => {
+                const handleExceed = function () {
                     ElementPlus.ElMessage.warning('最多只能上传 5 个文件');
                 };
 
-                // 触发AI识别
-                const triggerAIRecognition = (event) => {
-                    if (fileList.value.length === 0) {
-                        ElementPlus.ElMessage.warning('请先上传文件');
-                        return;
-                    }
-
-                    // 防止重复点击:检查是否正在分析中
-                    if (window.chatState && window.chatState.isAnalyzing) {
-                        ElementPlus.ElMessage.info('AI正在分析中,请稍候...');
-                        return;
-                    }
-
-                    // 触发粒子特效
-                    const btn = event?.target?.closest('.ai-recognize-btn') || document.querySelector('.ai-recognize-btn');
-                    if (btn && typeof createParticleEffect === 'function') {
-                        createParticleEffect(btn);
-                    }
-
-                    // 收集所有文件的URL
-                    const fileUrls = fileList.value.map(file => {
-                        if (file.raw) {
-                            return URL.createObjectURL(file.raw);
-                        }
-                        return file.url;
-                    });
-
-                    // 更新全局状态
-                    if (window.chatState) {
-                        window.chatState.uploadedFiles = fileUrls.map((url, index) => ({
-                            url: url,
-                            name: fileList.value[index].name
-                        }));
-                    }
-
-                    // 打开AI助手侧边栏(仅当未打开时)
-                    const sidebar = document.getElementById('aiSidebar');
-                    if (sidebar && !sidebar.classList.contains('active')) {
-                        if (typeof toggleAI === 'function') {
-                            toggleAI();
-                        }
-                    }
-
-                    // 立即设置分析中标志,防止重复点击
-                    if (window.chatState) {
-                        window.chatState.isAnalyzing = true;
-                    }
-
-                    // 将文件发送到AI助手进行分析
-                    setTimeout(() => {
-                        // 添加用户消息(显示文件)
-                        if (typeof addUserMessage === 'function') {
-                            addUserMessage('请帮我识别这些证照文件中的信息', fileUrls, true);
-                        }
-
-                        // 模拟AI分析
-                        if (typeof simulateAIAnalysis === 'function') {
-                            simulateAIAnalysis();
-                        }
-                    }, 300);
+                const triggerAIRecognition = function (event) {
+                    const files = toStoredFiles(fileList.value);
+                    const button = event && event.target && event.target.closest('.ai-recognize-btn');
+                    CertificateRecognitionPage.startEnterpriseRecognitionFromFiles(files, button || document.querySelector('.ai-recognize-btn'));
                 };
 
                 return {
@@ -623,23 +321,17 @@
             }
         };
 
-        // 创建Vue应用并挂载
         const fileApp = createApp(FileUploadApp);
         fileApp.use(ElementPlus);
-
-        // 注册Element Plus图标
         for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
             fileApp.component(key, component);
         }
-
         fileApp.mount('#fileUploadApp');
     </script>
 
     <script>
-        // 暴露全局变量用于人员清单操作
         window.personnelTableInstance = null;
 
-        // Element Plus 人员清单表格组件初始化
         const PersonnelTableApp = {
             setup() {
                 const personnelData = Vue.ref([
@@ -678,95 +370,49 @@
                         certCheckResult: '高空作业证',
                         status: '离场',
                         safetyTraining: '未完成'
-                    },
-                    {
-                        id: 4,
-                        avatar: 'https://ui-avatars.com/api/?name=刘洋&background=FAD000&color=000',
-                        name: '刘洋',
-                        gender: '男',
-                        phone: '13611122334',
-                        age: 31,
-                        certStatus: '正常',
-                        certCheckResult: '起重机操作证',
-                        status: '入场',
-                        safetyTraining: '已完成'
-                    },
-                    {
-                        id: 5,
-                        avatar: 'https://ui-avatars.com/api/?name=陈敏&background=8B5CF6&color=fff',
-                        name: '陈敏',
-                        gender: '女',
-                        phone: '13822334455',
-                        age: 26,
-                        certStatus: '正常',
-                        certCheckResult: '质量检验员证',
-                        status: '入场',
-                        safetyTraining: '已完成'
                     }
                 ]);
 
-                // 查看操作
-                const handleView = (row) => {
+                const handleView = function (row) {
                     ElementPlus.ElMessage.info(`查看人员: ${row.name}`);
-                    console.log('查看:', row);
                 };
 
-                // 编辑操作
-                const handleEdit = (row) => {
+                const handleEdit = function (row) {
                     ElementPlus.ElMessage.info(`编辑人员: ${row.name}`);
-                    console.log('编辑:', row);
                 };
 
-                // 删除操作
-                const handleDelete = (row) => {
-                    ElementPlus.ElMessageBox.confirm(
-                        `确定要删除人员 ${row.name} 吗？`,
-                        '确认删除',
-                        {
-                            confirmButtonText: '确定',
-                            cancelButtonText: '取消',
-                            type: 'warning',
-                        }
-                    ).then(() => {
-                        const index = personnelData.value.findIndex(item => item.id === row.id);
+                const handleDelete = function (row) {
+                    ElementPlus.ElMessageBox.confirm(`确定要删除人员 ${row.name} 吗？`, '确认删除', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(function () {
+                        const index = personnelData.value.findIndex(function (item) {
+                            return item.id === row.id;
+                        });
                         if (index > -1) {
                             personnelData.value.splice(index, 1);
                             ElementPlus.ElMessage.success('删除成功');
                         }
-                    }).catch(() => {
+                    }).catch(function () {
                         ElementPlus.ElMessage.info('已取消删除');
                     });
                 };
 
-                // 显示添加人员对话框
-                const showAddPersonnelDialog = () => {
-                    console.log('点击添加人员按钮');
-                    console.log('对话框实例:', window.addPersonnelDialogInstance);
-                    
+                const showAddPersonnelDialog = function () {
                     if (window.addPersonnelDialogInstance) {
-                        console.log('打开对话框');
                         window.addPersonnelDialogInstance.addMethodDialogVisible.value = true;
-                    } else {
-                        console.error('添加人员对话框实例未初始化');
-                        ElementPlus.ElMessage.error('对话框初始化失败，请刷新页面重试');
                     }
                 };
 
-                // 添加人员到清单
-                const addPersonnel = (personnelInfo) => {
-                    const newId = personnelData.value.length > 0 
-                        ? Math.max(...personnelData.value.map(p => p.id)) + 1 
+                const addPersonnel = function (personnelInfo) {
+                    const newId = personnelData.value.length
+                        ? Math.max.apply(null, personnelData.value.map(function (item) { return item.id; })) + 1
                         : 1;
-                    
-                    personnelData.value.push({
-                        id: newId,
-                        ...personnelInfo
-                    });
-                    
+                    personnelData.value.push(Object.assign({ id: newId }, personnelInfo));
                     ElementPlus.ElMessage.success('人员已成功添加到清单');
                 };
 
-                // 暴露实例到全局
                 window.personnelTableInstance = {
                     personnelData,
                     addPersonnel
@@ -782,149 +428,61 @@
             }
         };
 
-        // 创建人员表格Vue应用并挂载
         const personnelApp = Vue.createApp(PersonnelTableApp);
         personnelApp.use(ElementPlus);
-
-        // 注册Element Plus图标
         for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
             personnelApp.component(key, component);
         }
-
         personnelApp.mount('#personnelTableApp');
     </script>
 
     <script>
-        // 添加人员对话框组件
         const AddPersonnelDialogApp = {
             setup() {
-                const { ref, onMounted } = Vue;
-                
+                const { ref } = Vue;
                 const addMethodDialogVisible = ref(false);
 
-                // 从人员清单中选择
-                const selectFromList = () => {
+                const selectFromList = function () {
                     addMethodDialogVisible.value = false;
                     ElementPlus.ElMessage.info('从人员清单中选择功能开发中...');
                 };
 
-                // 识别证照录入 - 直接打开文件选择
-                const recognizeCredential = () => {
+                const recognizeCredential = function () {
                     addMethodDialogVisible.value = false;
-                    
-                    // 创建文件输入元素
                     const input = document.createElement('input');
                     input.type = 'file';
                     input.accept = 'image/jpeg,image/png';
                     input.multiple = true;
-                    
-                    input.onchange = (e) => {
-                        const files = Array.from(e.target.files);
-                        
-                        if (files.length === 0) {
+                    input.onchange = function (event) {
+                        const files = Array.from(event.target.files || []);
+                        if (!files.length) {
                             return;
                         }
-                        
                         if (files.length > 5) {
                             ElementPlus.ElMessage.warning('最多只能上传 5 张证照');
                             return;
                         }
-                        
-                        // 将文件转换为URL
+
                         const imageUrls = [];
                         let loadedCount = 0;
-                        
-                        files.forEach(file => {
+                        files.forEach(function (file) {
                             const reader = new FileReader();
-                            reader.onload = (readerEvent) => {
+                            reader.onload = function (readerEvent) {
                                 imageUrls.push(readerEvent.target.result);
-                                loadedCount++;
-                                
-                                // 所有文件都加载完成后，开始识别
+                                loadedCount += 1;
                                 if (loadedCount === files.length) {
-                                    startPersonnelRecognitionWithImages(imageUrls);
+                                    CertificateRecognitionPage.startPersonnelRecognitionWithImages(imageUrls);
                                 }
                             };
                             reader.readAsDataURL(file);
                         });
                     };
-                    
-                    // 触发文件选择
                     input.click();
                 };
 
-                // 使用图片开始人员证件识别
-                const startPersonnelRecognitionWithImages = (imageUrls) => {
-                    console.log('开始人员证件识别，图片数量:', imageUrls.length);
-                    
-                    // 触发粒子特效（从屏幕中心发出）
-                    if (typeof createParticleEffect === 'function') {
-                        const centerBtn = {
-                            getBoundingClientRect: () => ({
-                                left: window.innerWidth / 2,
-                                top: window.innerHeight / 2,
-                                width: 0,
-                                height: 0
-                            })
-                        };
-                        createParticleEffect(centerBtn);
-                    }
-
-                    // 打开AI助手侧边栏
-                    const sidebar = document.getElementById('aiSidebar');
-                    if (sidebar && !sidebar.classList.contains('active')) {
-                        if (typeof toggleAI === 'function') {
-                            toggleAI();
-                        }
-                    }
-
-                    // 延迟发送消息
-                    setTimeout(() => {
-                        // 设置分析中标志
-                        if (window.chatState) {
-                            window.chatState.isAnalyzing = true;
-                            window.chatState.recognitionType = 'personnel'; // 标记为人员证件识别
-                        }
-
-                        // 添加用户消息（显示证照图片）
-                        if (typeof addUserMessage === 'function') {
-                            addUserMessage('请帮我识别这些人员证件中的信息', imageUrls, true);
-                        }
-
-                        // 模拟AI分析人员证件
-                        if (typeof simulatePersonnelRecognition === 'function') {
-                            simulatePersonnelRecognition();
-                        }
-                    }, 300);
-                };
-
-                // 证照文件变化（Element Plus Upload组件使用，暂时保留）
-                const handleCredentialChange = (file, fileList) => {
-                    console.log('证照文件变化:', fileList.length);
-                };
-
-                // 移除证照文件（Element Plus Upload组件使用，暂时保留）
-                const handleCredentialRemove = (file, fileList) => {
-                    console.log('移除证照文件:', file.name);
-                };
-
-                // 超出数量限制（Element Plus Upload组件使用，暂时保留）
-                const handleCredentialExceed = () => {
-                    ElementPlus.ElMessage.warning('最多只能上传 5 张证照');
-                };
-
-
-                // 立即暴露实例到全局
                 window.addPersonnelDialogInstance = {
                     addMethodDialogVisible
                 };
-                
-                console.log('添加人员对话框组件setup完成，实例已暴露到window');
-
-                // 在挂载后输出日志
-                onMounted(() => {
-                    console.log('添加人员对话框组件已挂载到DOM');
-                });
 
                 return {
                     addMethodDialogVisible,
@@ -934,48 +492,13 @@
             }
         };
 
-        // 创建添加人员对话框应用并挂载
         const addPersonnelDialogApp = Vue.createApp(AddPersonnelDialogApp);
         addPersonnelDialogApp.use(ElementPlus);
-
-        // 注册Element Plus图标
         for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
             addPersonnelDialogApp.component(key, component);
         }
-
         addPersonnelDialogApp.mount('#addPersonnelDialogApp');
-    </script>
-
-    <!-- AI 助手组件脚本 -->
-    <script src="components/ai-assistant.js"></script>
-
-    <!-- 初始化 AI 助手 -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // 初始化 AI 助手组件
-            AIAssistant.init({
-                userName: '张三',
-                welcomeMessage: '您好，{userName}！我是您的安全生产AI助手，请向我提问吧',
-                onAnalysisComplete: function (results) {
-                    console.log('AI 分析完成，共识别出', results.length, '个结果');
-                },
-                onInsertToForm: function (selectedResults) {
-                    // 将分析结果插入到表单中
-                    console.log('选中的分析结果：', selectedResults);
-
-                    if (selectedResults.length === 0) {
-                        ElementPlus.ElMessage.warning('请先选择要插入的分析结果');
-                        return;
-                    }
-
-                    // 这里可以根据证照识别的具体需求来处理插入逻辑
-                    // 例如：将识别出的企业名称、证照编号等信息填入表单
-                    ElementPlus.ElMessage.success('已成功插入到表单');
-                }
-            });
-        });
     </script>
 </body>
 
 </html>
-

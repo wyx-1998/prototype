@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隐患列表 - 国投集团智能安全生产管理系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/hidden_danger.css">
+    <link rel="stylesheet" href="css/smart_qa.css">
+    <link rel="stylesheet" href="css/hidden_danger_list.css">
+    <link rel="stylesheet" href="components/ai-assistant.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+    <script src="https://unpkg.com/element-plus"></script>
+    <script src="https://unpkg.com/@element-plus/icons-vue"></script>
+</head>
+
+<body>
+    <div class="app-layout">
+        <header id="appShellHeader"></header>
+        <div class="main-body">
+            <aside id="appShellSidebar"></aside>
+            <main class="content-area hidden-danger-list-content-area">
+                <div class="content-tabs">
+                    <div class="tab-item active">隐患治理 <i class="ph ph-x"></i></div>
+                    <div class="tab-actions">
+                        <i class="ph ph-star"></i>
+                        <i class="ph ph-arrows-clockwise"></i>
+                    </div>
+                </div>
+                <div id="appPageContainer"></div>
+            </main>
+            <div id="aiAssistantMount"></div>
+        </div>
+    </div>
+
+    <script src="components/app-config.js"></script>
+    <script src="components/app-shell.js"></script>
+    <script src="components/ai-assistant-shell.js"></script>
+    <script src="components/ai-assistant-scenes.js"></script>
+    <script src="components/ai-assistant.js?v=20260306"></script>
+    <script src="js/smart_qa.js"></script>
+    <script src="js/hidden_danger.js"></script>
+    <script src="js/hidden_danger_list.js"></script>
+    <script src="js/certificate_recognition.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            AIAssistantShell.mount('aiAssistantMount');
+            AIAssistant.init({
+                userName: '张三',
+                sceneId: 'hidden_danger',
+                welcomeMessage: '您好，{userName}！我是您的安全生产AI助手，请向我提问吧'
+            });
+            AppShell.init({ pageId: 'hidden_danger_list' });
+            AppShell.navigateToPageById('hidden_danger_list', { skipHash: true });
+        });
+    </script>
+</body>
+
+</html>

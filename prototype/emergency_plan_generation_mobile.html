@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>应急预案生成 - 手机端</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/emergency_plan_generation_mobile.css">
+    <link rel="stylesheet" href="components/ai-assistant.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body class="emergency-plan-mobile-body">
+    <div class="mobile-page-shell">
+        <div class="mobile-chat-statusbar">
+            <div class="mobile-chat-time">9:41</div>
+            <div class="mobile-chat-status-icons">
+                <i class="ph ph-cell-signal-full"></i>
+                <i class="ph ph-wifi-high"></i>
+                <i class="ph ph-battery-full"></i>
+            </div>
+        </div>
+        <header class="mobile-page-header">
+            <button class="mobile-header-btn" type="button" aria-label="返回主页面" id="mobileGoHomeBtn">
+                <i class="ph ph-caret-left"></i>
+            </button>
+            <div class="mobile-page-header-main">
+                <div class="mobile-page-header-title">智能应急预案生成</div>
+                <div class="mobile-page-header-subtitle">内容由 AI 生成 &gt;</div>
+            </div>
+            <span class="mobile-header-btn mobile-header-btn-placeholder" aria-hidden="true">
+                <i class="ph ph-dots-three-outline"></i>
+            </span>
+        </header>
+
+        <main class="mobile-page-content">
+            <section class="mobile-assistant-panel">
+                <div id="aiAssistantMount"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="components/ai-assistant-shell.js"></script>
+    <script src="components/ai-assistant-scenes.js"></script>
+    <script src="components/ai-assistant.js?v=20260306"></script>
+    <script src="js/emergency_plan_generation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            AIAssistantShell.mount('aiAssistantMount');
+            AIAssistant.init({
+                userName: '张三',
+                sceneId: 'emergency_plan_generation',
+                welcomeMessage: '您好，{userName}！我是您的安全生产AI助手，请向我提问吧'
+            });
+
+            if (window.AIAssistant && typeof window.AIAssistant.updateConversationTitle === 'function') {
+                const originalUpdateConversationTitle = window.AIAssistant.updateConversationTitle.bind(window.AIAssistant);
+                window.AIAssistant.updateConversationTitle = function () {
+                    originalUpdateConversationTitle('智能应急预案生成');
+                };
+                window.AIAssistant.updateConversationTitle('智能应急预案生成');
+            }
+
+            var params = new URLSearchParams(window.location.search);
+            var shouldAutoStart = params.get('autostart') === '1';
+            if (shouldAutoStart && window.AIAssistant) {
+                if (typeof window.AIAssistant.startNewConversation === 'function') {
+                    window.AIAssistant.startNewConversation();
+                }
+                setTimeout(function () {
+                    if (typeof window.AIAssistant.selectSuggestion === 'function') {
+                        window.AIAssistant.selectSuggestion('脱硫区域突发有毒气体泄漏，现场应如何处置？');
+                    }
+                }, 180);
+            }
+
+            var goHomeBtn = document.getElementById('mobileGoHomeBtn');
+            if (goHomeBtn) {
+                goHomeBtn.addEventListener('click', function () {
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({ type: 'mobile-emergency-go-home' }, '*');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

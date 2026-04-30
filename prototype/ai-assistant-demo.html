@@ -5,28 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI 助手组件演示 - 国投集团智能安全生产管理系统</title>
-
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
         rel="stylesheet">
-
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
-    <!-- AI 助手组件样式 -->
     <link rel="stylesheet" href="components/ai-assistant.css">
-
     <style>
-        /* 基础样式 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', 'Noto Sans SC', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -34,15 +20,7 @@
             display: flex;
             overflow: hidden;
         }
-
-        /* 主容器 */
-        .demo-container {
-            display: flex;
-            width: 100%;
-            height: 100vh;
-        }
-
-        /* 左侧内容区域（可自由调整） */
+        .demo-container { display: flex; width: 100%; height: 100vh; }
         .content-area {
             flex: 1;
             padding: 40px;
@@ -53,186 +31,60 @@
             color: white;
             overflow-y: auto;
         }
-
-        .demo-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .demo-header h1 {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .demo-header p {
-            font-size: 20px;
-            opacity: 0.9;
-        }
-
-        .demo-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            max-width: 1000px;
-            width: 100%;
-        }
-
+        .demo-header { text-align: center; margin-bottom: 40px; }
+        .demo-header h1 { font-size: 48px; font-weight: 700; margin-bottom: 16px; }
+        .demo-header p { font-size: 20px; opacity: 0.9; }
+        .demo-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1000px; width: 100%; }
         .demo-card {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 28px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
         }
-
-        .demo-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-
         .demo-card-icon {
-            width: 56px;
-            height: 56px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-            font-size: 28px;
+            width: 56px; height: 56px; background: rgba(255,255,255,0.2); border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 28px;
         }
-
-        .demo-card h3 {
-            font-size: 20px;
-            margin-bottom: 12px;
-        }
-
-        .demo-card p {
-            font-size: 14px;
-            line-height: 1.6;
-            opacity: 0.9;
-        }
-
-        .demo-actions {
-            margin-top: 40px;
-            display: flex;
-            gap: 16px;
-        }
-
+        .demo-card h3 { font-size: 20px; margin-bottom: 12px; }
+        .demo-card p { font-size: 14px; line-height: 1.6; opacity: 0.9; }
+        .demo-actions { margin-top: 40px; display: flex; gap: 16px; }
         .demo-btn {
-            padding: 14px 32px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            padding: 14px 32px; border-radius: 12px; font-size: 16px; font-weight: 500; border: none; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
         }
-
-        .demo-btn-primary {
-            background: white;
-            color: #667eea;
-        }
-
-        .demo-btn-primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
-        }
-
-        .demo-btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .demo-btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
+        .demo-btn-primary { background: white; color: #667eea; }
+        .demo-btn-secondary { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); }
         .demo-note {
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            border-left: 4px solid white;
-            max-width: 600px;
+            margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 12px;
+            border-left: 4px solid white; max-width: 600px;
         }
-
-        .demo-note h4 {
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-
-        .demo-note p {
-            font-size: 14px;
-            opacity: 0.9;
-            line-height: 1.6;
-        }
-
-        /* 响应式 */
-        @media (max-width: 768px) {
-            .content-area {
-                padding: 20px;
-            }
-
-            .demo-header h1 {
-                font-size: 32px;
-            }
-
-            .demo-cards {
-                grid-template-columns: 1fr;
-            }
-
-            .demo-actions {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .demo-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
+        .demo-note h4 { margin-bottom: 8px; font-size: 16px; }
+        .demo-note p { font-size: 14px; opacity: 0.9; line-height: 1.6; }
     </style>
 </head>
 
 <body>
     <div class="demo-container">
-        <!-- 左侧内容区域（可自由调整） -->
         <div class="content-area">
             <div class="demo-header">
-                <h1>🤖 AI 助手组件演示</h1>
+                <h1>AI 助手组件演示</h1>
                 <p>独立、可复用的 AI 对话组件</p>
             </div>
 
             <div class="demo-cards">
                 <div class="demo-card">
-                    <div class="demo-card-icon">
-                        <i class="ph ph-chat-circle-dots"></i>
-                    </div>
+                    <div class="demo-card-icon"><i class="ph ph-chat-circle-dots"></i></div>
                     <h3>智能对话</h3>
                     <p>支持文字、图片等多种形式的对话交互，提供流畅的用户体验。</p>
                 </div>
-
                 <div class="demo-card">
-                    <div class="demo-card-icon">
-                        <i class="ph ph-brain"></i>
-                    </div>
+                    <div class="demo-card-icon"><i class="ph ph-brain"></i></div>
                     <h3>AI 分析</h3>
                     <p>智能识别隐患问题，提供专业的分析结果和整改建议。</p>
                 </div>
-
                 <div class="demo-card">
-                    <div class="demo-card-icon">
-                        <i class="ph ph-puzzle-piece"></i>
-                    </div>
+                    <div class="demo-card-icon"><i class="ph ph-puzzle-piece"></i></div>
                     <h3>易于集成</h3>
                     <p>组件化设计，只需引入文件即可使用，支持灵活配置。</p>
                 </div>
@@ -243,7 +95,7 @@
                     <i class="ph ph-robot"></i>
                     打开 AI 助手
                 </button>
-                <button class="demo-btn demo-btn-secondary" onclick="triggerDemo()">
+                <button class="demo-btn demo-btn-secondary" onclick="triggerHazardDemo()">
                     <i class="ph ph-play"></i>
                     隐患识别演示
                 </button>
@@ -258,224 +110,49 @@
             </div>
 
             <div class="demo-note">
-                <h4>💡 使用提示</h4>
-                <p>
-                    点击右下角的浮动按钮或上方的"打开 AI 助手"按钮即可开始对话。
-                    您可以上传图片让 AI 进行分析，也可以直接输入问题进行咨询。
-                    左侧的内容可以完全自定义，而右侧的AI对话框会始终保持一致的样式和交互。
-                </p>
+                <h4>使用提示</h4>
+                <p>左侧内容可以自由替换，右侧 AI 助手始终复用同一套结构和交互。</p>
             </div>
         </div>
 
-        <!-- AI 助手组件（右侧） -->
-        <aside class="ai-sidebar" id="aiSidebar">
-            <div class="ai-header">
-                <div class="ai-title-wrapper">
-                    <div class="ai-conversation-title" id="aiConversationTitle">新对话</div>
-                    <div class="ai-disclaimer" onclick="window.open('disclaimer.html', '_blank')">内容由AI生成 ></div>
-                </div>
-                <div class="ai-controls">
-                    <i class="ph ph-note-pencil" title="开始新对话"></i>
-                    <i class="ph ph-clock-counter-clockwise" title="历史对话"></i>
-                    <i class="ph ph-arrows-out-simple"></i>
-                    <i class="ph ph-x" onclick="toggleAI()"></i>
-                </div>
-            </div>
-            <div class="ai-chat-body" id="aiChatBody">
-                <!-- 初始消息 -->
-                <div class="chat-message ai">
-                    <div class="message-content">
-                        <p class="chat-text">您好，张三！我是您的安全生产AI助手，请向我提问吧</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 历史对话面板 -->
-            <div class="history-panel" id="historyPanel">
-                <div class="history-header">
-                    <i class="ph ph-arrow-left history-back-btn" onclick="AIAssistant.toggleHistoryPanel()"></i>
-                    <span class="history-title">历史对话</span>
-                </div>
-                <div class="history-search">
-                    <input type="text" id="historySearch" placeholder="搜索对话..." oninput="AIAssistant.searchHistory(this.value)">
-                </div>
-                <div class="history-list" id="historyList">
-                    <!-- 历史对话列表将动态生成 -->
-                </div>
-            </div>
-
-            <!-- 输入区域 -->
-            <div class="ai-input-area">
-                <textarea placeholder="请输入您的问题..."></textarea>
-
-                <!-- 控制行：工具栏左侧，操作按钮右侧 -->
-                <div class="input-controls-row">
-                    <div class="input-toolbar" style="position: relative;">
-                        <i class="ph ph-paperclip" title="上传文件"></i>
-                        <i class="ph ph-squares-four" title="选择技能" id="skillsBtn"></i>
-
-                        <!-- Skills 技能选择面板 -->
-                        <div class="ai-skills-panel" id="aiSkillsPanel">
-                            <div class="skills-panel-options" id="skillsPanelOptions"></div>
-                            <div class="skills-panel-footer">
-                                <button class="skills-manage-btn" onclick="openSkillsManageModal(); event.stopPropagation();">管理</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="input-actions">
-                        <i class="ph ph-microphone"></i>
-                        <button class="btn-send"><i class="ph ph-paper-plane-right"></i></button>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- 浮动 AI 图标 -->
-        <div class="ai-floating-btn" onclick="toggleAI()">
-            <img src="../pic/AI助手@2x.svg" alt="AI" style="width:24px; height:24px;">
-        </div>
-
-        <!-- 隐藏的文件上传input -->
-        <input type="file" id="aiFileInput" style="display: none;"
-            accept=".jpg,.jpeg,.png,.gif,.svg,.webp,.doc,.docx,.xls,.xlsx,.pdf,.txt,.csv" multiple>
-
-        <!-- 技能管理弹窗 -->
-        <div class="skills-manage-overlay" id="skillsManageOverlay" onclick="closeSkillsManageModal(event)">
-            <div class="skills-manage-modal" onclick="event.stopPropagation()">
-                <div class="skills-manage-modal-header">
-                    <span class="skills-manage-modal-title">技能管理</span>
-                    <i class="ph ph-x skills-manage-modal-close" onclick="closeSkillsManageModal(null, true)"></i>
-                </div>
-                <div class="skills-manage-modal-body">
-                    <div class="skills-manage-toolbar">
-                        <div class="skills-manage-search">
-                            <i class="ph ph-magnifying-glass"></i>
-                            <input type="text" id="skillsManageSearch" placeholder="搜索技能名称 / 技能包 / 关键词">
-                        </div>
-                        <div class="skills-manage-filters">
-                            <select id="skillsManageEnabledFilter">
-                                <option value="all">全部状态</option>
-                                <option value="enabled">仅启用</option>
-                                <option value="disabled">仅停用</option>
-                            </select>
-                            <select id="skillsManageTypeFilter">
-                                <option value="all">全部类型</option>
-                                <option value="system">系统内置</option>
-                                <option value="custom">自定义</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="skills-manage-layout">
-                        <div class="skills-manage-list-panel">
-                            <div class="skills-manage-list-header">
-                                <span>技能清单</span>
-                                <span class="skills-manage-count" id="skillsManageCount">0 个技能</span>
-                            </div>
-                            <div class="skills-manage-list" id="skillsManageList"></div>
-                        </div>
-                        <div class="skills-manage-detail-panel">
-                            <div class="skills-manage-detail-header">
-                                <span>技能详情</span>
-                            </div>
-                            <div class="skills-manage-detail" id="skillsManageDetail"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="skills-manage-modal-footer">
-                    <button class="skills-manage-footer-btn secondary" onclick="closeSkillsManageModal(null, true)">关闭</button>
-                    <button class="skills-manage-footer-btn primary" onclick="AIAssistant.saveSkillsManagement()">保存</button>
-                </div>
-            </div>
-        </div>
+        <div id="aiAssistantMount"></div>
     </div>
 
-    <!-- AI 助手组件脚本 -->
-    <script src="components/ai-assistant.js?v=20260305"></script>
-
-    <!-- 初始化 AI 助手 -->
+    <script src="components/ai-assistant-shell.js"></script>
+    <script src="components/ai-assistant-scenes.js"></script>
+    <script src="components/ai-assistant.js?v=20260306"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // 初始化 AI 助手组件
+            AIAssistantShell.mount('aiAssistantMount');
             AIAssistant.init({
                 userName: '张三',
-                welcomeMessage: '您好，{userName}！我是您的安全生产AI助手，请向我提问吧',
-                onAnalysisComplete: function (results) {
-                    console.log('AI 分析完成，共识别出', results.length, '个隐患');
-                },
-                onInsertToForm: function (selectedResults) {
-                    // 演示页面没有表单，所以只显示提示
-                    alert('已选择 ' + selectedResults.length + ' 个隐患分析结果\n\n' +
-                        '在实际应用中，这里可以将分析结果插入到表单中。\n\n' +
-                        '选中的隐患：\n' +
-                        selectedResults.map(r => '• ' + r.name).join('\n'));
-
-                    console.log('选中的分析结果：', selectedResults);
-                }
+                welcomeMessage: '您好，{userName}！我是您的安全生产AI助手，请向我提问吧'
             });
         });
 
-        // 演示功能 - 隐患识别
-        function triggerDemo() {
-            // 打开 AI 助手
-            const sidebar = document.getElementById('aiSidebar');
-            if (!sidebar.classList.contains('active')) {
-                AIAssistant.toggleAI();
-            }
-
-            // 模拟发送消息并触发分析
+        function triggerHazardDemo() {
+            AIAssistant.toggleAI(true);
             setTimeout(function () {
-                AIAssistant.addUserMessage('请帮我分析一下图片中的安全隐患', [], true);
+                AIAssistant.addUserMessage('请帮我分析一下图片中的安全隐患', [], true, 'hazard_analysis');
                 AIAssistant.simulateAIAnalysis();
             }, 500);
         }
 
-        // 演示功能 - 证照识别
         function triggerCertificateDemo() {
-            // 打开 AI 助手
-            const sidebar = document.getElementById('aiSidebar');
-            if (!sidebar.classList.contains('active')) {
-                AIAssistant.toggleAI();
-            }
-
-            // 模拟发送消息并触发证照识别
+            AIAssistant.toggleAI(true);
             setTimeout(function () {
-                AIAssistant.addUserMessage('请帮我识别这些证照', [], false);
+                AIAssistant.addUserMessage('请帮我识别这些证照', [], false, 'enterprise_certificate');
                 AIAssistant.simulateCertificateRecognition();
             }, 500);
         }
 
-        // 演示功能 - 培训课件生成
         function triggerCoursewareDemo() {
-            // 打开 AI 助手
-            const sidebar = document.getElementById('aiSidebar');
-            if (!sidebar.classList.contains('active')) {
-                AIAssistant.toggleAI();
-            }
-
-            // 模拟发送消息并触发课件生成
+            AIAssistant.toggleAI(true);
             setTimeout(function () {
-                AIAssistant.addUserMessage('请帮我生成高处作业安全培训课件', [], false);
+                AIAssistant.addUserMessage('请帮我生成高处作业安全培训课件', [], false, 'courseware_generation');
                 AIAssistant.simulateCoursewareGeneration();
             }, 500);
         }
-
-        function toggleAI(forceState) {
-            AIAssistant.toggleAI(forceState);
-        }
-
-        function openSkillsManageModal() {
-            AIAssistant.openSkillsManageModal();
-        }
-
-        function closeSkillsManageModal(event, force) {
-            AIAssistant.closeSkillsManageModal(event, force);
-        }
-
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') {
-                AIAssistant.closeSkillsManageModal(null, true);
-            }
-        });
     </script>
 </body>
 

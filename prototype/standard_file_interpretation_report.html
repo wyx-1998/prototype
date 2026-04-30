@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GB/T 33579—2017 《机械安全 危险能量控制方法 上锁/挂牌》标准解读</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #Fdfbf7;
+            --text-main: #2c2c2c;
+            --text-secondary: #555555;
+            --accent-color: #2c3e50;
+            --accent-highlight: #d35400;
+            --accent-blue: #2980b9;
+            --accent-green: #27ae60;
+            --accent-red: #c0392b;
+            --border-color: #E0E0E0;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --font-serif: 'Noto Serif SC', serif;
+            --font-sans: 'Noto Sans SC', sans-serif;
+            --max-width: 1000px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, h4 {
+            font-family: var(--font-serif);
+            color: var(--accent-color);
+            margin-bottom: 0.8em;
+            font-weight: 700;
+        }
+        h1 { font-size: 2.5rem; line-height: 1.2; margin-bottom: 1rem; }
+        h2 { font-size: 1.8rem; border-bottom: 2px solid var(--accent-highlight); padding-bottom: 0.3rem; margin-top: 2.5rem; }
+        h3 { font-size: 1.4rem; margin-top: 1.5rem; color: #34495e; }
+        h4 { font-size: 1.1rem; color: var(--text-secondary); font-weight: 600; margin-top: 1rem; }
+        p { margin-bottom: 1rem; color: #4a4a4a; }
+        strong { color: var(--accent-color); font-weight: 700; }
+        ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; }
+        a { color: var(--accent-blue); text-decoration: none; border-bottom: 1px dotted var(--accent-blue); transition: all 0.2s; }
+        a:hover { color: var(--accent-highlight); border-bottom-style: solid; }
+        .container { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
+        .header {
+            position: sticky; top: 0; background: rgba(253, 251, 247, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05); z-index: 1000; padding: 1rem 0; box-shadow: 0 2px 15px rgba(0, 0, 0, 0.03);
+        }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: var(--font-serif); font-weight: 900; font-size: 1.4rem; color: var(--accent-color); display: flex; align-items: center; gap: 0.8rem; }
+        .logo i { color: var(--accent-highlight); }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { font-size: 0.95rem; color: var(--text-secondary); font-weight: 500; border-bottom: none; padding: 0.5rem 0; }
+        .hero { padding: 5rem 0 4rem; text-align: center; }
+        .hero .subtitle { font-size: 1.2rem; color: var(--text-secondary); max-width: 700px; margin: 0 auto 2rem; }
+        .tag {
+            display: inline-block; background-color: rgba(211, 84, 0, 0.08); color: var(--accent-highlight);
+            padding: 0.4rem 1rem; border-radius: 999px; font-weight: 500; margin-bottom: 1.5rem; font-size: 0.9rem;
+        }
+        .main-content { padding-bottom: 4rem; }
+        .content-card {
+            background: var(--card-bg); border-radius: 16px; padding: 2rem 2.5rem; margin-bottom: 2rem;
+            box-shadow: var(--card-shadow); border: 1px solid var(--border-color);
+        }
+        .key-points-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem;
+        }
+        .point-card {
+            background: #fcfcfc; border: 1px solid #f0f0f0; border-left: 5px solid var(--accent-blue);
+            padding: 1.5rem; border-radius: 8px; transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .point-card:hover { transform: translateY(-5px); box-shadow: var(--card-hover-shadow); }
+        .point-card h3 { margin-top: 0; font-size: 1.2rem; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.95rem; }
+        .comparison-table th, .comparison-table td { border: 1px solid var(--border-color); padding: 1rem; text-align: left; vertical-align: top; }
+        .comparison-table th { background-color: #f8f9fa; font-weight: 700; color: var(--accent-color); }
+        .comparison-table tr:nth-child(even) { background-color: #fdfdfd; }
+        .comparison-table .status-new { color: var(--accent-green); font-weight: 700; }
+        .comparison-table .status-clarified { color: var(--accent-blue); font-weight: 700; }
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(41, 128, 185, 0.05), rgba(39, 174, 96, 0.05));
+            border-left: 5px solid var(--accent-blue); padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;
+        }
+        .footer { text-align: center; padding: 3rem 0; color: var(--text-secondary); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-inner">
+            <div class="logo">
+                <i class="fa-solid fa-lock"></i>
+                <span>标准解读中心</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#summary">核心摘要</a>
+                <a href="#changes">重点变化</a>
+                <a href="#practice">实践建议</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <span class="tag">标准文件解读报告</span>
+            <h1>GB/T 33579—2017《机械安全 危险能量控制方法 上锁/挂牌》</h1>
+            <p class="subtitle">本报告对标准核心要求、重点变化、适用场景与执行建议进行了结构化解读，便于管理层、审批人员和班组快速理解与落地。</p>
+        </div>
+    </section>
+
+    <main class="main-content container">
+        <section class="content-card" id="summary">
+            <h2>一、核心摘要</h2>
+            <p>该标准围绕机械设备检修、维护、清理和故障处理过程中的危险能量控制提出系统要求，核心目标是避免设备意外启动、释放残余能量，造成人员伤害。</p>
+            <div class="highlight-box">
+                <p><strong>一句话理解：</strong>凡是人员需要进入设备危险区域或接触可能导致伤害的能量源，就必须先识别、隔离、锁定并验证能量是否已处于安全状态。</p>
+            </div>
+        </section>
+
+        <section class="content-card" id="changes">
+            <h2>二、重点解读</h2>
+            <div class="key-points-grid">
+                <div class="point-card">
+                    <h3>1. 适用范围更明确</h3>
+                    <p>适用于机械设备相关的电能、液压、气压、重力、弹性势能等危险能量控制场景，不仅限于停电上锁。</p>
+                </div>
+                <div class="point-card">
+                    <h3>2. 强调验证环节</h3>
+                    <p>不只要求“上锁挂牌”，还要求在隔离后验证设备确实无法启动，残余能量已释放或受控。</p>
+                </div>
+                <div class="point-card">
+                    <h3>3. 关注多人协同作业</h3>
+                    <p>涉及多人检修、外委施工或交叉作业时，必须明确谁加锁、谁确认、谁解锁，责任不能模糊。</p>
+                </div>
+                <div class="point-card">
+                    <h3>4. 适合制度落地</h3>
+                    <p>标准可直接映射为检维修管理制度、作业许可流程、班组操作卡和现场点检清单。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>三、适用场景</h2>
+            <ul>
+                <li>皮带机、泵、风机、搅拌机等设备检修</li>
+                <li>清堵、清扫、进入防护罩内部作业</li>
+                <li>设备试运转前的多人协同确认</li>
+                <li>外委检维修与属地协同管理</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>四、角色化阅读重点</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>角色</th>
+                        <th>重点关注</th>
+                        <th>落地动作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>管理层</td>
+                        <td>制度是否覆盖危险能量识别、隔离、验证和解锁要求</td>
+                        <td>推动制度、培训和检查机制完善</td>
+                    </tr>
+                    <tr>
+                        <td>审批人员</td>
+                        <td>检维修作业是否明确停机、断能、上锁、挂牌和验证步骤</td>
+                        <td>在作业票和审批流中加入关键校验项</td>
+                    </tr>
+                    <tr>
+                        <td>班组人员</td>
+                        <td>现场具体怎么锁、怎么挂、怎么验</td>
+                        <td>按步骤执行，禁止未验证就开工</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="content-card" id="practice">
+            <h2>五、执行建议</h2>
+            <ol>
+                <li>把标准要求拆成现场可执行的危险能量控制清单。</li>
+                <li>在检维修票证中增加“已隔离、已上锁、已挂牌、已验证”字段。</li>
+                <li>对外委作业纳入统一锁具和统一交接规则。</li>
+                <li>对班组开展一次典型设备的实操演练。</li>
+            </ol>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">标准文件解读报告示例页</div>
+    </footer>
+</body>
+</html>
