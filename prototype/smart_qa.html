@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能问答 - 国投集团智能安全生产管理系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/hidden_danger.css">
+    <link rel="stylesheet" href="css/smart_qa.css">
+    <link rel="stylesheet" href="components/ai-assistant.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+    <div class="app-layout">
+        <header id="appShellHeader"></header>
+
+        <div class="main-body">
+            <aside id="appShellSidebar"></aside>
+
+            <main class="content-area smart-qa-content-area">
+                <div class="content-tabs">
+                    <div class="tab-item active">作业票审批 <i class="ph ph-x"></i></div>
+                    <div class="tab-actions">
+                        <i class="ph ph-star"></i>
+                        <i class="ph ph-arrows-clockwise"></i>
+                    </div>
+                </div>
+
+                <div class="scroll-container smart-qa-scroll-container">
+                    <div class="smart-qa-page">
+                        <div class="smart-qa-status-tabs">
+                            <button class="status-tab active">审批中 <span class="tab-badge">1</span></button>
+                            <button class="status-tab">待提交</button>
+                            <button class="status-tab">待签字 <span class="tab-badge">1</span></button>
+                            <button class="status-tab">草稿</button>
+                            <button class="status-tab">审批完成</button>
+                            <button class="status-tab">已作废</button>
+                        </div>
+
+                        <section class="smart-qa-filter-card">
+                            <div class="filter-toolbar">
+                                <div class="toolbar-actions-left">
+                                    <button class="toolbar-btn toolbar-btn-primary"><i class="ph ph-plus-square"></i> 新建</button>
+                                    <button class="toolbar-btn toolbar-btn-primary"><i class="ph ph-copy"></i> 复制</button>
+                                    <button class="toolbar-btn">关联开票</button>
+                                </div>
+                            </div>
+
+                            <div class="filter-form-grid">
+                                <div class="filter-field field-wide">
+                                    <label>申请部门/单位</label>
+                                    <div class="select-display">
+                                        <span>请选择（可多选）</span>
+                                        <i class="ph ph-caret-down"></i>
+                                    </div>
+                                </div>
+                                <div class="filter-field">
+                                    <label>级联选择</label>
+                                    <div class="select-display">
+                                        <span>请选择</span>
+                                        <i class="ph ph-caret-down"></i>
+                                    </div>
+                                </div>
+                                <div class="filter-field">
+                                    <label>申请人</label>
+                                    <div class="input-display">请输入内容</div>
+                                </div>
+                                <div class="filter-field field-type">
+                                    <label>作业票类型</label>
+                                    <div class="select-display">
+                                        <span>请选择</span>
+                                        <i class="ph ph-caret-down"></i>
+                                    </div>
+                                </div>
+                                <div class="filter-actions">
+                                    <button class="query-btn"><i class="ph ph-magnifying-glass"></i> 查询</button>
+                                    <button class="reset-btn"><i class="ph ph-arrow-counter-clockwise"></i> 重置</button>
+                                    <button class="expand-btn">展开 <i class="ph ph-caret-down"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="extra-filter-row">
+                                <label class="checkbox-display">
+                                    <input type="checkbox">
+                                    <span>显示禁用部门</span>
+                                </label>
+                            </div>
+                        </section>
+
+                        <section class="smart-qa-table-card">
+                            <div class="table-wrap">
+                                <table class="ticket-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-check"><input type="checkbox"></th>
+                                            <th>作业票编号</th>
+                                            <th>作业票类型</th>
+                                            <th>风险等级</th>
+                                            <th>作业内容</th>
+                                            <th>作业地点</th>
+                                            <th>作业区域</th>
+                                            <th>计划作业时间</th>
+                                            <th>作业人数</th>
+                                            <th>作业票状态</th>
+                                            <th>项目负责人</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="col-check"><input type="checkbox"></td>
+                                            <td class="ticket-code">ZYPJ-20260428-001</td>
+                                            <td>动火作业</td>
+                                            <td><span class="risk-tag">一般风险</span></td>
+                                            <td>振动器底板开裂</td>
+                                            <td>27皮带</td>
+                                            <td>二线调配库</td>
+                                            <td>2026-04-28 14:25至2026-04-29 18:00</td>
+                                            <td>1</td>
+                                            <td><span class="status-chip">审批中</span></td>
+                                            <td>吕建(生产技术部)</td>
+                                            <td>
+                                                <div class="table-actions">
+                                                    <button class="icon-btn" title="下载"><i class="ph ph-download-simple"></i></button>
+                                                    <span class="icon-btn icon-btn-static" title="查看"><i class="ph ph-eye"></i></span>
+                                                    <button class="icon-btn" title="复制"><i class="ph ph-copy"></i></button>
+                                                    <button class="icon-btn" title="删除"><i class="ph ph-trash"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section class="smart-qa-demo-hint-card">
+                            <div class="hint-header">
+                                <i class="ph ph-lightbulb"></i>
+                                <span>建议演示提问</span>
+                            </div>
+                            <div class="hint-list">
+                                <div class="hint-item">有限空间作业前，现场安全确认要看哪些关键项？</div>
+                                <div class="hint-item">外委动火作业发现监护不到位，现场第一步应该怎么处理？</div>
+                                <div class="hint-item">高处作业安全带佩戴有哪些强制要求？</div>
+                                <div class="hint-item">某类作业票审批不完整，是否允许开工？</div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </main>
+
+            <div id="aiAssistantMount"></div>
+        </div>
+    </div>
+
+    <script src="components/app-config.js"></script>
+    <script src="components/app-shell.js"></script>
+    <script src="components/ai-assistant-shell.js"></script>
+    <script src="components/ai-assistant-scenes.js"></script>
+    <script src="components/ai-assistant.js?v=20260306"></script>
+    <script src="js/smart_qa.js"></script>
+</body>
+
+</html>

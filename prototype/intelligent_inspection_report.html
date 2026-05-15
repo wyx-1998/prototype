@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能巡检报告</title>
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+    <link rel="stylesheet" href="components/ai-assistant.css">
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --panel: #ffffff;
+            --border: #e6eaf2;
+            --text: #101828;
+            --muted: #667085;
+            --blue: #3366cc;
+            --blue-light: #edf4ff;
+            --shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; height: 100%; font-family: "Inter", "Noto Sans SC", sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+        body { display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .workspace-frame { width: min(1520px, 100%); height: min(920px, calc(100vh - 48px)); display: grid; grid-template-columns: 400px minmax(0, 1fr); gap: 24px; }
+        .conversation-shell, .document-shell { background: #fff; border: 1px solid var(--border); border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; min-height: 0; }
+        .conversation-shell { position: relative; }
+        .conversation-shell #aiAssistantMount { width: 100%; height: 100%; }
+        .conversation-shell .ai-assistant-shell-mount { width: 100%; flex: none; }
+        .conversation-shell .ai-sidebar { position: relative; top: auto; right: auto; bottom: auto; width: 100%; height: 100%; transform: none; box-shadow: none; border-left: none; z-index: auto; }
+        .conversation-shell .ai-floating-btn, .conversation-shell .skills-manage-overlay, .conversation-shell #aiFileInput { display: none !important; }
+        .conversation-shell .ai-header { border-bottom: 1px solid var(--ai-border-color); }
+        .conversation-shell .ai-chat-body { min-height: 0; }
+        .conversation-shell .report-doc-card { background: #fff; border: 1px solid #d9dee8; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; max-width: 100%; }
+        .conversation-shell .report-doc-card-icon { width: 34px; height: 34px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; color: #2563eb; background: #eef4ff; font-size: 22px; flex: 0 0 auto; }
+        .conversation-shell .report-doc-card-info { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+        .conversation-shell .report-doc-card-title { font-size: 14px; font-weight: 600; color: #101828; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .conversation-shell .report-doc-card-meta { font-size: 12px; color: #98a2b3; }
+        .document-shell { display: flex; flex-direction: column; min-height: 0; }
+        .document-toolbar { height: 78px; padding: 0 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-shrink: 0; }
+        .document-meta-title { font-size: 14px; color: var(--muted); }
+        .document-meta-time { margin-top: 6px; font-size: 12px; color: var(--muted); }
+        .document-scroll { flex: 1; overflow-y: auto; padding: 28px; background: #f7f9fc; min-height: 0; }
+        .document-page { width: min(880px, 100%); margin: 0 auto; background: #fff; border: 1px solid #edf1f6; border-radius: 8px; box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06); padding: 56px 64px; }
+        .document-title { margin: 0 0 12px; text-align: center; font-size: 30px; }
+        .document-subtitle { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+        .overview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 28px; }
+        .overview-card { border: 1px solid #e8edf5; border-radius: 14px; background: #f8fbff; padding: 18px; }
+        .overview-label { font-size: 13px; color: var(--muted); }
+        .overview-value { margin-top: 8px; font-size: 24px; font-weight: 700; color: var(--blue); }
+        .document-section { margin-top: 28px; }
+        .document-section-title { margin: 0 0 14px; font-size: 20px; }
+        .document-section-text { margin: 0; font-size: 15px; line-height: 1.85; color: #344054; }
+        .inspection-point-card { border: 1px solid #e5ebf4; border-radius: 16px; padding: 18px 20px; background: #fff; margin-top: 16px; }
+        .inspection-point-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .inspection-point-title { font-size: 17px; font-weight: 600; color: #0f172a; }
+        .inspection-status-chip { display: inline-flex; align-items: center; justify-content: center; min-width: 76px; height: 30px; padding: 0 12px; border-radius: 999px; background: #eef4ff; color: #3366cc; font-size: 13px; }
+        .inspection-status-chip.danger { background: #fff1f2; color: #d92d20; }
+        .inspection-point-list { margin: 16px 0 0; padding-left: 18px; display: grid; gap: 10px; color: #344054; font-size: 14px; line-height: 1.75; }
+        .inspection-issue-box { margin-top: 16px; padding: 14px 16px; border-radius: 12px; background: #f8fbff; border: 1px solid #e4ecfb; }
+        .inspection-issue-box-title { font-size: 14px; font-weight: 600; color: #0f172a; }
+        .inspection-issue-items { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 8px; font-size: 14px; color: #475467; }
+    </style>
+</head>
+<body>
+    <div class="workspace-frame">
+        <section class="conversation-shell">
+            <div id="aiAssistantMount"></div>
+        </section>
+        <section class="document-shell">
+            <div class="document-toolbar">
+                <div>
+                    <div class="document-meta-title">智能巡检报告</div>
+                    <div class="document-meta-time" id="lastUpdated"></div>
+                </div>
+            </div>
+            <div class="document-scroll">
+                <article class="document-page" id="documentSheet">
+                    <h1 class="document-title" id="docTitle"></h1>
+                    <div class="document-subtitle" id="docSubtitle"></div>
+                    <section class="overview-grid">
+                        <div class="overview-card"><div class="overview-label">巡检路线</div><div class="overview-value" id="overviewRoute"></div></div>
+                        <div class="overview-card"><div class="overview-label">覆盖点位</div><div class="overview-value" id="overviewPoints"></div></div>
+                        <div class="overview-card"><div class="overview-label">异常点位</div><div class="overview-value" id="overviewAbnormal"></div></div>
+                    </section>
+                    <section class="document-section">
+                        <h2 class="document-section-title">总体结论</h2>
+                        <p class="document-section-text" id="docSummary"></p>
+                    </section>
+                    <section class="document-section">
+                        <h2 class="document-section-title">点位巡检明细</h2>
+                        <div id="inspectionPoints"></div>
+                    </section>
+                </article>
+            </div>
+        </section>
+    </div>
+
+    <script src="components/ai-assistant-shell.js"></script>
+    <script src="components/ai-assistant-scenes.js"></script>
+    <script src="components/ai-assistant.js"></script>
+    <script>
+        (function () {
+            const STORAGE_KEY = 'report_workspace_payload:intelligent_inspection_report.html';
+            const DEFAULT_DATA = {
+                title: '智能巡检报告',
+                routeName: '智能巡检路线1',
+                summary: '当前没有最新巡检记录。',
+                conversation: [
+                    { type: 'ai', content: '您好，张三！我是您的安全生产AI助手，请向我提问吧' },
+                    { type: 'user', content: '智能巡检路线' },
+                    { type: 'ai', content: '智能巡检报告已生成。' }
+                ],
+                inspectionPoints: []
+            };
+
+            function readJSON(key) {
+                try {
+                    const raw = localStorage.getItem(key);
+                    return raw ? JSON.parse(raw) : null;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            function getPayload() {
+                return readJSON(STORAGE_KEY) || DEFAULT_DATA;
+            }
+
+            function formatTime(value) {
+                const date = value ? new Date(value) : new Date();
+                if (Number.isNaN(date.getTime())) {
+                    return '--';
+                }
+                return date.toLocaleString('zh-CN', { hour12: false });
+            }
+
+            function formatConversationTime(value) {
+                const date = value ? new Date(value) : new Date();
+                if (Number.isNaN(date.getTime())) {
+                    return '--:--';
+                }
+                return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            }
+
+            function renderReportCard(message, payload) {
+                const html = [
+                    '<div class="report-doc-card">',
+                    '  <div class="report-doc-card-icon"><i class="ph ph-file-doc"></i></div>',
+                    '  <div class="report-doc-card-info">',
+                    '      <div class="report-doc-card-title">' + (payload.title || '巡检报告') + '</div>',
+                    '      <div class="report-doc-card-meta">创建时间：' + formatConversationTime(message && message.timestamp) + '</div>',
+                    '  </div>',
+                    '</div>'
+                ].join('');
+                const messages = payload.conversation || [];
+                const aiMessages = messages.filter(function (item) { return item.type === 'ai'; });
+                if (aiMessages.length) {
+                    aiMessages[aiMessages.length - 1].content = html;
+                    aiMessages[aiMessages.length - 1].answerHtml = html;
+                }
+                return messages;
+            }
+
+            function renderDocument(payload) {
+                const points = Array.isArray(payload.inspectionPoints) ? payload.inspectionPoints : [];
+                const abnormalCount = points.filter(function (item) { return item.status !== '正常'; }).length;
+                document.getElementById('docTitle').textContent = payload.title || '智能巡检报告';
+                document.getElementById('docSubtitle').textContent = '生成时间：' + formatTime(payload.generatedAt);
+                document.getElementById('overviewRoute').textContent = payload.routeName || '--';
+                document.getElementById('overviewPoints').textContent = String(points.length || 0);
+                document.getElementById('overviewAbnormal').textContent = String(abnormalCount);
+                document.getElementById('docSummary').textContent = payload.summary || '';
+
+                const pointsRoot = document.getElementById('inspectionPoints');
+                pointsRoot.innerHTML = '';
+                points.forEach(function (point) {
+                    const card = document.createElement('div');
+                    card.className = 'inspection-point-card';
+                    card.innerHTML = [
+                        '<div class="inspection-point-head">',
+                        '  <div class="inspection-point-title">' + (point.title || '') + '</div>',
+                        '  <span class="inspection-status-chip' + (point.status === '正常' ? '' : ' danger') + '">' + (point.status || '') + '</span>',
+                        '</div>',
+                        '<ul class="inspection-point-list">',
+                        '  <li><strong>摄像机巡检：</strong>' + (point.camera || '') + '</li>',
+                        '  <li><strong>作业票检查：</strong>' + (point.permit || '') + '</li>',
+                        '  <li><strong>隐患分析：</strong>' + (point.hazard || '') + '</li>',
+                        '  <li><strong>处置建议：</strong>' + (point.advice || '') + '</li>',
+                        '</ul>',
+                        '<div class="inspection-issue-box">',
+                        '  <div class="inspection-issue-box-title">问题清单</div>',
+                        '  <ul class="inspection-issue-items">' + ((point.issues || []).length ? (point.issues || []).map(function (issue) { return '<li>' + issue + '</li>'; }).join('') : '<li>正常</li>') + '</ul>',
+                        '</div>'
+                    ].join('');
+                    pointsRoot.appendChild(card);
+                });
+                document.getElementById('lastUpdated').textContent = '生成于 ' + formatTime(payload.generatedAt);
+            }
+
+            const payload = getPayload();
+            const conversationMessages = renderReportCard((payload.conversation || []).filter(function (item) {
+                return item.type === 'ai';
+            }).slice(-1)[0], payload);
+            AIAssistantShell.mount('aiAssistantMount');
+            AIAssistant.init({ sceneId: 'intelligent_inspection' });
+            AIAssistant.loadConversationMessages({
+                id: 'report_workspace_inspection',
+                title: payload.routeName || '智能巡检',
+                messages: conversationMessages
+            });
+            renderDocument(payload);
+        })();
+    </script>
+</body>
+</html>

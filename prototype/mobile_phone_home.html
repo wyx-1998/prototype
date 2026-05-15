@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>手机端主页面</title>
+    <link rel="stylesheet" href="css/mobile_phone_shell.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+    <div class="mobile-demo-shell">
+        <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+                <div id="mobileHomeView" class="phone-view phone-view-active">
+                    <div class="phone-home-statusbar">
+                        <div class="phone-home-time">9:41</div>
+                        <div class="phone-home-status-icons">
+                            <i class="ph ph-cell-signal-full"></i>
+                            <i class="ph ph-wifi-high"></i>
+                            <i class="ph ph-battery-full"></i>
+                        </div>
+                    </div>
+                    <div class="phone-home-header">
+                        <div class="phone-home-title">移动端演示</div>
+                        <div class="phone-home-subtitle">请选择要展示的场景</div>
+                    </div>
+                    <div class="phone-menu-list">
+                        <button id="openEmergencyPlanBtn" class="phone-menu-item" type="button">
+                            <div class="phone-menu-icon"><i class="ph ph-siren"></i></div>
+                            <div class="phone-menu-content">
+                                <div class="phone-menu-title">智能应急预案</div>
+                                <div class="phone-menu-desc">进入手机端 AI 对话页</div>
+                            </div>
+                            <i class="ph ph-caret-right phone-menu-arrow"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <iframe id="mobileEmergencyFrame" class="phone-view phone-frame-view" src="emergency_plan_generation_mobile.html" title="智能应急预案手机端"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var homeView = document.getElementById('mobileHomeView');
+            var emergencyFrame = document.getElementById('mobileEmergencyFrame');
+            var openBtn = document.getElementById('openEmergencyPlanBtn');
+
+            function openEmergencyPlan() {
+                emergencyFrame.src = 'emergency_plan_generation_mobile.html?autostart=1';
+                homeView.classList.remove('phone-view-active');
+                emergencyFrame.classList.add('phone-view-active');
+            }
+
+            openBtn.addEventListener('click', openEmergencyPlan);
+
+            window.addEventListener('message', function (event) {
+                if (!event || !event.data) {
+                    return;
+                }
+                if (event.data.type === 'mobile-emergency-go-home') {
+                    emergencyFrame.classList.remove('phone-view-active');
+                    homeView.classList.add('phone-view-active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

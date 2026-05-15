@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑按钮图标选择 - Playground</title>
+    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+    <link rel="stylesheet" href="components/ai-assistant.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 32px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .preview-section {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .preview-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preview-title i {
+            color: #667eea;
+        }
+
+        .ai-header-preview {
+            height: 48px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            background: #fff;
+        }
+
+        .ai-header-preview .ai-controls {
+            display: flex;
+            gap: 12px;
+            color: #666;
+        }
+
+        .ai-header-preview .ai-controls i {
+            cursor: pointer;
+            font-size: 18px;
+            transition: color 0.2s;
+        }
+
+        .ai-header-preview .ai-controls i:hover {
+            color: #3b71ca;
+        }
+
+        .ai-header-preview .ai-controls i.selected-icon {
+            color: #3b71ca;
+            background: rgba(59, 113, 202, 0.1);
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .icon-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .icon-card.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .icon-card i {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .icon-card.selected i {
+            color: #fff;
+        }
+
+        .icon-card .icon-name {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .icon-card.selected .icon-name {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .icon-card .icon-description {
+            font-size: 11px;
+            color: #999;
+            line-height: 1.4;
+        }
+
+        .icon-card.selected .icon-description {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .apply-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            display: block;
+            margin: 32px auto 0;
+        }
+
+        .apply-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .apply-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .selected-info {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 16px;
+            color: #fff;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .selected-info.show {
+            display: block;
+        }
+
+        .selected-info strong {
+            color: #ffd700;
+        }
+
+        .code-preview {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎨 编辑按钮图标选择器</h1>
+        <p class="subtitle">选择一个您喜欢的图标替换当前的编辑按钮</p>
+
+        <!-- 预览区域 -->
+        <div class="preview-section">
+            <div class="preview-title">
+                <i class="ph ph-eye"></i>
+                实时预览
+            </div>
+            <div class="ai-header-preview">
+                <div style="flex: 1;"></div>
+                <div class="ai-controls">
+                    <i id="previewIcon" class="ph ph-pencil-simple selected-icon" title="开始新对话"></i>
+                    <i class="ph ph-arrows-out-simple"></i>
+                    <i class="ph ph-x"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 铅笔/编辑类图标 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="ph ph-pencil"></i>
+                铅笔/编辑类图标
+            </div>
+            <div class="icons-grid" id="editIcons"></div>
+        </div>
+
+        <!-- 新建/添加类图标 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="ph ph-plus-circle"></i>
+                新建/添加类图标
+            </div>
+            <div class="icons-grid" id="addIcons"></div>
+        </div>
+
+        <!-- 刷新/重置类图标 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="ph ph-arrow-clockwise"></i>
+                刷新/重置类图标
+            </div>
+            <div class="icons-grid" id="resetIcons"></div>
+        </div>
+
+        <!-- 对话/消息类图标 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="ph ph-chat-circle-dots"></i>
+                对话/消息类图标
+            </div>
+            <div class="icons-grid" id="chatIcons"></div>
+        </div>
+
+        <!-- 应用/工具类图标 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="ph ph-app-window"></i>
+                应用/工具类图标
+            </div>
+            <div class="icons-grid" id="appIcons"></div>
+        </div>
+
+        <!-- 文件/文档类图标 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="ph ph-file"></i>
+                文件/文档类图标
+            </div>
+            <div class="icons-grid" id="fileIcons"></div>
+        </div>
+
+        <!-- 操作/动作类图标 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="ph ph-lightning"></i>
+                操作/动作类图标
+            </div>
+            <div class="icons-grid" id="actionIcons"></div>
+        </div>
+
+        <!-- 选中信息 -->
+        <div class="selected-info" id="selectedInfo">
+            您选择了：<strong id="selectedName"></strong>
+            <div class="code-preview" id="codePreview"></div>
+        </div>
+
+        <button class="apply-button" id="applyButton" onclick="applySelection()">
+            ✨ 应用此图标到组件
+        </button>
+    </div>
+
+    <script>
+        const icons = {
+            edit: [
+                { name: 'pencil-simple', class: 'ph-pencil-simple', desc: '简洁铅笔（当前）', current: true },
+                { name: 'pencil', class: 'ph-pencil', desc: '详细铅笔' },
+                { name: 'note-pencil', class: 'ph-note-pencil', desc: '笔记+铅笔' },
+                { name: 'pen', class: 'ph-pen', desc: '钢笔' },
+                { name: 'pen-nib', class: 'ph-pen-nib', desc: '钢笔笔尖' },
+                { name: 'eraser', class: 'ph-eraser', desc: '橡皮擦' },
+                { name: 'square-half-bottom', class: 'ph-square-half-bottom', desc: '编辑框' },
+                { name: 'text-aa', class: 'ph-text-aa', desc: '文本编辑' }
+            ],
+            add: [
+                { name: 'plus-circle', class: 'ph-plus-circle', desc: '圆形加号（原图标）' },
+                { name: 'plus', class: 'ph-plus', desc: '简单加号' },
+                { name: 'plus-square', class: 'ph-plus-square', desc: '方形加号' },
+                { name: 'file-plus', class: 'ph-file-plus', desc: '新建文件' },
+                { name: 'note', class: 'ph-note', desc: '笔记' },
+                { name: 'notepad', class: 'ph-notepad', desc: '记事本' },
+                { name: 'file-text', class: 'ph-file-text', desc: '文本文件' },
+                { name: 'article', class: 'ph-article', desc: '文章' }
+            ],
+            reset: [
+                { name: 'arrow-clockwise', class: 'ph-arrow-clockwise', desc: '顺时针刷新' },
+                { name: 'arrows-clockwise', class: 'ph-arrows-clockwise', desc: '双箭头刷新' },
+                { name: 'arrows-counter-clockwise', class: 'ph-arrows-counter-clockwise', desc: '逆时针刷新' },
+                { name: 'broom', class: 'ph-broom', desc: '清扫/清空' },
+                { name: 'eraser', class: 'ph-eraser', desc: '擦除' },
+                { name: 'trash', class: 'ph-trash', desc: '删除/清空' },
+                { name: 'arrows-out', class: 'ph-arrows-out', desc: '展开' },
+                { name: 'sparkle', class: 'ph-sparkle', desc: '新建/刷新' }
+            ],
+            chat: [
+                { name: 'chat-circle-dots', class: 'ph-chat-circle-dots', desc: '对话气泡' },
+                { name: 'chat-circle-text', class: 'ph-chat-circle-text', desc: '文字对话' },
+                { name: 'chat-text', class: 'ph-chat-text', desc: '对话文本' },
+                { name: 'chats-circle', class: 'ph-chats-circle', desc: '多个对话' },
+                { name: 'chat', class: 'ph-chat', desc: '简单对话' },
+                { name: 'chat-centered-dots', class: 'ph-chat-centered-dots', desc: '居中对话' },
+                { name: 'chats', class: 'ph-chats', desc: '多对话' },
+                { name: 'user-circle', class: 'ph-user-circle', desc: '用户' }
+            ],
+            app: [
+                { name: 'app-window', class: 'ph-app-window', desc: '应用窗口' },
+                { name: 'squares-four', class: 'ph-squares-four', desc: '应用网格' },
+                { name: 'grid-four', class: 'ph-grid-four', desc: '四宫格' },
+                { name: 'grid-nine', class: 'ph-grid-nine', desc: '九宫格' },
+                { name: 'app-store-logo', class: 'ph-app-store-logo', desc: '应用商店' },
+                { name: 'gear', class: 'ph-gear', desc: '设置' },
+                { name: 'magnifying-glass', class: 'ph-magnifying-glass', desc: '搜索' },
+                { name: 'bell', class: 'ph-bell', desc: '通知' },
+                { name: 'folder', class: 'ph-folder', desc: '文件夹' },
+                { name: 'house', class: 'ph-house', desc: '主页' },
+                { name: 'user', class: 'ph-user', desc: '用户' },
+                { name: 'calendar', class: 'ph-calendar', desc: '日历' },
+                { name: 'camera', class: 'ph-camera', desc: '相机' },
+                { name: 'image', class: 'ph-image', desc: '图片' },
+                { name: 'music-note', class: 'ph-music-note', desc: '音乐' },
+                { name: 'video-camera', class: 'ph-video-camera', desc: '视频' },
+                { name: 'envelope', class: 'ph-envelope', desc: '邮件' },
+                { name: 'phone', class: 'ph-phone', desc: '电话' },
+                { name: 'map-pin', class: 'ph-map-pin', desc: '位置' },
+                { name: 'heart', class: 'ph-heart', desc: '收藏' },
+                { name: 'star', class: 'ph-star', desc: '星标' },
+                { name: 'bookmark', class: 'ph-bookmark', desc: '书签' },
+                { name: 'shopping-cart', class: 'ph-shopping-cart', desc: '购物车' },
+                { name: 'credit-card', class: 'ph-credit-card', desc: '支付' }
+            ],
+            file: [
+                { name: 'file', class: 'ph-file', desc: '文件' },
+                { name: 'file-text', class: 'ph-file-text', desc: '文本文件' },
+                { name: 'file-pdf', class: 'ph-file-pdf', desc: 'PDF文件' },
+                { name: 'file-doc', class: 'ph-file-doc', desc: 'Word文档' },
+                { name: 'file-xls', class: 'ph-file-xls', desc: 'Excel表格' },
+                { name: 'file-ppt', class: 'ph-file-ppt', desc: 'PPT演示' },
+                { name: 'file-image', class: 'ph-file-image', desc: '图片文件' },
+                { name: 'file-video', class: 'ph-file-video', desc: '视频文件' },
+                { name: 'file-audio', class: 'ph-file-audio', desc: '音频文件' },
+                { name: 'file-zip', class: 'ph-file-zip', desc: '压缩文件' },
+                { name: 'file-code', class: 'ph-file-code', desc: '代码文件' },
+                { name: 'folder-open', class: 'ph-folder-open', desc: '打开文件夹' },
+                { name: 'folders', class: 'ph-folders', desc: '多个文件夹' },
+                { name: 'archive', class: 'ph-archive', desc: '归档' },
+                { name: 'database', class: 'ph-database', desc: '数据库' },
+                { name: 'cloud', class: 'ph-cloud', desc: '云存储' }
+            ],
+            action: [
+                { name: 'lightning', class: 'ph-lightning', desc: '快速操作' },
+                { name: 'play', class: 'ph-play', desc: '播放' },
+                { name: 'pause', class: 'ph-pause', desc: '暂停' },
+                { name: 'stop', class: 'ph-stop', desc: '停止' },
+                { name: 'download', class: 'ph-download', desc: '下载' },
+                { name: 'upload', class: 'ph-upload', desc: '上传' },
+                { name: 'share', class: 'ph-share', desc: '分享' },
+                { name: 'copy', class: 'ph-copy', desc: '复制' },
+                { name: 'check', class: 'ph-check', desc: '确认' },
+                { name: 'x', class: 'ph-x', desc: '关闭' },
+                { name: 'lock', class: 'ph-lock', desc: '锁定' },
+                { name: 'lock-open', class: 'ph-lock-open', desc: '解锁' },
+                { name: 'eye', class: 'ph-eye', desc: '查看' },
+                { name: 'eye-slash', class: 'ph-eye-slash', desc: '隐藏' },
+                { name: 'funnel', class: 'ph-funnel', desc: '筛选' },
+                { name: 'sort-ascending', class: 'ph-sort-ascending', desc: '升序' },
+                { name: 'sort-descending', class: 'ph-sort-descending', desc: '降序' },
+                { name: 'arrows-out-simple', class: 'ph-arrows-out-simple', desc: '展开' },
+                { name: 'arrows-in-simple', class: 'ph-arrows-in-simple', desc: '收起' },
+                { name: 'link', class: 'ph-link', desc: '链接' }
+            ]
+        };
+
+        let selectedIcon = { name: 'pencil-simple', class: 'ph-pencil-simple' };
+
+        function createIconCard(icon, container) {
+            const card = document.createElement('div');
+            card.className = 'icon-card' + (icon.current ? ' selected' : '');
+            card.innerHTML = `
+                <i class="ph ${icon.class}"></i>
+                <div class="icon-name">${icon.name}${icon.current ? '<span class="badge">当前</span>' : ''}</div>
+                <div class="icon-description">${icon.desc}</div>
+            `;
+            card.onclick = () => selectIcon(icon, card);
+            container.appendChild(card);
+        }
+
+        function selectIcon(icon, cardElement) {
+            // 移除所有选中状态
+            document.querySelectorAll('.icon-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('.selected-icon').forEach(i => i.classList.remove('selected-icon'));
+
+            // 添加新选中状态
+            cardElement.classList.add('selected');
+            selectedIcon = icon;
+
+            // 更新预览
+            const previewIcon = document.getElementById('previewIcon');
+            previewIcon.className = `ph ${icon.class} selected-icon`;
+
+            // 显示选中信息
+            const infoDiv = document.getElementById('selectedInfo');
+            const nameSpan = document.getElementById('selectedName');
+            const codeDiv = document.getElementById('codePreview');
+
+            infoDiv.classList.add('show');
+            nameSpan.textContent = icon.name;
+            codeDiv.innerHTML = `&lt;i class="ph ${icon.class}" title="开始新对话"&gt;&lt;/i&gt;`;
+
+            // 启用应用按钮
+            document.getElementById('applyButton').disabled = false;
+        }
+
+        function applySelection() {
+            const message = `
+已选择图标：${selectedIcon.name}
+图标类名：${selectedIcon.class}
+
+我将为您更新以下文件中的图标：
+• ai-assistant-demo.html
+• ai-assistant-template.html
+• ai-assistant.js
+
+确认应用？
+            `.trim();
+
+            if (confirm(message)) {
+                alert('✅ 正在应用更改...\n\n请等待文件更新完成。');
+                window.selectedIconForUpdate = selectedIcon;
+            }
+        }
+
+        // 初始化图标网格
+        createIconCard.bind(null, ...Object.values(icons.edit), document.getElementById('editIcons'));
+        icons.edit.forEach(icon => createIconCard(icon, document.getElementById('editIcons')));
+        icons.add.forEach(icon => createIconCard(icon, document.getElementById('addIcons')));
+        icons.reset.forEach(icon => createIconCard(icon, document.getElementById('resetIcons')));
+        icons.chat.forEach(icon => createIconCard(icon, document.getElementById('chatIcons')));
+        icons.app.forEach(icon => createIconCard(icon, document.getElementById('appIcons')));
+        icons.file.forEach(icon => createIconCard(icon, document.getElementById('fileIcons')));
+        icons.action.forEach(icon => createIconCard(icon, document.getElementById('actionIcons')));
+
+        // 设置初始选中
+        document.getElementById('applyButton').disabled = false;
+    </script>
+</body>
+
+</html>

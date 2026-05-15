@@ -1285,6 +1285,7 @@ body {
     border-radius: 10px;
     padding: 14px;
     transition: all 0.2s;
+    cursor: pointer;
 }
 
 .hazard-card:hover {

@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GB/T 33579—2017 机械安全 危险能量控制方法 上锁/挂牌</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #Fdfbf7;
+            --text-main: #2c3e50;
+            --text-secondary: #546e7a;
+            --accent-color: #2c3e50;
+            --accent-highlight: #d35400;
+            --accent-blue: #2980b9;
+            --accent-green: #27ae60;
+            --accent-purple: #8e44ad;
+            --border-color: #E0E0E0;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --font-serif: 'Noto Serif SC', serif;
+            --font-sans: 'Noto Sans SC', sans-serif;
+            --spacing-unit: 1.5rem;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--accent-blue);
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--accent-highlight);
+        }
+
+        /* --- Header --- */
+        .header {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            padding: 0.8rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .logo {
+            font-family: var(--font-serif);
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #1a1a1a;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--accent-highlight);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-size: 0.95rem;
+            color: #555;
+            font-weight: 500;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+            background: #f5f5f5;
+        }
+
+        /* --- Hero --- */
+        .hero {
+            padding: 6rem 2rem 4rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(to bottom, #ffffff, var(--bg-color));
+        }
+
+        .hero-meta {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: inline-block;
+            background: #eee;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .hero h1 {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 3rem;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .toc-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .toc-title {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-highlight);
+            padding-bottom: 0.5rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            margin-bottom: 0.8rem;
+        }
+
+        .toc-list a {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            display: block;
+            padding: 4px 0;
+        }
+
+        .toc-list a:hover {
+            color: var(--accent-highlight);
+            transform: translateX(4px);
+        }
+
+        .toc-list .toc-h3 {
+            padding-left: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* --- Main Content --- */
+        .content {
+            min-width: 0; /* Prevent overflow in grid */
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        /* --- Typography --- */
+        h2, h3, h4 {
+            font-family: var(--font-serif);
+            color: var(--accent-color);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            border-left: 5px solid var(--accent-highlight);
+            padding-left: 1rem;
+            margin-top: 0;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: #34495e;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        strong, b {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        /* --- Lists --- */
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* --- Info Box (Meta Data) --- */
+        .info-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-blue);
+            box-shadow: var(--card-shadow);
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .info-value {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* --- Blockquotes & Alerts --- */
+        blockquote {
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            border-left: 4px solid var(--accent-highlight);
+            background: #fff8f0;
+            color: #7f8c8d;
+            font-style: italic;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .warning-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .warning-box::before {
+            content: "!";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: #856404;
+            color: #fff;
+            border-radius: 50%;
+            flex-shrink: 0;
+            font-weight: bold;
+        }
+
+        /* --- Tables --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: var(--accent-color);
+            color: #fff;
+            font-weight: 500;
+            font-family: var(--font-sans);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* --- Images --- */
+        .img-container {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+        }
+
+        .img-caption {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none; /* Hide TOC on mobile for simplicity */
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <span>GB</span> Standard View
+        </div>
+        <nav class="nav-links">
+            <a href="#">首页</a>
+            <a href="#">标准库</a>
+            <a href="#">关于</a>
+            <a href="#" class="nav-btn-daily">下载 PDF</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-meta">GB/T 33579—2017</div>
+        <h1>机械安全 危险能量控制方法<br>上锁/挂牌</h1>
+        <p>Safety of machinery—Control methods of hazardous energy—Lockout/Tagout</p>
+    </section>
+
+    <!-- Main Container -->
+    <div class="container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="toc-card">
+                <div class="toc-title">目录导航</div>
+                <ul class="toc-list">
+                    <li><a href="#intro">引言</a></li>
+                    <li><a href="#scope">1 范围</a></li>
+                    <li><a href="#normative">2 规范性引用文件</a></li>
+                    <li><a href="#terms">3 术语和定义</a></li>
+                    <li><a href="#responsibilities">4 职责</a>
+                        <ul class="toc-list toc-h3">
+                            <li><a href="#resp-man">制造商职责</a></li>
+                            <li><a href="#resp-user">用户职责</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#design">5 设计</a></li>
+                    <li><a href="#control-plan">6 危险能量控制方案</a>
+                        <ul class="toc-list toc-h3">
+                            <li><a href="#control-methods">控制方法</a></li>
+                            <li><a href="#loto-proc">上锁/挂牌程序</a></li>
+                            <li><a href="#training">培训</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#appendix-a">附录 A (上锁/挂牌方案)</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+
+            <!-- Document Meta Info -->
+            <div class="info-box">
+                <div class="info-item">
+                    <span class="info-label">发布日期</span>
+                    <div class="info-value">2017-05-12</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">实施日期</span>
+                    <div class="info-value">2017-12-01</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">标准状态</span>
+                    <div class="info-value">现行有效</div>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">ICS 分类</span>
+                    <div class="info-value">13.110</div>
+                </div>
+            </div>
+
+            <!-- Intro -->
+            <article class="card" id="intro">
+                <h2>引言</h2>
+                <p>机械领域安全标准的结构如下：</p>
+                <ul>
+                    <li><strong>A类标准（基础安全标准）</strong>：给出适用于所有机械的基本概念、设计原则和一般特征；</li>
+                    <li><strong>B类标准（通用安全标准）</strong>：涉及在机械的一种安全特征或使用范围较宽的一类安全装置：
+                        <ul>
+                            <li><strong>B1类</strong>：安全特征（如安全距离、表面温度、噪声）标准；</li>
+                            <li><strong>B2类</strong>：安全装置（如双手操纵装置、联锁装置、压敏装置、防护装置）标准。</li>
+                        </ul>
+                    </li>
+                    <li><strong>C类标准（机器安全标准）</strong>：对一种特定的机器或一组机器规定出详细的安全要求的标准。</li>
+                </ul>
+                <p>根据 GB/T 15706，本标准属于 B 类标准。</p>
+                <p>在机器全生命周期内进行制造、安装、建造、修理、调整、检查、疏通、设定、故障查找、测试、清洗、拆卸、保养或维护时，因没有完全释放的能量，如势能、电能、热能等的意外释放，或者机器运动部件与能量源的意外接通，都可能造成危害。上锁／挂牌是一种常见的控制危险能量方法，但随着技术的进步，用户可能需要采用不同的方法和技术来保护人员的安全。</p>
+            </article>
+
+            <!-- Section 1 -->
+            <article class="card" id="scope">
+                <h2>1 范围</h2>
+                <p>本标准规定了可能造成人员伤害的危险能量控制要求。</p>
+                <p>本标准也规定了控制危险能量意外释放¹）的保护步骤、技术、设计、方法及性能指标，从而避免人员受到伤害。</p>
+                <blockquote>
+                    ¹） 从暴露于风险的人员的角度出发，任何意想不到的动作，如通电、启动和储能的释放，都属于危险能量意外释放。
+                </blockquote>
+                <p>本标准适用于在机器全生命周期内的设计、制造、安装、建造、修理、调整、检查、疏通、设定、故障查找、测试、清洗、拆卸、保养和维护等。</p>
+                <div class="warning-box">
+                    <strong>不适用范围：</strong> 本标准不适用于由电线和插头连接电源且电源插头的插拔只由从事保养或维护人员个人控制的电气设备上从事的保养或维护工作。也不适用于与水、蒸汽、天然气或石油产品等压力管道传输和配送系统。
+                </div>
+            </article>
+
+            <!-- Section 2 -->
+            <article class="card" id="normative">
+                <h2>2 规范性引用文件</h2>
+                <ul>
+                    <li>GB 5226.1—2008　机械电气安全　机械电气设备　第1部分：通用技术条件</li>
+                    <li>GB/T 15706—2012　机械安全　设计通则　风险评估与风险减小</li>
+                    <li>GB/T 19876　机械安全　与人体部位接近速度相关的安全防护装置的定位</li>
+                </ul>
+            </article>
+
+            <!-- Section 3 -->
+            <article class="card" id="terms">
+                <h2>3 术语和定义</h2>
+                <p>GB 5226.1—2008 和 GB/T 15706—2012 界定的以及下列术语和定义适用于本文件。</p>
+                
+                <h4>3.1 警报 (alarm)</h4>
+                <p>用听觉或视觉的手段提醒人员即将发生的危险，如机器的启动、运动、失效或失灵。</p>
+
+                <h4>3.2 授权人员 (authorized individual)</h4>
+                <p>被指派执行危险能量控制的人员。</p>
+
+                <h4>3.8 能量隔离装置 (energy isolating device)</h4>
+                <p>物理防止能量传输或释放的机械装置，如：</p>
+                <ul>
+                    <li>手动操作断路器、断开开关、手动开关，通过这些装置可同时断开所有火线连接；</li>
+                    <li>截止阀；</li>
+                    <li>挡块；</li>
+                    <li>其他用于阻挡或隔离能量的类似装置。</li>
+                </ul>
+
+                <h4>3.9 危险能量 (hazardous energy)</h4>
+                <p>任何可能造成人身伤害的能源，包括电气、机械、液压、气动、化学、热能、势能等。</p>
+
+                <h4>3.11 上锁／挂牌 (lockout/tagout)</h4>
+                <p>按照既定程序在能量隔离装置上放置锁具／标牌，以表明在锁具／标牌按照既定程序移除之前，不得操作能量隔离装置。</p>
+            </article>
+
+            <!-- Section 4 -->
+            <article class="card" id="responsibilities">
+                <h2>4 职责</h2>
+                
+                <h3 id="resp-man">4.1 制造商的职责</h3>
+                <p>制造商在设计、制造、安装机器的过程中应考虑危险能量的控制，以使用户在机器全生命周期内从事有关活动（见第1章）时，能有效控制危险能量。</p>
+
+                <h3 id="resp-user">4.2 用户的职责</h3>
+                <p>用户应按照本标准的相关规定，制订有效方案，保护在机器全生命周期内从事有关活动（见第1章）的人员免受危险能量伤害。</p>
+                <p><em>注：由于用户从事的工作性质，在某些情况下用户也可以是制造商。</em></p>
+
+                <h3>4.3 授权人员的职责</h3>
+                <p>授权人员应遵守用户提供的执行危险能量控制的方案、规程和培训。</p>
+            </article>
+
+            <!-- Section 5 -->
+            <article class="card" id="design">
+                <h2>5 设计</h2>
+                
+                <h3>5.1 对制造商的要求</h3>
+                <p>机器的设计、制造和安装应便于用户执行本标准规定的控制方法。任何影响能源隔离的修改都应符合本标准。在机器的设计阶段应进行风险评估，以确定对能量隔离装置和系统的需求以及设计余量。</p>
+
+                <h3>5.2 能量隔离装置</h3>
+                <p>为满足6.3的要求，机器的设计、制造和安装应根据其用途考虑能量隔离装置。能量隔离装置应能控制和／或耗散危险能量。</p>
+                
+                <h4>5.2.2 位置</h4>
+                <p>能量隔离装置应安装在容易接近的位置。如果可行，应尽量位于在维修和维护过程中方便使用上锁装置的位置。</p>
+                <blockquote>
+                    注：能量隔离装置最好位于危险区之外，且在邻近的步行可达区域，位于方便操控的高度（即：不在高处、不在梯子上、也不在机器下面）。
+                </blockquote>
+
+                <h3>5.7 储存的能量和剩余能量</h3>
+                <p>如果已确定储存的能量或剩余能量是危险的，则应将安全耗散或约束储存的能量或剩余能量的装置集成到机器中。用于耗散储存的能量的装置应设计成具有验证其位置和状态的措施或方法。</p>
+            </article>
+
+            <!-- Section 6 -->
+            <article class="card" id="control-plan">
+                <h2>6 危险能量控制方案</h2>
+                
+                <h3 id="control-methods">6.2 控制方法</h3>
+                <p>危险能量控制方法的选择取决于任务是否能够在得能条件下进行。一般情况下，危险能量控制的首选方法是 6.3 规定的上锁／挂牌。</p>
+
+                <h3 id="loto-proc">6.3 上锁／挂牌方案</h3>
+                <p>上锁／挂牌是一个系统方案。为了提供有效的保护，上锁／挂牌应包括以下要素：</p>
+                <ul>
+                    <li>所有危险能量的调查；</li>
+                    <li>能量隔离装置的识别；</li>
+                    <li>防护材料及硬件的选择和采购；</li>
+                    <li>职责和责任的指派；</li>
+                    <li>人员的培训；</li>
+                    <li>方案元素的审核。</li>
+                </ul>
+
+                <h4>6.3.3.4 机器关闭</h4>
+                <p>应通过专门设立的危险能量控制规程来关闭机器或使机器失能。</p>
+                <blockquote>
+                    注：专门的机器关闭程序是必要的，以避免因机器停止而给人员带来更多或更大的风险。
+                </blockquote>
+
+                <h4>6.3.3.6 上锁或挂牌装置的使用</h4>
+                <p>上锁或挂牌装置应由授权人员附在每个能量隔离装置上。</p>
+                <ul>
+                    <li>采用上锁装置时，应确保能量隔离装置保持在“安全”或“关闭”位置。</li>
+                    <li>采用挂牌装置时，应使其能明确表明禁止操作或移动处于“安全”或“关闭”位置的能量隔离装置。</li>
+                </ul>
+
+                <h3 id="training">6.5 沟通与培训</h3>
+                <p>用户应提供初步培训，这将确保所有授权人员理解能量控制程序的目的和功能。培训应使得所有授权人员认知度与他们可能会遇到的暴露于危险的水平相匹配。</p>
+                
+                <div class="warning-box">
+                    <strong>培训要求：</strong> 培训项目应至少满足以下要求：
+                    <ul style="margin-top: 0.5rem; margin-bottom: 0;">
+                        <li>对授权人员的培训应在他们进行维修和维护工作之前进行；</li>
+                        <li>培训应具体到用户的书面程序；</li>
+                        <li>每个授权人员应受到与工作场所的能源类型及大小的培训；</li>
+                        <li>用户应该记录所有已经进行的初始和后续的培训。</li>
+                    </ul>
+                </div>
+            </article>
+
+            <!-- Appendix A -->
+            <article class="card" id="appendix-a">
+                <h2>附录 A（规范性附录） 上锁／挂牌方案</h2>
+                
+                <h3>A.1 目的</h3>
+                <p>建立一套控制系统，并利用上锁／挂牌规程防止机器的能量意外释放或传输。</p>
+
+                <h3>A.4 步骤</h3>
+                <p>在进行上锁／挂牌之前，应制定包含以下内容的书面上锁／挂牌方案：</p>
+                
+                <h4>a) 原则：</h4>
+                <ol>
+                    <li>所有人员应遵守上锁／挂牌系统的要求。应加强对个人锁具／标签的管理。</li>
+                    <li>锁具／标签应在企业内部标准化，能源的上锁／挂牌只能采用经授权的方法。</li>
+                    <li>除非已针对特殊情况制定了特殊措施，否则锁具／标签应由暴露在潜在的能量意外释放的人放置和移除。</li>
+                    <li>如果设备可锁定，所有暴露人员应使用锁具。</li>
+                </ol>
+
+                <div class="img-container">
+                    <!-- Placeholder for image if needed in original doc, strictly keeping path structure -->
+                    <!-- <img src="path/to/image.png" alt="上锁挂牌示意图"> -->
+                    <p style="color: #999; font-size: 0.9rem;">(此处展示附录A中关于锁具/标签标准化的示意图)</p>
+                </div>
+            </article>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2017 机械安全标准化技术委员会. 本页面内容仅供技术参考，请以官方发布的纸质版为准。</p>
+    </footer>
+
+</body>
+</html>

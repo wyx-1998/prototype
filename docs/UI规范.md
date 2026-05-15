@@ -262,26 +262,4 @@ Disabled	`#E6F0FF`	`#B8BABF`	无	R3
 - 文字: `#F33E3E`
 - 图标: `#F33E3E`
 
----
-
-十、设计资源输出
-
-推荐工具: Figma, Sketch, Adobe XD
-
-组件库结构:
-
-```
-Chatbot Design System
-├── Colors (样式库)
-├── Typography (文字样式)
-├── Icons (24px/16px 图标集)
-├── Border Radius (圆角样式)
-├── Shadows (阴影样式)
-└── Components
-    ├── Header
-    ├── Message Bubble
-    ├── Input Area
-    ├── Quick Reply
-    └── Loading State
-```
 

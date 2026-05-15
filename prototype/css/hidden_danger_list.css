@@ -1,0 +1,481 @@
+.hidden-danger-list-content-area {
+    background: #f5f7fa;
+}
+
+.hidden-danger-list-scroll-container {
+    padding: 12px;
+}
+
+.hidden-danger-list-page {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 100%;
+}
+
+.hidden-danger-context-tabs,
+.hidden-danger-level-tabs,
+.hidden-danger-filter-card,
+.hidden-danger-table-card {
+    background: #fff;
+    border: 1px solid #e7ebf0;
+}
+
+.hidden-danger-context-tabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+}
+
+.context-tab-chip {
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 14px;
+    border: 1px solid #d7dce5;
+    background: #f5f7fa;
+    color: #666;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.context-tab-chip.active {
+    background: #3366cc;
+    border-color: #3366cc;
+    color: #fff;
+}
+
+.hidden-danger-level-tabs {
+    display: flex;
+    align-items: center;
+    gap: 42px;
+    padding: 0 12px;
+    border-bottom-color: #ebeff4;
+}
+
+.level-tab {
+    position: relative;
+    height: 38px;
+    border: none;
+    background: none;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.level-tab.active {
+    color: #3366cc;
+    font-weight: 500;
+}
+
+.level-tab.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: #3366cc;
+}
+
+.hidden-danger-filter-card {
+    padding: 14px 16px;
+}
+
+.filter-toolbar-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 1.05fr) minmax(320px, 1fr) minmax(280px, 1fr) auto;
+    gap: 16px 18px;
+    align-items: center;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.filter-item label {
+    color: #333;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.filter-input,
+.filter-select,
+.filter-date {
+    height: 32px;
+    width: 100%;
+    border: 1px solid #d9d9d9;
+    background: #fff;
+    color: #333;
+    font-size: 14px;
+    padding: 0 12px;
+    outline: none;
+}
+
+.filter-input::placeholder {
+    color: #b3b8c3;
+}
+
+.multi-select-display {
+    min-height: 32px;
+    border: 1px solid #d9d9d9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 4px 10px;
+    width: 100%;
+}
+
+.multi-select-tags {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.select-tag {
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 4px;
+    background: #f2f4f7;
+    color: #666;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.select-tag-count {
+    height: 22px;
+    min-width: 26px;
+    padding: 0 6px;
+    border-radius: 4px;
+    background: #f2f4f7;
+    color: #666;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.multi-select-arrow {
+    color: #98a1b2;
+    font-size: 14px;
+    flex: 0 0 auto;
+}
+
+.filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-end;
+    white-space: nowrap;
+}
+
+.query-action,
+.reset-action {
+    height: 32px;
+    padding: 0 16px;
+    border-radius: 2px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.query-action {
+    border: 1px solid #3366cc;
+    background: #3366cc;
+    color: #fff;
+}
+
+.reset-action {
+    border: 1px solid #d9d9d9;
+    background: #fff;
+    color: #333;
+}
+
+.expand-action {
+    border: none;
+    background: none;
+    color: #3366cc;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.hidden-danger-table-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 560px;
+    overflow: hidden;
+}
+
+.hidden-danger-table-wrap {
+    flex: 1;
+    overflow: auto;
+}
+
+.hidden-danger-table {
+    width: 100%;
+    min-width: 1720px;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.hidden-danger-table thead th {
+    height: 34px;
+    background: #f5f4f7;
+    color: #666;
+    font-size: 13px;
+    font-weight: 400;
+    text-align: left;
+    padding: 0 12px;
+    border-right: 1px solid #eceff3;
+    border-bottom: 1px solid #eceff3;
+    white-space: nowrap;
+}
+
+.hidden-danger-table thead tr.filter-row th {
+    height: 42px;
+    background: #f5f4f7;
+    padding: 6px 10px;
+}
+
+.hidden-danger-table tbody td {
+    height: 34px;
+    padding: 0 12px;
+    border-right: 1px solid #f1f3f7;
+    border-bottom: 1px solid #f1f3f7;
+    color: #333;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hidden-danger-table th:last-child,
+.hidden-danger-table td:last-child {
+    border-right: none;
+}
+
+.col-id {
+    width: 150px;
+}
+
+.col-desc {
+    width: 200px;
+}
+
+.col-status {
+    width: 96px;
+}
+
+.col-handler {
+    width: 170px;
+}
+
+.col-location {
+    width: 100px;
+}
+
+.col-dept,
+.col-accept-dept {
+    width: 110px;
+}
+
+.col-person,
+.col-accept-person {
+    width: 110px;
+}
+
+.col-date,
+.col-complete-date {
+    width: 150px;
+}
+
+.col-actions {
+    width: 190px;
+    text-align: center;
+}
+
+.table-filter-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.table-filter-input,
+.table-filter-date {
+    width: 100%;
+    height: 24px;
+    border: 1px solid #b9c2d0;
+    background: #fff;
+    color: #333;
+    font-size: 12px;
+    padding: 0 8px;
+    outline: none;
+}
+
+.table-filter-input.active {
+    border-color: #3366cc;
+    box-shadow: inset 0 0 0 1px #3366cc;
+}
+
+.table-filter-icon {
+    color: #7f8794;
+    font-size: 12px;
+    flex: 0 0 auto;
+}
+
+.link-text {
+    color: #3366cc;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 12px;
+    background: #dfe7f7;
+    color: #3366cc;
+    font-size: 12px;
+}
+
+.status-pill i {
+    font-size: 10px;
+}
+
+.table-actions-group {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.table-action-icon {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table-action-icon.view {
+    color: #18b566;
+}
+
+.table-action-icon.edit {
+    color: #3366cc;
+}
+
+.table-action-icon.copy {
+    color: #b7bfcb;
+}
+
+.table-action-icon.assign {
+    color: #3366cc;
+}
+
+.table-action-icon.warn {
+    color: #ff4d4f;
+}
+
+.hidden-danger-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+    padding: 10px 14px;
+    border-top: 1px solid #eef1f5;
+    background: #fff;
+    color: #333;
+    font-size: 13px;
+}
+
+.pagination-size,
+.pagination-jump-input,
+.pagination-tool-btn,
+.pagination-page-btn,
+.pagination-arrow-btn {
+    height: 30px;
+    border: 1px solid #d9d9d9;
+    background: #fff;
+    color: #333;
+    font-size: 13px;
+}
+
+.pagination-size {
+    width: 84px;
+    padding: 0 10px;
+}
+
+.pagination-arrow-btn,
+.pagination-tool-btn {
+    width: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.pagination-page-btn {
+    min-width: 30px;
+    padding: 0 10px;
+    color: #3366cc;
+    border-color: #3366cc;
+}
+
+.pagination-jump-input {
+    width: 42px;
+    text-align: center;
+}
+
+.pagination-tools {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 1440px) {
+    .filter-toolbar-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 900px) {
+    .filter-toolbar-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hidden-danger-level-tabs {
+        gap: 20px;
+        overflow-x: auto;
+    }
+
+    .hidden-danger-context-tabs {
+        overflow-x: auto;
+    }
+}
